@@ -1,0 +1,76 @@
+﻿@model CreateLoanView
+
+
+<div class="container">
+    <h2 class="mb-4">Edit or Confirm Loan Record</h2>
+
+    <form asp-action="EditLoan" method="post">
+
+        <!-- User -->
+        <div class="mb-3">
+            <label class="form-label">User</label>
+            <select class="form-select"
+                    asp-for="UserId"
+                    asp-items="Model.UsersList">
+                <option value="">-- Select a user --</option>
+            </select>
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <!-- Book -->
+        <div class="mb-3">
+            <label class="form-label">Book</label>
+            <select class="form-select"
+                    asp-for="BookId"
+                    asp-items="Model.BookList">
+                <option value="">-- Select a book --</option>
+            </select>
+            <span asp-validation-for="BookId" class="text-danger"></span>
+        </div>
+
+        <!-- Pick-up date (editable) -->
+        <div class="mb-3">
+            <label class="form-label">Pick-up date</label>
+            <input type="date"
+                   class="form-control"
+                   id="pickUpDate"
+                   name="PickUpDate"
+                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <!-- Return date (auto calculated, readonly) -->
+        <div class="mb-3">
+            <label class="form-label">Return date</label>
+            <input type="date"
+                   class="form-control"
+                   id="returnDate"
+                   name="ReturnDate"
+                   value="@DateTime.Now.AddDays(25).ToString("yyyy-MM-dd")"
+                   readonly />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Confirm Changes
+        </button>
+        <a class="btn btn-secondary"
+           asp-controller="Systems"
+           asp-action="Register">
+            Cancel
+        </a>
+
+    </form>
+</div>
+@section Scripts {
+    <script>
+        const pickUpInput = document.getElementById('pickUpDate');
+        const returnInput = document.getElementById('returnDate');
+
+        pickUpInput.addEventListener('change', function () {
+            const pickUpDate = new Date(this.value);
+            if (!isNaN(pickUpDate)) {
+                pickUpDate.setDate(pickUpDate.getDate() + 25);
+                returnInput.value = pickUpDate.toISOString().split('T')[0];
+            }
+        });
+    </script>
+}

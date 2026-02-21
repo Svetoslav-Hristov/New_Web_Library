@@ -1,0 +1,78 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.book-cover-small {
+    width: 80px !important;
+    height: auto;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.green-value {
+    color: #00FF00;
+    font-weight: 500;
+}
+
+.red-value {
+    color: #ff0000;
+    font-weight: 500;
+}
+
+.book-preview-container {
+    margin-top: 15vh;
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: wrap;
+    .book-card
+
+{
+    width: 160px;
+    text-align: center;
+}
+
+.book-card img {
+    width: 160px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.book-title {
+    margin: 8px 0 4px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.preview-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #0d6efd;
+}
+
+    .preview-link:hover {
+        text-decoration: underline;
+    }
+

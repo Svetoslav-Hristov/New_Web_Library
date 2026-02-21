@@ -1,0 +1,69 @@
+﻿@model CreateReserveModel
+
+
+<div class="container">
+    <h2>Reserve Book</h2>
+    <form asp-action="SearchByCriteria" method="post">
+        <input type="hidden" asp-for="BookId" />
+        <input type="hidden" asp-for="BookTitle" />
+        <div class="mb-3">
+            <label>Email or PhoneNumber</label>
+            <input asp-for="SearchingCriteria" class="form-control" />
+            <span asp-validation-for="SearchingCriteria" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-outline-primary">
+            Submit
+        </button>
+    </form>
+
+    <hr />
+
+    @if (Model.UserId != null)
+    {
+        <form asp-action="CreateReservation" method="post">
+            <input type="hidden" asp-for="BookId" />
+            <input type="hidden" asp-for="UserId" />
+
+            <div class="mb-3">
+                <label>User</label>
+                <input class="form-control"
+                       value="@Model.UserName"
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <label>Book</label>
+                <input class="form-control"
+                       value="@Model.BookTitle"
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <label>Reserved On</label>
+                <input class="form-control"
+                       value="@DateOnly.FromDateTime(DateTime.UtcNow).ToString("dd/MM/yyyy")"
+                       readonly />
+            </div>
+            <div class="mb-3">
+                <label>Еxpires Оn</label>
+                <input class="form-control"
+                       value="@DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3).ToString("dd/MM/yyyy")"
+                       readonly />
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                Confirm Reservation
+            </button>
+            <a class="btn btn-secondary"
+               asp-controller="Books"
+               asp-action="Details"
+               asp-route-id="@Model.BookId">
+                Cancel
+            </a>
+        </form>
+    }
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

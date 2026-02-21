@@ -1,0 +1,167 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Users";
+
+    var notFound = TempData["NotFound"] as string;
+
+    var emptyCollection = TempData["EmptyCollection"] as string;
+
+    var successChanges = TempData["SuccessMessage"] as string;
+
+    var statusMessage = TempData["SuccesStatus"] as string;
+
+    var errorStatus = TempData["NotNeed"] as string;
+
+    var unexpectedStatus = TempData["ErrorStatus"] as string;
+
+    var successRegistration = TempData["SuccessRegistration"] as string;
+
+}
+
+@if (!string.IsNullOrEmpty(unexpectedStatus))
+{
+    <div class="alert alert-danger" role="alert">
+        @unexpectedStatus
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(successRegistration))
+{
+    <div class="alert alert-success" role="alert">
+        @successRegistration
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @statusMessage
+    </div>
+}
+@if (!string.IsNullOrEmpty(errorStatus))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorStatus
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(successChanges))
+{
+    <div class="alert alert-success" role="alert">
+        @successChanges
+    </div>
+}
+
+
+@if (!string.IsNullOrEmpty(notFound))
+{
+    <div class="alert alert-info" role="alert">
+        @notFound
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(emptyCollection))
+{
+    <div class="alert alert-success" role="alert">
+        @emptyCollection
+    </div>
+
+}
+
+
+<div class="container">
+  
+
+    <form>
+        <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
+            <input type="text"
+                   name="search"
+                   value="@Context.Request.Query["search"]"
+                   class="form-control"
+                   placeholder="Search by FirstName or LastName or Age " />
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+        </form>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h1 class="mb-2">Users List</h1>
+
+            <a class="btn btn-primary" asp-controller="Users" asp-action="Create">
+                + Add User
+            </a>
+
+        </div>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted">No users yet.</p>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 250px;">First Name</th>
+                        <th style="width: 180px;">Last Name</th>
+                        <th style="width: 180px;">Age</th>
+                        <th style="width: 180px;">Address </th>
+                        <th style="width: 180px;">Telephone Number</th>
+                        <th style="width: 180px;">Email</th>
+                        <th style="width: 180px;">Status</th>
+                        <th style="width: 100px;"></th>
+                        <th style="width: 100px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (User u in Model)
+                    {
+                        <tr>
+
+                            <td>@u.FirstName</td>
+                            <td>@u.LastName</td>
+                            <td>@u.Age</td>
+                            <td>@u.Address</td>
+                            <td>@u.PhoneNumber</td>
+                            <td>@u.Email</td>
+                            @if (u.IsBlocked)
+                            {
+                                <td style="color:#FF0000">Blocked!</td>
+                            }
+                            else
+                            {
+                                <td style="color:#00FF00">Not Blocked</td>
+                            }
+
+                            <td>
+                                <a class="btn btn-sm btn-outline-warning"
+                                   asp-controller="Users"
+                                   asp-action="Details"
+                                   asp-route-id=@u.Id>
+                                    UserInfo
+                                </a>
+                            </td>
+                            <td>
+                                <form asp-controller="Users"
+                                      asp-action="ChangeStatus"
+                                      asp-route-id="@u.Id"
+                                      method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to change staus of this user?');">
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm px-4 d-inline-flex align-items-center justify-content-center">
+                                        ChangeStatus
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </form>
+</div>

@@ -1,0 +1,140 @@
+﻿@model IEnumerable<FullPreviewModelBook>
+@{
+    ViewData["Title"] = "Books";
+}
+<div class="d-flex">
+
+    <div class="border-end bg-light p-3" style="width: 230px; min-height: 100vh;">
+        <h5>Genres</h5>
+
+        <div class="list-group">
+            <a asp-action="Index" class="list-group-item list-group-item-action">
+                All
+            </a>
+
+            <a asp-action="Index" asp-route-genre="Fantasy"
+               class="list-group-item list-group-item-action">
+                Fantasy
+            </a>
+
+            <a asp-action="Index" asp-route-genre="ScienceFiction"
+               class="list-group-item list-group-item-action">
+                Sci-Fi
+            </a>
+
+            <a asp-action="Index" asp-route-genre="Romance"
+               class="list-group-item list-group-item-action">
+                Romance
+            </a>
+            <a asp-action="Index" asp-route-genre=" Mystery"
+               class="list-group-item list-group-item-action">
+                Mystery
+            </a>
+            <a asp-action="Index" asp-route-genre="Horror"
+               class="list-group-item list-group-item-action">
+                Horror
+            </a>
+            <a asp-action="Index" asp-route-genre="Biography"
+               class="list-group-item list-group-item-action">
+                Biography
+            </a>
+            <a asp-action="Index" asp-route-genre="History"
+               class="list-group-item list-group-item-action">
+                History
+            </a>
+            <a asp-action="Index" asp-route-genre="Programming"
+               class="list-group-item list-group-item-action">
+                Programming
+            </a>
+            <a asp-action="Index" asp-route-genre="Philosophy"
+               class="list-group-item list-group-item-action">
+                Philosophy
+            </a>
+            <a asp-action="Index" asp-route-genre="Poetry"
+               class="list-group-item list-group-item-action">
+                Poetry
+            </a>
+            <a asp-action="Index" asp-route-genre="ClassicalLiterature"
+               class="list-group-item list-group-item-action">
+                Classic
+            </a>
+            <a asp-action="Index" asp-route-genre="Thriller"
+               class="list-group-item list-group-item-action">
+                Thriller
+            </a>
+            <a asp-action="Index" asp-route-genre="Other"
+               class="list-group-item list-group-item-action">
+                Other
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-grow-1">
+        <div class="container">
+
+            <!-- SEARCH -->
+            <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
+                <input type="text"
+                       name="search"
+                       value="@Context.Request.Query["search"]"
+                       class="form-control"
+                       placeholder="Search by title or author" />
+
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+            </form>
+
+            <!-- HEADER -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="mb-0">Books Catalog</h1>
+
+            </div>
+
+            <!-- TABLE -->
+            @if (!Model.Any())
+            {
+                <p class="text-muted">No books yet.</p>
+            }
+            else
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:250px;">Book Cover</th>
+                            <th>Title</th>
+                            <th>Author Name</th>
+                            <th>Year of published</th>
+                            <th style="width:100px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (FullPreviewModelBook b in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="~/Images/@b.CoverImageUrl"
+                                         class="img-thumbnail book-cover-small" />
+                                </td>
+                                <td>@b.Title</td>
+                                <td>@b.AuthorName</td>
+                                <td>@b.YearOfPublished</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       asp-controller="Books"
+                                       asp-action="Details"
+                                       asp-route-id="@b.Id">
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    </div>
+
+</div>

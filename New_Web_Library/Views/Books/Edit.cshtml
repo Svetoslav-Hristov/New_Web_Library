@@ -1,0 +1,66 @@
+﻿@model BookFormModel
+
+<div class="container">
+   
+
+    <form>
+
+        <h1>Edit Book</h1>
+
+        <form asp-action="Edit" method="post">
+
+            <div class="mb-3">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Year"></label>
+                <input asp-for="Year" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CoverImage"></label>
+                <select asp-for="CoverImage"
+                        asp-items="Model.Covers"
+                        class="form-select">
+                    <option value="">-- Select cover --</option>
+                </select>
+            </div>
+            <div>
+                <img src="~/Images/@Model.CoverImage"
+                     alt="Book cover"
+                     class="img-thumbnail" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description"></label>
+                <input asp-for="Description" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Genre">Select Genre</label>
+                <select asp-for="Genre"
+                        asp-items="Model.Genres"
+                        class="form-select">
+                    <option value="">-- Select genre --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SelectedAuthor">Select Author</label>
+                <select asp-for="SelectedAuthor"
+                        asp-items="Model.Authors"
+                        class="form-select">
+                    <option value="">-- Select author --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NewAuthor">Or add new Author</label>
+                <input asp-for="NewAuthor" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Save</button>
+            <a class="btn btn-secondary" asp-controller="Books" asp-action="Index">Cancel</a>
+        </form>
+
+    </form>
+</div>

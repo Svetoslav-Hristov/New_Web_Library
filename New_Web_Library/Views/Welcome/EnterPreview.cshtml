@@ -1,0 +1,43 @@
+﻿@model IEnumerable<PreviewBookModel>
+
+@{
+    ViewData["Title"] = "Welcome to Web Library";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Web Library </h1>
+
+</div>
+
+<h2 class="text-center mb-4"> Latest Titles</h2>
+
+
+<div class="book-preview-container">
+
+    @foreach (var book in Model)
+    {
+        <div class="book-card">
+            <img src="~/images/@book.CoverImageUrl" alt="@book.Title" />
+
+            <p class="book-title">@book.Title</p>
+
+            <a asp-controller="Books"
+               asp-action="Details"
+               asp-route-id="@book.Id"
+               class="preview-link">
+                Preview
+            </a>
+        </div>
+    }
+
+
+</div>
+<div class="book-preview-container">
+    <h4> To our collection => </h4>
+    <a asp-controller="Books"
+       asp-action="Index"
+       class="btn btn-outline-success">
+        BooksCatalog
+    </a>
+
+</div>
