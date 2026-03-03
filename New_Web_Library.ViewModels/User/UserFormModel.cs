@@ -19,6 +19,13 @@ namespace New_Web_Library.ViewModels.User
         public string LastName { get; set; } = null!;
 
 
+
+        [Required]
+        [StringLength(UserNameMaxLength,MinimumLength =UserNameMinLength,
+            ErrorMessage = "The field is required.")]
+        public string UserName { get; set; } = null!;
+
+
         [Range(5, 120, ErrorMessage = "Age must be between 5 and 120.")]
         public int Age { get; set; }
 
@@ -41,6 +48,11 @@ namespace New_Web_Library.ViewModels.User
         [StringLength(EmailAddressMaxLength, MinimumLength = EmailAddressMinLength,
          ErrorMessage = "The field is required.")]
         public string Email { get; set; } = null!;
+
+
+        [Required]
+        [DataType(DataType.Password,ErrorMessage = "The field is required.")]
+        public string Password { get; set; } = null!;
 
 
     }

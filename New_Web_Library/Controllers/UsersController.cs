@@ -67,48 +67,6 @@ namespace Web_Library.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-
-            var model = _usersService.CreateNewUserUsingFormModel();
-
-
-            return View(model.Data);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> Create(UserFormModel model)
-        {
-
-            if (!ModelState.IsValid)
-            {
-
-                return View(model);
-
-            }
-
-
-            var newUser = await _usersService.ConfirmRegistrationNewUserAsync(model);
-
-
-
-            if (!newUser.Success)
-            {
-                ModelState.AddModelError("", newUser.ErrorMessage);
-
-                return View(newUser.Data);
-
-            }
-
-
-
-            TempData["SuccessRegistration"] = "The user was successfully registered.";
-
-            return RedirectToAction("Index", "Books");
-
-        }
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
@@ -126,53 +84,6 @@ namespace Web_Library.Controllers
 
             return View(model.Data);
 
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid Id)
-        {
-            var formModel = await _usersService.EditUserRegistrationAsync(Id);
-
-            if (!formModel.Success)
-            {
-                TempData["ErrorEdit"] = formModel.ErrorMessage;
-
-                return RedirectToAction(nameof(Index));
-            }
-
-
-            return View(formModel.Data);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit([FromRoute] Guid Id, UserFormModel formModel)
-        {
-
-            if (!ModelState.IsValid)
-            {
-
-                return View(formModel);
-            }
-
-
-            var model = await _usersService.ConfirmEditChangesAsync(Id, formModel);
-
-
-            if (!model.Success)
-            {
-
-                ModelState.AddModelError("", model.ErrorMessage);
-
-                return View(model.Data);
-
-            }
-
-
-
-            TempData["SuccessMessage"] = "New changes saved successfully";
-
-
-            return RedirectToAction(nameof(Index));
         }
 
 

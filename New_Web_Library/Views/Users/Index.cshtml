@@ -14,7 +14,6 @@
 
     var unexpectedStatus = TempData["ErrorStatus"] as string;
 
-    var successRegistration = TempData["SuccessRegistration"] as string;
 
 }
 
@@ -22,14 +21,6 @@
 {
     <div class="alert alert-danger" role="alert">
         @unexpectedStatus
-    </div>
-
-}
-
-@if (!string.IsNullOrEmpty(successRegistration))
-{
-    <div class="alert alert-success" role="alert">
-        @successRegistration
     </div>
 
 }

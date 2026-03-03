@@ -1,15 +1,13 @@
 ﻿using New_Web_Library.Data.Models.Contracts;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace New_Web_Library.Data.Models
 {
     using static New_Web_Library.GCommon.EntityValidations.Users;
-    public class User : IUser 
+    public class User :IdentityUser<Guid>,IUser
     {
 
-
-        [Key]
-        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(FirstNameUserMaxLength)]
@@ -26,17 +24,10 @@ namespace New_Web_Library.Data.Models
         [MaxLength(AddressMaxLength)]
         public string Address { get; set; } = null!;
 
-        [Required]
-        [MaxLength(PhoneNumberMaxLength)]
-        public string PhoneNumber { get; set; } = null!;
-
-        [Required]
-        [MaxLength(EmailAddressMaxLength)]
-        public string Email { get; set; } = null!;
-
+        public bool IsDeleted { get; set; } = false;
+        
         public bool IsBlocked { get; set; }
 
         public virtual ICollection<UserBook> UserBooks { get; set; } = new List<UserBook>();
-
     }
 }

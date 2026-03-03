@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
@@ -35,7 +36,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpGet]
-
+        
         public async Task<IActionResult> CreateLoan()
         {
 
@@ -47,7 +48,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpPost]
-
+        
         public async Task<IActionResult> CreateLoan(CreateLoanView model)
         {
             if (!ModelState.IsValid)

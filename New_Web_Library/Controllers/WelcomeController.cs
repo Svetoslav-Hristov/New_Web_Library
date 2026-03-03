@@ -5,6 +5,7 @@ using New_Web_Library.Data;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels;
 using New_Web_Library.ViewModels.Book;
+using Microsoft.AspNetCore.Authorization;
 
 namespace New_Web_Library.Controllers
 {
@@ -35,6 +36,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> EnterPreview()
         {
             IEnumerable<PreviewBookModel> bookCollection = await _welcomeService.GetLatestTitlesPreviewAsync();

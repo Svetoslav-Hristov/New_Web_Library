@@ -5,14 +5,58 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace New_Web_Library.Data.Migrations
+namespace New_Library.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMIgration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
@@ -31,28 +75,117 @@ namespace New_Web_Library.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    IsBlocked = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UsersBooks",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ReservedOn = table.Column<DateOnly>(type: "date", nullable: true),
                     ReservationExpiresOn = table.Column<DateOnly>(type: "date", nullable: true),
                     PickUpDate = table.Column<DateOnly>(type: "date", nullable: true),
@@ -65,17 +198,34 @@ namespace New_Web_Library.Data.Migrations
                 {
                     table.PrimaryKey("PK_UsersBooks", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_UsersBooks_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_UsersBooks_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UsersBooks_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsBlocked", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"), 0, "Sofia, Lozenets", 32, "b03512e8-48ea-46ce-90a2-fa0b23f0f40f", "maria.georgieva@library.bg", false, "Maria", false, "Georgieva", false, null, null, null, null, "+359887654321", false, null, false, null },
+                    { new Guid("30460549-2e0d-40c7-90ff-6f435900d186"), 0, "Sofia, Nadezhda", 41, "9578811a-2a63-45bf-bf84-fb2e987fc74a", "georgi.ivanov@library.bg", false, "Georgi", true, "Ivanov", false, null, null, null, null, "+359889777888", false, null, false, null },
+                    { new Guid("376b646e-7761-428b-b62b-21c58734fca7"), 0, "Sofia, Obelya", 46, "34d6d104-0d41-4395-9689-89eb1f1794f0", "dimitar.hristov@library.bg", false, "Dimitar", true, "Hristov", false, null, null, null, null, "+359883111222", false, null, false, null },
+                    { new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"), 0, "Sofia, Geo Milev", 30, "8ea6c40a-8b43-4045-920c-eb1da699f101", "radostina.nikolova@library.bg", false, "Radostina", false, "Nikolova", false, null, null, null, null, "+359882444555", false, null, false, null },
+                    { new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"), 0, "Sofia, Lyulin 5", 34, "64156c43-aaf5-4ff8-9d51-ae5b4071e778", "vladimir.angelov@library.bg", false, "Vladimir", false, "Angelov", false, null, null, null, null, "+359881666777", false, null, false, null },
+                    { new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"), 0, "Sofia, Center", 27, "c4bb942c-97fb-4a1c-a42f-dd2044f0d4a7", "desislava.popova@library.bg", false, "Desislava", false, "Popova", false, null, null, null, null, "+359880888999", false, null, false, null },
+                    { new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"), 0, "Sofia, Druzhba 2", 23, "03cf7ee4-2d1b-497a-9ab8-81e245445e9a", "petya.koleva@library.bg", false, "Petya", false, "Koleva", false, null, null, null, null, "+359884222333", false, null, false, null },
+                    { new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"), 0, "Sofia, Krasno Selo", 35, "566b1f19-c770-4f8b-baf9-2e9d5ae0af31", "nikolay.stoyanov@library.bg", false, "Nikolay", false, "Stoyanov", false, null, null, null, null, "+359885999000", false, null, false, null },
+                    { new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"), 0, "Sofia, Studentski Grad", 29, "807e77de-db88-40d8-812a-ba5d2cbfdafd", "elena.dimitrova@library.bg", false, "Elena", false, "Dimitrova", false, null, null, null, null, "+359886333444", false, null, false, null },
+                    { new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"), 0, "Sofia, Mladost 1", 26, "40818565-55a8-4534-9e47-22a51d5ee188", "ivan.petrov@library.bg", false, "Ivan", false, "Petrov", false, null, null, null, null, "+359888123456", false, null, false, null }
                 });
 
             migrationBuilder.InsertData(
@@ -109,22 +259,44 @@ namespace New_Web_Library.Data.Migrations
                     { new Guid("f315b770-aba6-4dd3-b9f0-c8b3d0dce787"), "Yuval Noah Harari", "Sapiens.jpg", null, 6, "Sapiens", 2011 }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Address", "Age", "Email", "FirstName", "IsBlocked", "LastName", "PhoneNumber" },
-                values: new object[,]
-                {
-                    { new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"), "Sofia, Lozenets", 32, "maria.georgieva@library.bg", "Maria", false, "Georgieva", "+359887654321" },
-                    { new Guid("30460549-2e0d-40c7-90ff-6f435900d186"), "Sofia, Nadezhda", 41, "georgi.ivanov@library.bg", "Georgi", true, "Ivanov", "+359889777888" },
-                    { new Guid("376b646e-7761-428b-b62b-21c58734fca7"), "Sofia, Obelya", 46, "dimitar.hristov@library.bg", "Dimitar", true, "Hristov", "+359883111222" },
-                    { new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"), "Sofia, Geo Milev", 30, "radostina.nikolova@library.bg", "Radostina", false, "Nikolova", "+359882444555" },
-                    { new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"), "Sofia, Lyulin 5", 34, "vladimir.angelov@library.bg", "Vladimir", false, "Angelov", "+359881666777" },
-                    { new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"), "Sofia, Center", 27, "desislava.popova@library.bg", "Desislava", false, "Popova", "+359880888999" },
-                    { new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"), "Sofia, Druzhba 2", 23, "petya.koleva@library.bg", "Petya", false, "Koleva", "+359884222333" },
-                    { new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"), "Sofia, Krasno Selo", 35, "nikolay.stoyanov@library.bg", "Nikolay", false, "Stoyanov", "+359885999000" },
-                    { new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"), "Sofia, Studentski Grad", 29, "elena.dimitrova@library.bg", "Elena", false, "Dimitrova", "+359886333444" },
-                    { new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"), "Sofia, Mladost 1", 26, "ivan.petrov@library.bg", "Ivan", false, "Petrov", "+359888123456" }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsersBooks_BookId",
@@ -141,13 +313,31 @@ namespace New_Web_Library.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
                 name: "UsersBooks");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Books");
         }
     }
 }

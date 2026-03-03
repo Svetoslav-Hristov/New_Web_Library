@@ -10,14 +10,6 @@ namespace New_Web_Library.Services.Core.Interfaces
 
         Task<ServiceResult<User>> ChangeUserStatusAsync(Guid Id);
 
-        ServiceResult<UserFormModel> CreateNewUserUsingFormModel();
-
-        Task<ServiceResult<UserFormModel>> ConfirmRegistrationNewUserAsync(UserFormModel model);
-
-        Task<ServiceResult<UserFormModel>> EditUserRegistrationAsync(Guid Id);
-
-        Task<ServiceResult<UserFormModel>> ConfirmEditChangesAsync(Guid Id,UserFormModel model);
-
         Task<ServiceResult<UserViewModel>> GetAllUserDetailsAsync(Guid Id);
 
 

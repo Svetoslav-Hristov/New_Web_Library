@@ -8,24 +8,25 @@ using New_Web_Library.Data;
 
 #nullable disable
 
-namespace New_Web_Library.Data.Migrations
+namespace New_Library.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    partial class LibraryDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.22")
+                .HasAnnotation("ProductVersion", "8.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -49,7 +50,7 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,9 +64,8 @@ namespace New_Web_Library.Data.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -74,72 +74,7 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -153,9 +88,8 @@ namespace New_Web_Library.Data.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -164,7 +98,7 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -177,9 +111,8 @@ namespace New_Web_Library.Data.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -188,13 +121,13 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -203,10 +136,10 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -224,7 +157,7 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.Book", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -489,11 +422,14 @@ namespace New_Web_Library.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.User", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -503,10 +439,17 @@ namespace New_Web_Library.Data.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -516,138 +459,253 @@ namespace New_Web_Library.Data.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("NormalizedEmail")
+                        .IsUnique()
+                        .HasDatabaseName("EmailIndex")
+                        .HasFilter("[NormalizedEmail] IS NOT NULL");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Mladost 1",
                             Age = 26,
+                            ConcurrencyStamp = "a3a465e4-7609-40bb-96d7-6ae72029e983",
                             Email = "ivan.petrov@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Ivan",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Petrov",
-                            PhoneNumber = "+359888123456"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359888123456",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Lozenets",
                             Age = 32,
+                            ConcurrencyStamp = "ecbd63ed-9eb8-4d2d-9f41-7e40ca0143a8",
                             Email = "maria.georgieva@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Maria",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Georgieva",
-                            PhoneNumber = "+359887654321"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359887654321",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("30460549-2e0d-40c7-90ff-6f435900d186"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Nadezhda",
                             Age = 41,
+                            ConcurrencyStamp = "01d75dd5-64b7-4666-aeb6-ac9907a0971b",
                             Email = "georgi.ivanov@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Georgi",
                             IsBlocked = true,
+                            IsDeleted = false,
                             LastName = "Ivanov",
-                            PhoneNumber = "+359889777888"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359889777888",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Studentski Grad",
                             Age = 29,
+                            ConcurrencyStamp = "d6771b93-f9f3-40fd-894f-268f3653809e",
                             Email = "elena.dimitrova@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Elena",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Dimitrova",
-                            PhoneNumber = "+359886333444"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359886333444",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Krasno Selo",
                             Age = 35,
+                            ConcurrencyStamp = "0587382b-2097-44cf-82b6-53f76ee1fb12",
                             Email = "nikolay.stoyanov@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Nikolay",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Stoyanov",
-                            PhoneNumber = "+359885999000"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359885999000",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Druzhba 2",
                             Age = 23,
+                            ConcurrencyStamp = "6bf9e7b3-7701-403c-9b25-72bd0121f3d4",
                             Email = "petya.koleva@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Petya",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Koleva",
-                            PhoneNumber = "+359884222333"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359884222333",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("376b646e-7761-428b-b62b-21c58734fca7"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Obelya",
                             Age = 46,
+                            ConcurrencyStamp = "e9018f28-ed55-45ea-9bac-6c439d0a62d8",
                             Email = "dimitar.hristov@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Dimitar",
                             IsBlocked = true,
+                            IsDeleted = false,
                             LastName = "Hristov",
-                            PhoneNumber = "+359883111222"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359883111222",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Geo Milev",
                             Age = 30,
+                            ConcurrencyStamp = "026ccefc-932f-4ef2-9ede-74a0d7a94788",
                             Email = "radostina.nikolova@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Radostina",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Nikolova",
-                            PhoneNumber = "+359882444555"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359882444555",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Lyulin 5",
                             Age = 34,
+                            ConcurrencyStamp = "2a6fc747-2e31-4aad-be84-7c36e153d933",
                             Email = "vladimir.angelov@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Vladimir",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Angelov",
-                            PhoneNumber = "+359881666777"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359881666777",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         },
                         new
                         {
                             Id = new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"),
+                            AccessFailedCount = 0,
                             Address = "Sofia, Center",
                             Age = 27,
+                            ConcurrencyStamp = "3506b296-eeed-41d5-a779-8891e7df4baa",
                             Email = "desislava.popova@library.bg",
+                            EmailConfirmed = false,
                             FirstName = "Desislava",
                             IsBlocked = false,
+                            IsDeleted = false,
                             LastName = "Popova",
-                            PhoneNumber = "+359880888999"
+                            LockoutEnabled = false,
+                            PhoneNumber = "+359880888999",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false
                         });
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.UserBook", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.UserBook", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<Guid>("BookId")
                         .HasColumnType("uniqueidentifier");
@@ -679,66 +737,66 @@ namespace New_Web_Library.Data.Migrations
                     b.ToTable("UsersBooks");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("New_Web_Library.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("New_Web_Library.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("New_Web_Library.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("New_Web_Library.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.UserBook", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.UserBook", b =>
                 {
-                    b.HasOne("New_Web_Library.Models.Book", "Book")
+                    b.HasOne("New_Web_Library.Data.Models.Book", "Book")
                         .WithMany("BookUsers")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("New_Web_Library.Models.User", "User")
+                    b.HasOne("New_Web_Library.Data.Models.User", "User")
                         .WithMany("UserBooks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -749,12 +807,12 @@ namespace New_Web_Library.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.Book", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.Book", b =>
                 {
                     b.Navigation("BookUsers");
                 });
 
-            modelBuilder.Entity("New_Web_Library.Models.User", b =>
+            modelBuilder.Entity("New_Web_Library.Data.Models.User", b =>
                 {
                     b.Navigation("UserBooks");
                 });

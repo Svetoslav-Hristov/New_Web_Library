@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
@@ -10,10 +11,14 @@ namespace New_Library.Services.Core
 {
     public class UsersService : IUsersService
     {
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly LibraryDbContext _dbContext;
-
-        public UsersService(LibraryDbContext dbContext)
+        public UsersService(UserManager<User> userManager, SignInManager<User> signInManager,
+            LibraryDbContext dbContext)
         {
+            this._userManager = userManager;
+            this._signInManager = signInManager;
             this._dbContext = dbContext;
         }
 
@@ -32,8 +37,9 @@ namespace New_Library.Services.Core
 
                 bool isValidAge = int.TryParse(search, out int age);
 
-                IEnumerable<User> foundUsers = await allUsers.AsNoTracking().Where(u => u.FirstName.ToLower().Contains(search) ||
-                u.LastName.ToLower().Contains(search) || (isValidAge && u.Age == age)).ToArrayAsync();
+                IEnumerable<User> foundUsers = await allUsers.AsNoTracking()
+                    .Where(u => !u.IsDeleted && (u.FirstName.ToLower().Contains(search) || u.LastName.ToLower()
+                    .Contains(search) || (isValidAge && u.Age == age))).ToArrayAsync();
 
                 if (!foundUsers.Any())
                 {
@@ -47,7 +53,7 @@ namespace New_Library.Services.Core
             }
 
 
-            IEnumerable<User> users = await allUsers.AsNoTracking().ToArrayAsync();
+            IEnumerable<User> users = await allUsers.AsNoTracking().Where(u => !u.IsDeleted).ToArrayAsync();
 
             if (!users.Any())
             {
@@ -104,210 +110,6 @@ namespace New_Library.Services.Core
             }
 
             return new ServiceResult<User> { Success = true };
-        }
-
-        public ServiceResult<UserFormModel> CreateNewUserUsingFormModel()
-        {
-
-            return new ServiceResult<UserFormModel> { Success = true, Data = new UserFormModel() };
-
-        }
-
-        public async Task<ServiceResult<UserFormModel>> ConfirmRegistrationNewUserAsync(UserFormModel model)
-        {
-
-            if (model == null)
-            {
-                return new ServiceResult<UserFormModel>
-                {
-                    Success = false,
-                    ErrorMessage = "Incorrect user data !",
-                    Data = model
-                };
-            }
-
-
-            var email = model.Email.Trim().ToLower();
-
-            var invalidEmail = await _dbContext.Users.AnyAsync(u => u.Email.ToLower() == email);
-
-            if (invalidEmail)
-            {
-
-                return new ServiceResult<UserFormModel>
-                {
-                    Success = false,
-                    ErrorMessage = "Email all ready exist in database! ",
-                    Data = model
-                };
-
-            }
-
-            var phoneNumber = model.PhoneNumber.Trim();
-            var normalizedPhone = phoneNumber.Replace(" ", "");
-
-            var invalidPhoneNumber = await _dbContext.Users.AnyAsync(u => u.PhoneNumber != null && u.PhoneNumber.Replace(" ", "") == normalizedPhone);
-
-            if (invalidPhoneNumber)
-            {
-
-                return new ServiceResult<UserFormModel>
-                {
-                    Success = false,
-                    ErrorMessage = "Phone number all ready exist in database! ",
-                    Data = model
-                };
-
-            }
-
-
-
-            try
-            {
-                User newUser = new User()
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Age = model.Age,
-                    Address = model.Address,
-                    PhoneNumber = phoneNumber,
-                    Email = email,
-                    IsBlocked = false
-
-                };
-
-
-                await _dbContext.AddAsync(newUser);
-
-                await _dbContext.SaveChangesAsync();
-
-
-            }
-            catch (Exception)
-            {
-
-                return new ServiceResult<UserFormModel>
-                {
-                    Success = false,
-                    ErrorMessage = "Unexpected error is occurred while register user! Please try again later.",
-                    Data = model
-                };
-            }
-
-            return new ServiceResult<UserFormModel> { Success = true };
-
-        }
-
-        public async Task<ServiceResult<UserFormModel>> EditUserRegistrationAsync(Guid Id)
-        {
-            if (Id == Guid.Empty)
-            {
-
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "Not found !" };
-
-            }
-
-
-            User? user = await _dbContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == Id);
-
-            if (user == null)
-            {
-
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "User not found !" };
-
-            }
-
-            UserFormModel formModel = new UserFormModel()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Age = user.Age,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                Email = user.Email
-            };
-
-            return new ServiceResult<UserFormModel> { Success = true, Data = formModel };
-
-        }
-
-        public async Task<ServiceResult<UserFormModel>> ConfirmEditChangesAsync(Guid Id, UserFormModel model)
-        {
-            if (Id == Guid.Empty)
-            {
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "Not found !", Data = model };
-
-
-            }
-
-
-            User? foundUser = await _dbContext.Users.FindAsync(Id);
-
-            if (foundUser == null)
-            {
-
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "User not found !", Data = model };
-
-            }
-
-            var email = model.Email.ToLower().Trim();
-
-
-            bool isEmailExist = await _dbContext.Users.AnyAsync(u => u.Email.ToLower() == email && u.Id != Id);
-
-
-            if (isEmailExist)
-            {
-
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "This email belongs to another user !", Data = model };
-
-            }
-
-
-
-            var phoneNumber = model.PhoneNumber.Trim();
-            var normalizedPhone = phoneNumber.Replace(" ", "");
-
-            var invalidPhoneNumber = await _dbContext.Users.
-                AnyAsync(u => u.PhoneNumber != null && u.PhoneNumber.Replace(" ", "") == normalizedPhone && u.Id != Id);
-
-
-            if (invalidPhoneNumber)
-            {
-
-                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "Phone number already exists.", Data = model };
-
-            }
-
-
-            try
-            {
-
-                foundUser.FirstName = model.FirstName;
-                foundUser.LastName = model.LastName;
-                foundUser.Age = model.Age;
-                foundUser.Address = model.Address;
-                foundUser.PhoneNumber = phoneNumber;
-                foundUser.Email = email;
-
-                await _dbContext.SaveChangesAsync();
-
-
-
-            }
-            catch (Exception)
-            {
-
-                return new ServiceResult<UserFormModel>
-                {
-                    Success = false,
-                    ErrorMessage = "Unexpected error is occurred while editing user! Please try again later.",
-                    Data = model
-                };
-            }
-
-            return new ServiceResult<UserFormModel> { Success = true };
         }
 
         public async Task<ServiceResult<UserViewModel>> GetAllUserDetailsAsync(Guid Id)
@@ -389,8 +191,7 @@ namespace New_Library.Services.Core
 
             try
             {
-
-                _dbContext.Remove(removedUser);
+                removedUser.IsDeleted = true;
 
                 await _dbContext.SaveChangesAsync();
 

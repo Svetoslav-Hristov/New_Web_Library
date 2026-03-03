@@ -16,4 +16,8 @@
     <ProjectReference Include="..\New_Library.Data.Models\New_Library.Data.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
