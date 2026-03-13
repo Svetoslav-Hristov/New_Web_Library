@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
@@ -9,35 +10,42 @@ using New_Web_Library.ViewModels.System;
 
 namespace New_Library.Services.Core
 {
+    using static New_Web_Library.GCommon.EntityValidations;
     using static New_Web_Library.GCommon.EntityValidations.UsersBooks;
     public class SystemsService : ISystemsService
     {
-        private readonly LibraryDbContext _dbContext;
 
-        public SystemsService(LibraryDbContext dbContext)
+        private readonly ISystemsRepository _systemsRepository;
+        private readonly IUsersRepository _usersRepository;
+        private readonly IBooksRepository _booksRepository;
+
+        public SystemsService(ISystemsRepository systemsRepository ,IUsersRepository usersRepository,
+            IBooksRepository booksRepository)
         {
-            this._dbContext = dbContext;
+            this._systemsRepository = systemsRepository;
+            this. _usersRepository = usersRepository;
+            this._booksRepository = booksRepository;
         }
 
 
         public async Task<IEnumerable<RegisterModelView>> AllUserWhoHaveActiveLoanOrReservationAsync(string? search)
         {
-            IQueryable<RegisterModelView> usersRegister = _dbContext.UsersBooks.
-              Where(ub => ub.Status == BookStatus.PickedUp || ub.Status == BookStatus.Reserved)
-               .Select(ub => new RegisterModelView()
-               {
-                   LoanId = ub.Id,
-                   UserId = ub.UserId,
-                   UserFirstName = ub.User.FirstName,
-                   UserLastName = ub.User.LastName,
-                   BookId = ub.BookId,
-                   BookTitle = ub.Book.Title,
-                   PickUpDate = ub.PickUpDate,
-                   ReturnDate = ub.ReturnDate,
-                   ReservedOn = ub.ReservedOn,
-                   ReservationExpiresOn = ub.ReservationExpiresOn,
-                   Status = ub.Status
-               }).OrderByDescending(ub => ub.PickUpDate.HasValue);
+            IQueryable<UserBook> activeLoans = _systemsRepository.GetActiveLoans();
+
+            IQueryable<RegisterModelView> usersRegister = activeLoans.Select(ub => new RegisterModelView()
+            {
+                LoanId = ub.Id,
+                UserId = ub.UserId,
+                UserFirstName = ub.User.FirstName,
+                UserLastName = ub.User.LastName,
+                BookId = ub.BookId,
+                BookTitle = ub.Book.Title,
+                PickUpDate = ub.PickUpDate,
+                ReturnDate = ub.ReturnDate,
+                ReservedOn = ub.ReservedOn,
+                ReservationExpiresOn = ub.ReservationExpiresOn,
+                Status = ub.Status
+            }).OrderByDescending(ub => ub.PickUpDate.HasValue);
 
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
@@ -99,9 +107,9 @@ namespace New_Library.Services.Core
 
 
 
-            User? foundUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == model.UserId);
+            User? foundUser = await _usersRepository.FindByIdAsync(model.UserId);
 
-            Book? foundBook = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == model.BookId);
+            Book? foundBook = await _booksRepository.GetByIdAsync(model.BookId);   
 
 
             if (foundUser == null || foundBook == null)
@@ -114,10 +122,8 @@ namespace New_Library.Services.Core
             }
 
 
-            UserBook? isTakenBook = await _dbContext.UsersBooks.AsNoTracking()
-            .FirstOrDefaultAsync(ub => ub.BookId == foundBook.Id &&
-            (ub.Status == BookStatus.Reserved || ub.Status == BookStatus.PickedUp || ub.Status == BookStatus.Expired));
-
+            UserBook? isTakenBook = await _systemsRepository.GetLoan(model.BookId);
+            
             if (isTakenBook != null)
             {
                 string status = isTakenBook.Status.ToString();
@@ -154,13 +160,10 @@ namespace New_Library.Services.Core
             try
             {
 
-                await _dbContext.UsersBooks.AddAsync(newLoan);
-
-                await _dbContext.SaveChangesAsync();
-
+                await _systemsRepository.AddAsync(newLoan);
 
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Unexpected error is occurred please try again! " };
 
@@ -179,7 +182,7 @@ namespace New_Library.Services.Core
             }
 
 
-            Book? book = await _dbContext.Books.FindAsync(bookId);
+            Book? book = await _booksRepository.GetByIdAsync(bookId);
 
 
             if (book == null)
@@ -219,9 +222,9 @@ namespace New_Library.Services.Core
             }
 
 
-            bool foundBook = await _dbContext.Books.AsNoTracking().AnyAsync(b => b.Id == model.BookId);
+            bool foundBook = await _booksRepository.IsExistBook(model.BookId);
 
-            bool foundUser = await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == model.UserId);
+            bool foundUser = await _usersRepository.IsExistUser(model.UserId);
 
             if (!foundBook || !foundUser)
             {
@@ -233,8 +236,8 @@ namespace New_Library.Services.Core
 
 
 
-            bool takenOrReserve = await _dbContext.UsersBooks.AsNoTracking().AnyAsync(ub => ub.BookId == model.BookId &&
-            (ub.Status == BookStatus.Reserved || ub.Status == BookStatus.PickedUp));
+            bool takenOrReserve = await _systemsRepository.BookTakenOrReserve(model.BookId);
+            
 
             if (takenOrReserve)
             {
@@ -265,16 +268,12 @@ namespace New_Library.Services.Core
             try
             {
 
-                await _dbContext.AddAsync(newReservation);
-
-                await _dbContext.SaveChangesAsync();
-
-
+                await _systemsRepository.AddAsync(newReservation);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.ToString());
+               
 
                 return new ServiceResult<CreateReserveModel>
                 {
@@ -300,7 +299,7 @@ namespace New_Library.Services.Core
             }
 
 
-            UserBook? foundRecord = await _dbContext.UsersBooks.Include(ub => ub.Book).Include(ub => ub.User).FirstOrDefaultAsync(ub => ub.Id == Id);
+            UserBook? foundRecord = await _systemsRepository.ReturnRecord(Id);
 
             if (foundRecord == null)
             {
@@ -337,7 +336,8 @@ namespace New_Library.Services.Core
             }
 
 
-            var editRecord = await _dbContext.UsersBooks.FirstOrDefaultAsync(ub => ub.Id == Id);
+            
+            UserBook? editRecord = await _systemsRepository.ReturnRecord(Id);
 
             if (editRecord == null)
             {
@@ -345,12 +345,9 @@ namespace New_Library.Services.Core
 
             }
 
+            
 
-
-            bool takenByAnotherUser = await _dbContext.UsersBooks.AsNoTracking()
-            .AnyAsync(ub => ub.BookId == model.BookId && ub.UserId != model.UserId &&
-            ub.Id != Id && (ub.Status == BookStatus.Reserved || ub.Status == BookStatus.PickedUp));
-
+            bool takenByAnotherUser = await _systemsRepository.TakeFromAnotherUser(model.BookId, model.UserId, Id);
 
 
             if (takenByAnotherUser)
@@ -361,9 +358,8 @@ namespace New_Library.Services.Core
 
 
 
-            bool reservedBySameUser = await _dbContext.UsersBooks.AsNoTracking()
-            .AnyAsync(ub => ub.UserId == model.UserId && ub.BookId == model.BookId && ub.Status == BookStatus.Reserved && ub.Id != Id);
-
+            bool reservedBySameUser = await _systemsRepository.ReservedBySameUser(model.BookId, model.UserId, Id);
+            
 
             if (reservedBySameUser)
             {
@@ -385,8 +381,8 @@ namespace New_Library.Services.Core
                 editRecord.PickUpDate = pickUpDate;
                 editRecord.ReturnDate = returnDate;
                 editRecord.Status = BookStatus.PickedUp;
-                await _dbContext.SaveChangesAsync();
 
+                await _systemsRepository.UpdateAsync(editRecord);
 
             }
             catch (Exception e)
@@ -412,7 +408,7 @@ namespace New_Library.Services.Core
 
             }
 
-            var removeLoan = await _dbContext.UsersBooks.FirstOrDefaultAsync(ub => ub.Id == Id);
+            var removeLoan = await _systemsRepository.GetByIdAsync<UserBook>(Id);
 
             if (removeLoan == null)
             {
@@ -429,10 +425,10 @@ namespace New_Library.Services.Core
                 removeLoan.Status = BookStatus.Returned;
                 removeLoan.ReturnDate = today;
 
-                var anotherBook = await _dbContext.UsersBooks.AnyAsync(ub => ub.UserId == removeLoan.UserId &&
-                ub.Id != removeLoan.Id && ub.Status == BookStatus.PickedUp);
+                var user = await _usersRepository.FindByIdAsync(removeLoan.UserId);
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == removeLoan.UserId);
+                var anotherBook = await _systemsRepository.UserExtraLoan(removeLoan.UserId, removeLoan.Id);
+               
 
                 if (user != null && user.IsBlocked)
                 {
@@ -442,10 +438,10 @@ namespace New_Library.Services.Core
                     }
                 }
 
-                await _dbContext.SaveChangesAsync();
+                await _systemsRepository.UpdateAsync(removeLoan);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Unexpected error is occurred please try again!" };
@@ -454,7 +450,7 @@ namespace New_Library.Services.Core
             }
 
             return new ServiceResult<UserBook> { Success = true };
-            ;
+            
         }
 
         private async Task CheckingOverdueUsersAsync(DateOnly today, IQueryable<RegisterModelView> usersRegister)
@@ -466,7 +462,7 @@ namespace New_Library.Services.Core
             if (overdueUsers.Any())
             {
 
-                var users = await _dbContext.Users.Where(u => overdueUsers.Contains(u.Id) && !u.IsBlocked).ToListAsync();
+                var users = await _usersRepository.CheckOverdueUsers(overdueUsers);
 
 
                 foreach (User user in users)
@@ -475,7 +471,7 @@ namespace New_Library.Services.Core
 
                 }
 
-                await _dbContext.SaveChangesAsync();
+                await _usersRepository.UpdateAsync(users);
             }
 
 
@@ -489,19 +485,19 @@ namespace New_Library.Services.Core
             if (missingReservation.Any())
             {
 
-                var reservations = await _dbContext.UsersBooks.Where(u => missingReservation.Contains(u.Id)).ToListAsync();
+                var reservations = await _systemsRepository.CheckMissingReservation(missingReservation);
 
-                _dbContext.UsersBooks.RemoveRange(reservations);
+                await _systemsRepository.DeleteAsync(reservations);
 
-
-                await _dbContext.SaveChangesAsync();
             }
         }
 
         public async Task<(IEnumerable<SelectListItem> users, IEnumerable<SelectListItem> books)> FillLoanDataFormAsync()
         {
 
-            var users = await _dbContext.Users.AsNoTracking()
+            IQueryable<User> allUsers = _usersRepository.GetAllUsers();
+
+            var users = await allUsers
            .Select(u => new SelectListItem
            {
                Text = $"{u.FirstName} {u.LastName}",
@@ -510,8 +506,9 @@ namespace New_Library.Services.Core
            }).ToListAsync();
 
 
+            IQueryable<Book> allBooks = _booksRepository.GetAllBooks();
 
-            var books = await _dbContext.Books.AsNoTracking()
+            var books = await allBooks
             .Select(b => new SelectListItem
             {
 
@@ -527,7 +524,7 @@ namespace New_Library.Services.Core
 
         public async Task RestoreReservationModelAsync(CreateReserveModel model)
         {
-            var book = await _dbContext.Books.FindAsync(model.BookId);
+            var book = await _booksRepository.GetByIdAsync(model.BookId);
 
             if (book != null)
             {
@@ -556,8 +553,8 @@ namespace New_Library.Services.Core
 
             string criteria = model.SearchingCriteria.Trim().ToLower();
 
-            var foundUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == criteria || u.PhoneNumber.ToLower() == criteria);
-
+            var foundUser = await _usersRepository.SearchByPhoneOrEmail(criteria);
+            
             if (foundUser == null)
             {
                 return new ServiceResult<CreateReserveModel>

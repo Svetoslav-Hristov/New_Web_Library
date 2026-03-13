@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
@@ -7,17 +8,19 @@ namespace New_Library.Services.Core
 {
     public class WelcomeService : IWelcomeService
     {
-        private readonly LibraryDbContext _dbContext;
+        private readonly IBooksRepository _booksRepository;
 
-        public WelcomeService(LibraryDbContext dbContext)
+        public WelcomeService(IBooksRepository booksRepository)
         {
-            this._dbContext = dbContext;
+            this._booksRepository = booksRepository;
         }
 
         public async Task<IEnumerable<PreviewBookModel>> GetLatestTitlesPreviewAsync()
         {
 
-            IEnumerable<PreviewBookModel> bookCollection = await _dbContext.Books.AsNoTracking().
+            var allBooks = _booksRepository.GetAllBooks();
+
+            IEnumerable<PreviewBookModel> bookCollection = await allBooks.
                Where(b => b.CoverImageUrl != null).OrderByDescending(b => b.Id).Select(b => new PreviewBookModel()
                {
 

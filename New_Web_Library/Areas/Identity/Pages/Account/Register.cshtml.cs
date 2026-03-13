@@ -2,11 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -21,7 +21,7 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
         private readonly UserManager<User> _userManager;
         private readonly IUserStore<User> _userStore;
         private readonly IUserEmailStore<User> _emailStore;
-        
+
 
         public RegisterModel(
             UserManager<User> userManager,
@@ -32,24 +32,24 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
-            
-           
+
+
         }
 
-        
+
         [BindProperty]
         public InputModel Input { get; set; }
 
-       
+
         public string ReturnUrl { get; set; }
 
-        
-       
+
+
 
         public class InputModel
         {
 
-          
+
 
             [Required]
             [StringLength(FirstNameUserMaxLength, MinimumLength = FirstNameUserMinLength,
@@ -67,7 +67,7 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
 
             [StringLength(UserNameMaxLength, MinimumLength = UserNameMinLength)]
             public string UserName { get; set; }
-            
+
 
 
             [Range(UserMinAge, UserMaxAge, ErrorMessage = "Age must be between 5 and 120.")]
@@ -84,30 +84,20 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
             [StringLength(PhoneNumberMaxLength, MinimumLength = PhoneNumberMinLength,
              ErrorMessage = "The field is required.")]
             public string PhoneNumber { get; set; } = null!;
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [StringLength(UserPasswordMaxLength,
-                ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",MinimumLength = UserPasswordMinLength)]
+                ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = UserPasswordMinLength)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
@@ -118,22 +108,31 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-           
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/Books/Index");
-            
+
 
             if (ModelState.IsValid)
             {
-               
-                
+
+
                 if (await _userManager.FindByEmailAsync(Input.Email) != null)
                 {
                     ModelState.AddModelError(string.Empty, "Email is already taken. Please use a different email.");
                     return Page();
+                }
+
+                bool isPhoneExist = await _userManager.Users.AnyAsync(u => u.PhoneNumber == Input.PhoneNumber);
+
+                if (isPhoneExist)
+                {
+                    ModelState.AddModelError("Input.PhoneNumber", "Phone number already exists.");
+                    return Page();
+
                 }
 
 
@@ -146,9 +145,9 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
                 user.PhoneNumber = Input.PhoneNumber;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                
+
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -173,6 +172,11 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
                     }
                     else
                     {
+                        if (User.IsInRole("Admin"))
+                        {
+                            return RedirectToAction("Index", "Users");
+                        }
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
@@ -185,7 +189,7 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
 
-            
+
 
 
             return Page();

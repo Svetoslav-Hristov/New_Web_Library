@@ -2,9 +2,13 @@
 {
     public class IUserBook
     {
-        DateOnly ReservedOn { get; set; }
-        DateOnly ReservationExpiresOn { get; set; }
-        DateOnly PickUpDate { get; set; }
-        DateOnly ReturnDate { get; set; }
+        int Id { get; set; }
+        DateOnly? ReservedOn { get; set; }
+        DateOnly? ReservationExpiresOn { get; set; }
+        DateOnly? PickUpDate { get; set; }
+        DateOnly? ReturnDate { get; set; }
+
+
+
     }
 }

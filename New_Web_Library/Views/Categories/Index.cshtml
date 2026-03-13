@@ -1,0 +1,119 @@
+﻿
+@model IEnumerable<IndexForumModel>
+
+@{
+    Layout = "_ForumLayout";
+
+    var errorMessage = TempData["WrongData"] as string;
+
+    var errorCategory = TempData["ErrorCategory"] as string;
+
+    var successCategory = TempData["SuccessCategory"] as string;
+
+    var errorEdit = TempData["ErrorEdit"] as string;
+}
+
+@if (!string.IsNullOrEmpty(errorEdit))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorEdit
+    </div>
+}
+
+
+
+@if (!string.IsNullOrEmpty(successCategory))
+{
+    <div class="alert alert-success" role="alert">
+        @successCategory
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorCategory
+    </div>
+}
+
+
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+
+<div>
+   
+    <a class="btn btn-outline-primary"
+       asp-controller="Forum"
+       asp-action="CreateCategory">
+        + Add Category
+    </a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Posts</th>
+                <th>Last Post</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>
+                        <strong>@category.Name</strong>
+
+                        <p>SubCategory</p>
+
+                        @if (category.Topics != null && category.Topics.Any())
+                        {
+                            <div style="margin-left:15px;">
+
+                                @foreach (var sub in category.Topics)
+                                {
+                                    <div>
+                                        <a asp-controller="Topics"
+                                           asp-action="SubCategory"
+                                           asp-route-id="@sub.Id">
+                                            @sub.Title
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </td>
+
+                    <td>@category.Description</td>
+                    <td>@category.PostCount</td>
+                    <td>@category.LastPostTitle</td>
+                    <td>
+                        <a class="btn btn-outline-warning"
+                           asp-controller="Forum"
+                           asp-action="CreateCategory">
+                             Edit Category
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-danger"
+                           asp-controller="Forum"
+                           asp-action="CreateCategory">
+                             Remove Category
+                        </a>
+                    </td>
+                </tr>
+               
+            }
+
+            
+        </tbody>
+    </table>
+</div>

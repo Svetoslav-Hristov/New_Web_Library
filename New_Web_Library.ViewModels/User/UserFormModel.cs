@@ -20,10 +20,10 @@ namespace New_Web_Library.ViewModels.User
 
 
 
-        [Required]
+        
         [StringLength(UserNameMaxLength,MinimumLength =UserNameMinLength,
             ErrorMessage = "The field is required.")]
-        public string UserName { get; set; } = null!;
+        public string? UserName { get; set; }
 
 
         [Range(5, 120, ErrorMessage = "Age must be between 5 and 120.")]

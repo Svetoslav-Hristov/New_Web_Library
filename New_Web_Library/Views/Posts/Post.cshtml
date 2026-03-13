@@ -1,0 +1,155 @@
+﻿@model PostForumModel
+@{
+
+    Layout = "_ForumLayout";
+
+
+
+    var errorComment = TempData["ErrorComment"] as string;
+
+    var successEditComment = TempData["SuccessEditComment"] as string;
+
+}
+
+@if (!string.IsNullOrEmpty(successEditComment))
+{
+    <div class="alert alert-success" role="alert">
+        @successEditComment
+    </div>
+}
+
+
+
+@if (!string.IsNullOrEmpty(errorComment))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorComment
+    </div>
+}
+
+
+
+<div class="d-flex">
+
+    <div class="border-end bg-light p-3" style="width: 230px; min-height: 100vh;">
+        <div class="list-group">
+
+            <a asp-action="CreateComment" asp-route-Id="@Model.Id" class="btn btn-outline-primary mb-3">
+                Add Comment
+            </a>
+
+        </div>
+    </div>
+
+    <div class="container mt-4">
+
+        <div class="card mb-4">
+            <div class="row g-0">
+                <!-- User info (left) -->
+                <div class="col-md-3 border-end p-3 text-center" style=" background-color:lightgrey;">
+                    <h5>@Model.AuthorName</h5>
+                    <img src="~/images/default-user.png"
+                         class="img-fluid rounded-circle mb-2"
+                         style="width:80px;height:80px;" />
+                    <div class="fw-bold">@Model.AuthorName</div>
+                    <div class="text-muted small">Member</div>
+                    <div class="text-muted small">Posts: @Model.UserPostCount</div>
+                </div>
+
+                <!-- Post content (right) -->
+                <div class="col-md-9 p-3" style="background-color: #e6f0ff; border-radius: 5px;">
+                    <h4>@Model.Title</h4>
+
+                    <div class="text-muted mb-3">
+                        Posted on @Model.CreatedOn
+                    </div>
+
+                    <hr />
+
+                    <div>
+                        @Model.Content
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        @if (Model.IsAuthor)
+        {
+            <a asp-action="EditPost" asp-route-Id="@Model.Id" class="btn btn-outline-warning mb-3">
+                Edit Post
+            </a>
+
+            <a asp-action="DeletePost" asp-route-Id="@Model.Id" class="btn btn-outline-danger mb-3">
+                Delete Post
+            </a>
+        }
+
+        <!-- Comments section -->
+        <div class="comments-section">
+            <h5>Comments (@Model.Comments.Count())</h5>
+
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                @foreach (var comment in Model.Comments.OrderBy(c => c.CreatedOn))
+                {
+
+
+                    <div class="card mb-4">
+                        <div class="row g-0">
+                            <!-- User info (left) -->
+                            <div class="col-md-3 border-end p-3 text-center" style=" background-color:lightgrey;">
+                                <h5>@comment.AuthorName</h5>
+                                <img src="~/images/default-user.png"
+                                     class="img-fluid rounded-circle mb-2"
+                                     style="width:80px;height:80px;" />
+                                <div class="fw-bold">@comment.AuthorName</div>
+                                <div class="text-muted small">Member</div>
+                                <div class="text-muted small">Posts: @comment.UserPostCount</div>
+                            </div>
+
+                            <!-- Post content (right) -->
+                            <div class="col-md-9 p-3">
+                                <h4>@comment.Title</h4>
+                                <div class="text-muted mb-3">
+                                    Posted on @comment.CreatedOn
+                                </div>
+                                <hr />
+                                <div>
+                                    @comment.Content
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @if (comment.IsAuthor)
+                    {
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Forum"
+                               asp-action="EditComment"
+                               asp-route-id="@comment.Id"
+                               class="btn btn-outline-warning">
+                                Edit
+                            </a>
+                            <form asp-controller="Forum"
+                                  asp-action="DeleteComment"
+                                  asp-route-id="@comment.Id"
+                                  asp-route-postId="@Model.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this comment?');">
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p class="text-muted">No comments yet. Be the first to comment!</p>
+            }
+        </div>
+
+    </div>

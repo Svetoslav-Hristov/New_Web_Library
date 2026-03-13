@@ -1,0 +1,51 @@
+﻿@model IEnumerable<SubCategoryForumModel>
+@{
+    Layout = "_ForumLayout";
+
+}
+
+<a asp-action="CreatePost" class="btn btn-primary">
+    New Post
+</a>
+
+
+@if (Model.Any())
+{
+    <h3 class="category-title">@Model.First().PostCategory</h3>
+}
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>Post</th>
+            <th>Author</th>
+            <th>Created</th>
+            <th>Comments</th>
+           
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var post in Model)
+        {
+
+            <tr>
+                <td>
+                    <a asp-controller="Posts"
+                        asp-action="Post"
+                       asp-route-id="@post.Id">
+                        @post.PostTitle
+                    </a>
+                </td>
+
+                <td>@post.PostAuthor</td>
+                <td>@post.CreatedOn</td>
+                <td>@post.CommentCount</td>
+               
+            </tr>
+        }
+    </tbody>
+
+</table>
+

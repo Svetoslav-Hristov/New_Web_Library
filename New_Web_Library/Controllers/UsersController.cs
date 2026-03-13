@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
@@ -7,6 +8,7 @@ using New_Web_Library.Services.Core;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.User;
+using System.Security.Claims;
 
 namespace Web_Library.Controllers
 {
@@ -14,11 +16,13 @@ namespace Web_Library.Controllers
     {
        
         private readonly IUsersService _usersService;
+        private readonly SignInManager<User> _signInManager;
 
-        public UsersController( IUsersService usersService)
+        public UsersController( IUsersService usersService, SignInManager<User> signInManager)
         {
            
             this._usersService = usersService;
+            this._signInManager = signInManager;
         }
 
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
@@ -13,21 +15,22 @@ namespace New_Library.Services.Core
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly LibraryDbContext _dbContext;
+        private readonly IUsersRepository _usersRepository;
+        private readonly ISystemsRepository _systemsRepository;
         public UsersService(UserManager<User> userManager, SignInManager<User> signInManager,
-            LibraryDbContext dbContext)
+            IUsersRepository usersRepository ,ISystemsRepository systemsRepository)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
-            this._dbContext = dbContext;
+            this._usersRepository = usersRepository;
+            this._systemsRepository = systemsRepository;
         }
 
 
         public async Task<ServiceResult<IEnumerable<User>>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search)
         {
 
-            IQueryable<User> allUsers = _dbContext.Users.AsNoTracking()
-            .OrderBy(u => u.FirstName).ThenBy(u => u.LastName).ThenBy(u => u.Age);
+            IQueryable<User> allUsers = _usersRepository.GetAllUsers();
 
 
 
@@ -74,7 +77,7 @@ namespace New_Library.Services.Core
             }
 
 
-            User? blockedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == Id);
+            User? blockedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (blockedUser == null)
             {
@@ -94,7 +97,7 @@ namespace New_Library.Services.Core
             {
 
                 blockedUser.IsBlocked = false;
-                await _dbContext.SaveChangesAsync();
+                await _usersRepository.UpdateAsync(blockedUser);
 
 
             }
@@ -122,8 +125,8 @@ namespace New_Library.Services.Core
 
 
 
-            var foundUser = await _dbContext.Users.Include(u => u.UserBooks).ThenInclude(ub => ub.Book)
-               .AsNoTracking().FirstOrDefaultAsync(u => u.Id == Id);
+            var foundUser = await _usersRepository.UserFullDetailsAndHistory(Id);
+             
 
 
             if (foundUser == null)
@@ -171,7 +174,7 @@ namespace New_Library.Services.Core
             }
 
 
-            User? removedUser = await _dbContext.Users.FindAsync(Id);
+            User? removedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (removedUser == null)
             {
@@ -180,7 +183,7 @@ namespace New_Library.Services.Core
 
 
 
-            bool notReturnedBook = await _dbContext.UsersBooks.AnyAsync(ub => ub.UserId == Id && ub.Status == BookStatus.PickedUp);
+            bool notReturnedBook = await _systemsRepository.UserExtraLoan(Id);
 
             if (notReturnedBook || removedUser.IsBlocked)
             {
@@ -193,7 +196,7 @@ namespace New_Library.Services.Core
             {
                 removedUser.IsDeleted = true;
 
-                await _dbContext.SaveChangesAsync();
+                await _usersRepository.UpdateAsync(removedUser);
 
             }
             catch (Exception)
@@ -207,6 +210,7 @@ namespace New_Library.Services.Core
 
         }
 
+        
     }
 }
 

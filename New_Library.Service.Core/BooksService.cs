@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
@@ -12,18 +13,25 @@ namespace New_Web_Library.Services.Core
 {
     public class BooksService : IBooksService
     {
-        private readonly LibraryDbContext _dbContext;
+        private readonly IBooksRepository _booksRepository;
+        private readonly ISystemsRepository _systemsRepository;
         private readonly IWebHostEnvironment _environment;
-        public BooksService(LibraryDbContext dbContext, IWebHostEnvironment environment)
+      
+        public BooksService(IBooksRepository booksRepository, IWebHostEnvironment environment,
+            ISystemsRepository systemsRepository)
         {
-            this._dbContext = dbContext;
+            this._booksRepository = booksRepository;
             this._environment = environment;
+            this._systemsRepository = systemsRepository;
         }
 
 
         public async Task<IEnumerable<FullPreviewModelBook>> GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre)
         {
-            IQueryable<FullPreviewModelBook> allBooks = _dbContext.Books.AsNoTracking().Select(b => new FullPreviewModelBook()
+
+            var allCollection = _booksRepository.GetAllBooks();
+
+            IQueryable<FullPreviewModelBook> allBooks = allCollection.Select(b => new FullPreviewModelBook()
             {
                 Id = b.Id,
                 Title = b.Title,
@@ -67,7 +75,7 @@ namespace New_Web_Library.Services.Core
             }
 
 
-            Book? book = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == Id);
+            Book? book = await _booksRepository.GetByIdAsync(Id);
 
             if (book == null)
             {
@@ -75,9 +83,9 @@ namespace New_Web_Library.Services.Core
 
             }
 
+            BookStatus? bookStatus = await _systemsRepository.ReturnStatus(Id);
 
-            BookStatus? bookStatus = await _dbContext.UsersBooks.AsNoTracking().Where(ub => ub.BookId == Id)
-                .OrderByDescending(ub => ub.Id).Select(ub => (BookStatus?)ub.Status).FirstOrDefaultAsync();
+            
 
             BookStatus currentStatus = bookStatus ?? BookStatus.Returned;
 
@@ -157,9 +165,8 @@ namespace New_Web_Library.Services.Core
 
             try
             {
-
-                await _dbContext.Books.AddAsync(newBook);
-                await _dbContext.SaveChangesAsync();
+                await _booksRepository.AddAsync(newBook);
+                
 
             }
             catch(Exception)
@@ -187,7 +194,7 @@ namespace New_Web_Library.Services.Core
             }
 
 
-            Book? book = await _dbContext.Books.AsNoTracking().SingleOrDefaultAsync(b => b.Id == Id);
+            Book? book = await _booksRepository.GetByIdAsync(Id);
 
             if (book == null)
             {
@@ -243,7 +250,7 @@ namespace New_Web_Library.Services.Core
             }
 
 
-            Book? book = await _dbContext.Books.FindAsync(Id);
+            Book? book = await _booksRepository.GetByIdAsync(Id);
 
             if (book == null )
             {
@@ -266,7 +273,9 @@ namespace New_Web_Library.Services.Core
                 book.Author = authorName;
                 book.Genre = model.Genre;
 
-                await _dbContext.SaveChangesAsync();
+                
+
+                await _booksRepository.UpdateAsync(book);
 
             }
             catch(Exception)
@@ -295,9 +304,9 @@ namespace New_Web_Library.Services.Core
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Not found !" };
 
             }
-            
-            
-            Book? foundBook = await _dbContext.Books.FindAsync(Id);
+
+
+            Book? foundBook = await _booksRepository.GetByIdAsync(Id);
 
             if (foundBook == null)
             {
@@ -308,8 +317,8 @@ namespace New_Web_Library.Services.Core
                };
             
             }
-            
-            var isTaken = await _dbContext.UsersBooks.AnyAsync(ub => ub.BookId == Id && ub.Status==BookStatus.PickedUp);
+
+            var isTaken = await _systemsRepository.IsTakenBook(Id);
 
             if (isTaken)
             {
@@ -327,10 +336,8 @@ namespace New_Web_Library.Services.Core
             try
             {
 
-                _dbContext.Remove(foundBook);
 
-                await _dbContext.SaveChangesAsync();
-            
+                await _booksRepository.DeleteAsync(foundBook);
             
             }
             catch(Exception)
@@ -351,10 +358,13 @@ namespace New_Web_Library.Services.Core
 
         public async Task BookModelDataFillingAsync(BookFormModel model)
         {
+            List<string> authors = await _booksRepository.GetAllAuthors();
 
-            model.Authors = await _dbContext.Books.AsNoTracking().Select(b => b.Author).Distinct()
-            .Select(a => new SelectListItem { Text = a, Value = a })
-            .ToListAsync();
+            model.Authors = authors.Select(a => new SelectListItem 
+            {
+                Text = a,
+                Value = a 
+            });
 
             model.Genres = Enum.GetValues(typeof(Genre)).Cast<Genre>()
             .Select(g => new SelectListItem
