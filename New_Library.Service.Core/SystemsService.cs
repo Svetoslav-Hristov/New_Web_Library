@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
-using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
+using New_Web_Library.ViewModels.Forum;
 using New_Web_Library.ViewModels.System;
 
 namespace New_Library.Services.Core
 {
-    using static New_Web_Library.GCommon.EntityValidations;
     using static New_Web_Library.GCommon.EntityValidations.UsersBooks;
     public class SystemsService : ISystemsService
     {
@@ -18,13 +18,22 @@ namespace New_Library.Services.Core
         private readonly ISystemsRepository _systemsRepository;
         private readonly IUsersRepository _usersRepository;
         private readonly IBooksRepository _booksRepository;
+        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ITopicsRepository _topicsRepository;
+        private readonly IPostsRepository _postsRepository;
+        private readonly ICommentsRepository _commentsRepository;
 
-        public SystemsService(ISystemsRepository systemsRepository ,IUsersRepository usersRepository,
-            IBooksRepository booksRepository)
+        public SystemsService(ISystemsRepository systemsRepository, IUsersRepository usersRepository,
+            IBooksRepository booksRepository, ICategoriesRepository categoriesRepository,
+            ITopicsRepository topicsRepository, IPostsRepository postsRepository, ICommentsRepository commentsRepository)
         {
             this._systemsRepository = systemsRepository;
-            this. _usersRepository = usersRepository;
+            this._usersRepository = usersRepository;
             this._booksRepository = booksRepository;
+            this._categoriesRepository = categoriesRepository;
+            this._topicsRepository = topicsRepository;
+            this._postsRepository = postsRepository;
+            this._commentsRepository = commentsRepository;
         }
 
 
@@ -109,7 +118,7 @@ namespace New_Library.Services.Core
 
             User? foundUser = await _usersRepository.FindByIdAsync(model.UserId);
 
-            Book? foundBook = await _booksRepository.GetByIdAsync(model.BookId);   
+            Book? foundBook = await _booksRepository.GetByIdAsync(model.BookId);
 
 
             if (foundUser == null || foundBook == null)
@@ -123,7 +132,7 @@ namespace New_Library.Services.Core
 
 
             UserBook? isTakenBook = await _systemsRepository.GetLoan(model.BookId);
-            
+
             if (isTakenBook != null)
             {
                 string status = isTakenBook.Status.ToString();
@@ -163,7 +172,7 @@ namespace New_Library.Services.Core
                 await _systemsRepository.AddAsync(newLoan);
 
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Unexpected error is occurred please try again! " };
 
@@ -174,75 +183,40 @@ namespace New_Library.Services.Core
 
         }
 
-        public async Task<ServiceResult<CreateReserveModel>> CreateNewReservationAsync(Guid bookId)
+        public async Task<ServiceResult<Guid>> CreateNewReservationAsync(Guid bookId,Guid userId)
         {
             if (bookId == Guid.Empty)
             {
-                return new ServiceResult<CreateReserveModel> { Success = false, ErrorMessage = "Invalid book Id!" };
+                return new ServiceResult<Guid> { Success = false, ErrorMessage = "Invalid book Id!" };
             }
 
 
-            Book? book = await _booksRepository.GetByIdAsync(bookId);
+            bool foundBook = await _booksRepository.IsExistBook(bookId);
 
 
-            if (book == null)
+            if (foundBook == null)
             {
-                return new ServiceResult<CreateReserveModel> { Success = false, ErrorMessage = "Book not found" };
+                return new ServiceResult<Guid> { Success = false, ErrorMessage = "Book not found" };
             }
 
+            bool foundUser = await _usersRepository.IsExistUser(userId);
 
-
-            CreateReserveModel model = new CreateReserveModel()
-            {
-                BookId = bookId,
-                BookTitle = book.Title,
-            };
-
-
-
-            return new ServiceResult<CreateReserveModel> { Success = true, Data = model };
-
-        }
-
-        public async Task<ServiceResult<CreateReserveModel>> ConfirmNewReservationAsync(CreateReserveModel model)
-        {
-
-            if (model == null)
-            {
-
-                await RestoreReservationModelAsync(model);
-
-                return new ServiceResult<CreateReserveModel>
-                {
-                    Success = false,
-                    Data = model,
-                    ErrorMessage = "Invalid user use the search engine and field correctly"
-                };
-
-            }
-
-
-            bool foundBook = await _booksRepository.IsExistBook(model.BookId);
-
-            bool foundUser = await _usersRepository.IsExistUser(model.UserId);
-
+            
             if (!foundBook || !foundUser)
             {
                 var argument = !foundBook ? "Book" : "User";
 
-                return new ServiceResult<CreateReserveModel> { Success = false, ErrorMessage = $"Reservation is fail because {argument} missing! " };
+                return new ServiceResult<Guid> { Success = false, ErrorMessage = $"Reservation is fail because {argument} missing! " };
 
             }
 
+            bool takenOrReserve = await _systemsRepository.BookTakenOrReserve(bookId);
 
-
-            bool takenOrReserve = await _systemsRepository.BookTakenOrReserve(model.BookId);
-            
 
             if (takenOrReserve)
             {
 
-                return new ServiceResult<CreateReserveModel> { Success = false, ErrorMessage = "Book is not available." };
+                return new ServiceResult<Guid> { Success = false, ErrorMessage = "Book is not available." };
 
             }
 
@@ -251,12 +225,11 @@ namespace New_Library.Services.Core
 
             DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
             DateOnly expiriesPeriod = today.AddDays(ReservedExpiryPeriod);
-
             UserBook newReservation = new UserBook()
             {
 
-                UserId = model.UserId,
-                BookId = model.BookId,
+                UserId = userId,
+                BookId = bookId,
                 ReservedOn = today,
                 ReservationExpiresOn = expiriesPeriod,
                 Status = BookStatus.Reserved
@@ -273,9 +246,9 @@ namespace New_Library.Services.Core
             }
             catch (Exception)
             {
-               
 
-                return new ServiceResult<CreateReserveModel>
+
+                return new ServiceResult<Guid>
                 {
                     Success = false,
                     ErrorMessage = "Unexpected error is occurred while register new reservation! Please try again later."
@@ -285,7 +258,9 @@ namespace New_Library.Services.Core
 
             }
 
-            return new ServiceResult<CreateReserveModel> { Success = true };
+            return new ServiceResult<Guid> { Success = true ,Data=bookId};
+
+
 
 
         }
@@ -336,7 +311,7 @@ namespace New_Library.Services.Core
             }
 
 
-            
+
             UserBook? editRecord = await _systemsRepository.ReturnRecord(Id);
 
             if (editRecord == null)
@@ -345,7 +320,7 @@ namespace New_Library.Services.Core
 
             }
 
-            
+
 
             bool takenByAnotherUser = await _systemsRepository.TakeFromAnotherUser(model.BookId, model.UserId, Id);
 
@@ -359,7 +334,7 @@ namespace New_Library.Services.Core
 
 
             bool reservedBySameUser = await _systemsRepository.ReservedBySameUser(model.BookId, model.UserId, Id);
-            
+
 
             if (reservedBySameUser)
             {
@@ -428,7 +403,7 @@ namespace New_Library.Services.Core
                 var user = await _usersRepository.FindByIdAsync(removeLoan.UserId);
 
                 var anotherBook = await _systemsRepository.UserExtraLoan(removeLoan.UserId, removeLoan.Id);
-               
+
 
                 if (user != null && user.IsBlocked)
                 {
@@ -450,7 +425,7 @@ namespace New_Library.Services.Core
             }
 
             return new ServiceResult<UserBook> { Success = true };
-            
+
         }
 
         private async Task CheckingOverdueUsersAsync(DateOnly today, IQueryable<RegisterModelView> usersRegister)
@@ -554,7 +529,7 @@ namespace New_Library.Services.Core
             string criteria = model.SearchingCriteria.Trim().ToLower();
 
             var foundUser = await _usersRepository.SearchByPhoneOrEmail(criteria);
-            
+
             if (foundUser == null)
             {
                 return new ServiceResult<CreateReserveModel>
@@ -575,6 +550,79 @@ namespace New_Library.Services.Core
 
             return new ServiceResult<CreateReserveModel> { Success = true, Data = model };
 
+
+        }
+
+        public async Task<IEnumerable<DeletedItemViewModel>> GetAllDeleteItems()
+        {
+
+            List<DeletedItemViewModel> deleteItems = new List<DeletedItemViewModel>();
+
+            var allDeleteCategories = _categoriesRepository.GetAllDeleteCategories();
+
+            var categories =await allDeleteCategories
+                  .Select(c => new DeletedItemViewModel
+                  {
+                      Id = c.Id,
+                      Name = c.Name,
+                      Type = "Category",
+                      Description = c.Description
+
+                  })
+                  .ToListAsync();
+
+            var allDeleteSubCategories = _topicsRepository.GetAllDeleteSubCategories();
+
+            var subCategories =await allDeleteSubCategories
+                   .Select(t => new DeletedItemViewModel
+                   {
+                       Id = t.Id,
+                       Name = t.Title,
+                       Type = "SubCategory",
+                       Description = null,
+                       ParentId = t.CategoryId,
+                       ParentName = t.Category.Name
+                   })
+                   .ToListAsync();
+
+
+            var allDeletePosts = _postsRepository.AllDeletePost();
+
+
+            var posts =await  allDeletePosts
+            .Select(p => new DeletedItemViewModel
+            {
+                Id = p.Id,
+                Name = p.Title,
+                Type = "Post",
+                Description = p.Content,
+                ParentId = p.TopicId,
+                ParentName = p.Topic.Title
+            })
+            .ToListAsync();
+
+            IQueryable<Comment> allDeleteComments = _commentsRepository.GetAllDeleteComments();
+
+            var comments = await allDeleteComments
+                .Select(c => new DeletedItemViewModel
+                {
+                    Id = c.Id,
+                    Name = "Comment",
+                    Type = "Comment",
+                    Description = c.Content,
+                    ParentId = c.PostId,
+                    ParentName = c.Post.Title
+                })
+                .ToListAsync();
+
+
+            deleteItems.AddRange(categories);
+            deleteItems.AddRange(subCategories);
+            deleteItems.AddRange(posts);
+            deleteItems.AddRange(comments);
+
+
+            return deleteItems;
 
         }
     }

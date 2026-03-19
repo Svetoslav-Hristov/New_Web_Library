@@ -6,5 +6,11 @@ namespace New_Library.Data.Repository.Contracts
     {
         Task<List<Category>> GetAllCategoriesWithSubCategories(int? Id=null);
 
+        IQueryable<Category> GetAllDeleteCategories();
+
+        Task<bool> ExistByName(string name);
+
+        Task<bool> ExistByName(string name,int Id);
+
     }
 }

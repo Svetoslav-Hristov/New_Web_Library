@@ -16,6 +16,10 @@ namespace New_Web_Library.ViewModels.Forum
         public Guid UserId { get; set; }
 
         public int PostId { get; set; }
+
+        public int? Id { get; set; }
+
+       public int? SubCategoryId { get; set; }
         
     }
 }

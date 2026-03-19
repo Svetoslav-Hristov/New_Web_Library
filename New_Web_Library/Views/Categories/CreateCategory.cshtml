@@ -1,8 +1,22 @@
 ﻿@model CategoryFormModel
+@{
 
-<h2>Create Category</h2>
+    Layout = "_ForumLayout";
 
-<form asp-action="CreateCategory" method="post">
+
+
+    bool isEdit = Model.Id > 0;
+
+    string title = isEdit ? "Edit" : "Create";
+
+    string formatAction = isEdit ? "EditCategory" : "CreateCategory";
+
+}
+
+
+<h2>@title Category</h2>
+
+<form asp-controller="Categories" asp-action="@formatAction" method="post">
 
     <div class="form-group">
         <label asp-for="Name"></label>
@@ -15,9 +29,9 @@
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Create</button>
-
+   
+    <button type="submit" class="btn btn-primary mt-3">@title</button>
+    <a asp-controller="Categories" asp-action="Index" class="btn btn-primary mt-3">Cancel</a>
 </form>
 
 @section Scripts {

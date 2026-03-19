@@ -107,7 +107,15 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+
             ReturnUrl = returnUrl;
+
+
+            if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
+            {
+                Response.Redirect("/");
+            }
+
 
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
@@ -26,6 +27,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(string? search, Genre? genre)
         {
 
@@ -36,6 +38,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid Id)
         {
 
@@ -55,6 +58,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Create()
         {
 
@@ -73,6 +77,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(BookFormModel formModel)
         {
 
@@ -120,6 +125,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid Id)
         {
             var model = await _bookService.EditBookUsingBookFormModelAsync(Id);
@@ -136,6 +142,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit([FromRoute] Guid Id, BookFormModel model)
         {
 
@@ -181,6 +188,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid Id)
         {
 

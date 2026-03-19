@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
@@ -27,6 +28,7 @@ namespace Web_Library.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index(string? search)
         {
 
@@ -47,6 +49,7 @@ namespace Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> ChangeStatus(Guid Id)
         {
 
@@ -73,6 +76,7 @@ namespace Web_Library.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Details(Guid Id)
         {
 
@@ -92,6 +96,7 @@ namespace Web_Library.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var result = await _usersService.DeleteUserProfileAsync(Id);

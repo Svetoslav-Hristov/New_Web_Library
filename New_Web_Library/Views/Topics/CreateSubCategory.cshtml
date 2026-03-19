@@ -1,0 +1,35 @@
+﻿@model CreateSubCategoryViewModel
+@{
+
+
+
+    Layout = "_ForumLayout";
+
+
+    bool isEdit = Model.SubCategoryId > 0;
+
+    string title = isEdit ? "Edit" : "Create";
+
+    string formatAction = isEdit ? "EditSubCategory" : "CreateSubCategory";
+
+    string formatExitController = isEdit ? "Topics" : "Categories";
+
+    string formatExitAction = isEdit ? "SubCategory" : "Index";
+
+}
+
+<form asp-action="@formatAction" method="post">
+
+    <input type="hidden" asp-for="CategoryId" />
+
+    <div class="form-group">
+        <label asp-for="@Model.TopicName"></label>
+        <input asp-for="@Model.TopicName" class="form-control" />
+        <span asp-validation-for="@Model.TopicName"></span>
+    </div>
+
+    <button type="submit" class="btn btn-outline-warning mt-3">@title</button>
+
+    <a asp-controller="@formatExitController" asp-action="@formatExitAction" asp-route-Id="@Model.SubCategoryId" class="btn btn-outline-primary mt-3"> Cancel </a>
+
+</form>

@@ -14,5 +14,9 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<Dictionary<Guid, int>> GetAllCountComments(List<Guid> usersId);
 
+        IQueryable<Comment> GetAllDeleteComments();
+
+        Task<Comment?> GetDeleteComment(int Id);
+
     }
 }

@@ -26,12 +26,25 @@ namespace New_Library.Data.Repository
             return countComments;
         }
 
+        public IQueryable<Comment> GetAllDeleteComments()
+        {
+            IQueryable<Comment> allDelete = _dbContext.Comments.IgnoreQueryFilters().Where(c => c.IsDeleted);
+
+
+            return allDelete;
+            
+        }
+
         public async Task<Comment?> GetCommentWithPostAsync(int id)
         {
             return await  _dbContext.Comments.Include(c => c.Post)
               .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        
+        public async Task<Comment?> GetDeleteComment(int Id)
+        {
+            return await _dbContext.Comments.IgnoreQueryFilters().Where(c => c.Id == Id).FirstOrDefaultAsync();
+           
+        }
     }
 }

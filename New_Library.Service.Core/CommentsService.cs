@@ -5,6 +5,9 @@ using New_Web_Library.Data.Models;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
+using System.Numerics;
+using static New_Web_Library.GCommon.EntityValidations;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Service.Core
 {
@@ -15,9 +18,9 @@ namespace New_Web_Library.Service.Core
         private readonly IPostsRepository _postRepository;
         private readonly IUsersRepository _usersRepository;
 
-        public CommentsService(ICommentsRepository commentRepository,IPostsRepository postRepository ,
+        public CommentsService(ICommentsRepository commentRepository, IPostsRepository postRepository,
             IUsersRepository usersRepository)
-            
+
         {
             this._commentRepository = commentRepository;
             this._postRepository = postRepository;
@@ -38,11 +41,13 @@ namespace New_Web_Library.Service.Core
 
 
 
+
             string commentTitle = $"Re:{post.Title}";
             CreateContentViewModel model = new CreateContentViewModel()
             {
                 Title = commentTitle,
-                PostId = post.Id
+                PostId = post.Id,
+
 
             };
 
@@ -94,7 +99,7 @@ namespace New_Web_Library.Service.Core
             try
             {
                 await _commentRepository.AddAsync(newComment);
-                
+
             }
             catch (Exception)
             {
@@ -113,7 +118,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<CreateContentViewModel>> EditComment(int Id, Guid userId)
         {
-            var comment = await _commentRepository.GetCommentWithPostAsync(Id);                    
+            var comment = await _commentRepository.GetCommentWithPostAsync(Id);
 
             if (comment == null)
             {
@@ -158,7 +163,7 @@ namespace New_Web_Library.Service.Core
 
             try
             {
-
+                comment.CreatedOn = DateTime.UtcNow;
                 comment.Content = model.Description;
                 await _commentRepository.UpdateAsync(comment);
 
@@ -177,9 +182,9 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<Post>> SoftDeleteComment(int Id,int postId, Guid userId)
+        public async Task<ServiceResult<Post>> SoftDeleteComment(int Id, int postId, Guid userId)
         {
-            var comment = await _commentRepository.GetByIdAsync<Comment>(Id);      
+            var comment = await _commentRepository.GetByIdAsync<Comment>(Id);
 
 
 
@@ -193,7 +198,7 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<Post> { Success = false, ErrorMessage = "Not found!" };
             }
 
-            var user = await _usersRepository.FindByIdAsync(userId);          
+            var user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null || user.Id != comment.UserId)
             {
@@ -203,7 +208,7 @@ namespace New_Web_Library.Service.Core
             }
 
             Post? post = await _postRepository.GetByIdAsync(postId);
-           
+
             try
             {
 
@@ -229,6 +234,81 @@ namespace New_Web_Library.Service.Core
 
         }
 
+        public async Task<ServiceResult<bool>> RestoreDeleteComment(int Id)
+        {
+            var comment = await _commentRepository.GetDeleteComment(Id);
+
+            if (comment == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Comment not found!" };
+            }
+
+            Post? post = await _postRepository.GetDeleteOrNotPost(Id);
+
+            if (post != null)
+            {
+                if (post.IsDeleted)
+                {
+                    return new ServiceResult<bool>
+                    {
+                        Success = false,
+                        ErrorMessage = "You won't be able to return the comment because the post is also missing!"
+                    };
+                }
+            }
+
+
+
+            try
+            {
+
+                comment.IsDeleted = false;
+                await _commentRepository.UpdateAsync(comment);
+
+            }
+            catch (Exception)
+            {
+
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while restore delete comment! Please try again later."
+                };
+
+            }
+
+
+            return new ServiceResult<bool> { Success = true };
+        }
+
+        public async Task<ServiceResult<bool>> HardDeleteComment(int Id)
+        {
+            var comment = await _commentRepository.GetDeleteComment(Id);
+
+            if (comment == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Comment not found!" };
+            }
+
+            try
+            {
+
+                await _commentRepository.DeleteAsync(comment);
+
+            }
+            catch(Exception)
+            {
+                return new ServiceResult<bool> 
+                { 
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while hard delete comment! Please try again later." 
+                };
+
+            }
+
+            return new ServiceResult<bool> { Success = true };
+
+        }
     }
 }
 

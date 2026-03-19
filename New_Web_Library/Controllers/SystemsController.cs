@@ -7,6 +7,7 @@ using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.System;
+using System.Security.Claims;
 
 namespace New_Web_Library.Controllers
 {
@@ -24,6 +25,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Register(string? search)
         {
 
@@ -36,7 +38,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpGet]
-        
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateLoan()
         {
 
@@ -48,7 +50,7 @@ namespace New_Web_Library.Controllers
 
 
         [HttpPost]
-        
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateLoan(CreateLoanView model)
         {
             if (!ModelState.IsValid)
@@ -76,53 +78,26 @@ namespace New_Web_Library.Controllers
             return RedirectToAction(nameof(Register));
         }
 
-        [HttpGet]
+        
+        [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateReservation(Guid bookId)
         {
 
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var model = await _systemsService.CreateNewReservationAsync(bookId);
-
-            if (!model.Success)
-            {
-                TempData["ErrorMessage"] = model.ErrorMessage;
-
-                return RedirectToAction("Index", "Books");
-
-            }
-
-
-
-            return View(model.Data);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateReservation(CreateReserveModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-
-                await _systemsService.RestoreReservationModelAsync(model);
-
-                return View("CreateReservation", model);
-
-            }
-
-
-            var reservation = await _systemsService.ConfirmNewReservationAsync(model);
+            var reservation = await _systemsService.CreateNewReservationAsync(bookId, userId);
 
 
 
             if (!reservation.Success)
             {
-                await _systemsService.RestoreReservationModelAsync(model);
 
-                ModelState.AddModelError(nameof(model.SearchingCriteria), reservation.ErrorMessage);
+                TempData["ErrorReserve"] = reservation.ErrorMessage;
 
-                return View("CreateReservation", model);
+               
 
-
+                return RedirectToAction("Index", "Books");
 
             }
 
@@ -131,12 +106,13 @@ namespace New_Web_Library.Controllers
             TempData["SuccessReservation"] = "You have successfully reserved the book you selected.";
 
 
-            return RedirectToAction("Details", "Books", new { Id = model.BookId });
+            return RedirectToAction("Details", "Books", new { Id = reservation.Data});
 
 
         }
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> EditLoan(int Id)
         {
 
@@ -156,6 +132,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> EditLoan([FromRoute] int Id, CreateLoanView model)
         {
 
@@ -179,7 +156,7 @@ namespace New_Web_Library.Controllers
             }
 
 
-            TempData["ConfirmOrEdit"] = "You have successfully changed or created your Loan.";
+            TempData["ConfirmOrEdit"] = "You have successfully modified or created the loan.";
 
 
             return RedirectToAction(nameof(Register))
@@ -187,6 +164,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteLoan(int Id)
         {
 
@@ -210,6 +188,8 @@ namespace New_Web_Library.Controllers
 ;
         }
 
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> SearchByCriteria(CreateReserveModel model)
         {
 
@@ -227,6 +207,16 @@ namespace New_Web_Library.Controllers
 
         }
 
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> ForumSupportPreview()
+        {
+            var result = await _systemsService.GetAllDeleteItems();
+
+
+            return View(result);
+
+        }
 
 
 

@@ -36,8 +36,6 @@ namespace New_Web_Library.Data
 
             base.OnModelCreating(modelBuilder);
 
-            
-
 
             modelBuilder.Entity<User>().Property(u => u.Email).IsRequired().HasMaxLength(EmailAddressMaxLength);
 
@@ -47,8 +45,18 @@ namespace New_Web_Library.Data
 
             modelBuilder.Entity<User>().HasIndex(u => u.PhoneNumber).IsUnique();
 
+            modelBuilder.Entity<User>().HasQueryFilter(c => !c.IsDeleted);
+
+            modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
+
+            modelBuilder.Entity<Topic>().HasQueryFilter(t => !t.IsDeleted);
+
+            modelBuilder.Entity<Post>().HasQueryFilter(p => !p.IsDeleted);
+
+            modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
+
             modelBuilder.Entity<Post>().HasOne(p => p.Topic).WithMany(t => t.Posts)
-            .HasForeignKey(p => p.TopicId).OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey(p => p.TopicId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Post>().HasOne(p => p.User).WithMany()
             .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.NoAction);

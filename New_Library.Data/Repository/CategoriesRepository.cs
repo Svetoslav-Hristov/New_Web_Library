@@ -12,22 +12,43 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<List<Category>> GetAllCategoriesWithSubCategories(int? Id=null)
+        public async Task<bool> ExistByName(string name)
+        {
+            return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name);
+        }
+
+        public async Task<bool> ExistByName(string name, int Id)
+        {
+            return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name && c.Id != Id);
+        }
+
+        public async Task<List<Category>> GetAllCategoriesWithSubCategories(int? Id = null)
         {
 
-            var categories = _dbContext.Categories.AsNoTracking().
-              Include(c => c.Topics).ThenInclude(c => c.Posts).ThenInclude(c=>c.User).AsQueryable();
+            var categories = _dbContext.Categories.AsNoTracking()
+           .Include(c => c.Topics).ThenInclude(t => t.Posts)
+            .ThenInclude(p => p.User).Include(c => c.Topics)
+        .ThenInclude(t => t.Posts).ThenInclude(p => p.Comments)
+        .ThenInclude(c => c.User).AsQueryable();
 
-            if(Id != null)
+
+            if (Id != null)
             {
-              categories = categories.Where(c => c.Id == Id);
+                categories = categories.Where(c => c.Id == Id);
 
             }
-           
+
             return await categories.ToListAsync();
 
         }
 
+        public  IQueryable<Category> GetAllDeleteCategories()
+        {
+            var deleteCategories = _dbContext.Categories.IgnoreQueryFilters().Where(c => c.IsDeleted);
+                
 
+            return  deleteCategories;
+
+        }
     }
 }

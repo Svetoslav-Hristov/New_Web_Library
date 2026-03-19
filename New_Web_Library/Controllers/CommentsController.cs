@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using New_Library.Data.Models.Forum;
 using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
@@ -63,7 +64,7 @@ namespace New_Web_Library.Controllers
             }
 
 
-            return RedirectToAction(nameof(Post), new { Id });
+            return RedirectToAction("PostPreview", "Posts", new { id = Id });
 
 
         }
@@ -106,13 +107,14 @@ namespace New_Web_Library.Controllers
             if (!result.Success)
             {
                 TempData["ErrorEdit"] = result.ErrorMessage;
-                return RedirectToAction(nameof(Post), new { Id });
+
+                return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId});
             }
 
             TempData["SuccessEditComment"] = "You have successfully edited your comment.";
 
 
-            return RedirectToAction(nameof(Post), new { Id = result.Data.PostId });
+            return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId});
 
 
         }
@@ -128,13 +130,52 @@ namespace New_Web_Library.Controllers
             if (!result.Success)
             {
 
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorDeleteComment"] = result.ErrorMessage;
+
+
+                return RedirectToAction("PostPreview", "Posts", new { Id = postId });
 
 
             }
 
-            return RedirectToAction(nameof(Post), new { result.Data.Id });
+            return RedirectToAction("PostPreview", "Posts",new {Id=postId});
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreComment(int Id)
+        {
+            var result = await _commentsService.RestoreDeleteComment(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorRestoreComment"] = result.ErrorMessage;
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HardDeleteComment (int Id)
+        {
+            var result = await _commentsService.HardDeleteComment(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorHardDeleteComment"] = result.ErrorMessage;
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+
+           
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
+
+        }
+
+
     }
 }

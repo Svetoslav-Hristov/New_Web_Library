@@ -8,11 +8,13 @@
 
         public string PostAuthor { get; set; } = null!;
 
-        public string PostCategory { get; set; } = null!;
+        
 
         public  DateTime CreatedOn { get; set; }
 
         public int CommentCount { get; set; }
+
+       
 
         
     }

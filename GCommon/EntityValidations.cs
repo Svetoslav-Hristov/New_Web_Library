@@ -1,5 +1,7 @@
 ﻿
 
+using System.Runtime.InteropServices;
+
 namespace New_Web_Library.GCommon
 {
     public static class EntityValidations
@@ -81,8 +83,15 @@ namespace New_Web_Library.GCommon
             public const int ContentMaxLength = 5000;
             public const int ContentMinLength = 10;
             public const int CommentLifeTime = 15;
+            
 
         }
+        public static class TimeFormat
+        {
+            public const string ForumTimeFormat = "dd.MM.yyyy HH:mm";
+
+        }
+       
         
 
 

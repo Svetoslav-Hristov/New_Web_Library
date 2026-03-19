@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface IPostsRepository
+    public interface IPostsRepository:IBaseRepository
     {
         Task<Post?> GetByIdAsync(int id);
 
         Task<Dictionary<Guid, int>> GetAllCountPosts(List<Guid> usersId);
+
+        IQueryable<Post> AllDeletePost();
+
+        Task<Post?> GetDeleteOrNotPost(int Id);
 
     }
 }

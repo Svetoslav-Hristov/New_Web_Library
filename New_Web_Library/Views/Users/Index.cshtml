@@ -14,6 +14,14 @@
 
     var unexpectedStatus = TempData["ErrorStatus"] as string;
 
+    var successRegistration = TempData["SuccessRegistration"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successRegistration))
+{
+    <div class="alert alert-success" role="alert">
+        @successRegistration
+    </div>
 
 }
 

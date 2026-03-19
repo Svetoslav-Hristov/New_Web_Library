@@ -69,5 +69,64 @@ namespace New_Web_Library.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCategory(int Id)
+        {
+            var result = await _categoryService.EditCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorCategoryEdit"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View("CreateCategory",result.Data);
+
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditCategory(CategoryFormModel model, [FromRoute] int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _categoryService.ConfirmEditCategory(model, Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorCategoryEdit"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+
+            }
+
+
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory (int Id)
+        {
+            var result = await _categoryService.SoftDeleteCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorDeleteCategory"] = result.ErrorMessage;
+            }
+
+
+            return RedirectToAction(nameof(Index));
+
+
+        }
+
+
     }
 }

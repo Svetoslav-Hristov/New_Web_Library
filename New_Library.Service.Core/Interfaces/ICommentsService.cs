@@ -15,6 +15,9 @@ namespace New_Web_Library.Service.Core.Interfaces
         Task<ServiceResult<Comment>> ConfirmNewComment(CreateContentViewModel model, int Id, Guid userId);
         Task<ServiceResult<CreateContentViewModel>> EditComment(int Id, Guid userId);
         Task<ServiceResult<Comment>> ConfirmEditComment(CreateContentViewModel model, int Id);
-        Task<ServiceResult<Post>> SoftDeleteComment(int Id,int postId, Guid userId);
+        Task<ServiceResult<Post>> SoftDeleteComment(int Id, int postId, Guid userId);
+        Task<ServiceResult<bool>> RestoreDeleteComment(int Id);
+        Task<ServiceResult<bool>> HardDeleteComment(int Id);
+
     }
 }

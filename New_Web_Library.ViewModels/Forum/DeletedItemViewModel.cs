@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 
 namespace New_Web_Library.ViewModels.Forum
 {
-    public class IndexForumModel
+    public class DeletedItemViewModel
     {
+
         public int Id { get; set; }
 
         public string Name { get; set; } = null!;
 
+        public string Type { get; set; } = null!;
+
+
         public string? Description { get; set; }
+
        
-        public TopicForumModel[] Topics { get; set; } = Array.Empty<TopicForumModel>();
+        public int? ParentId { get; set; }
 
-        public int PostCount { get; set; }
+        public string? ParentName { get; set; }
 
-        public string? LastPostTitle { get; set; }
 
     }
 }

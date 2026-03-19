@@ -15,6 +15,14 @@ namespace New_Library.Data.Repository
 
         }
 
+        public IQueryable<Post> AllDeletePost()
+        {
+            var allDelete = _dbContext.Posts.IgnoreQueryFilters().Where(p => p.IsDeleted);
+
+            return allDelete;
+           
+        }
+
         public async Task<Dictionary<Guid, int>> GetAllCountPosts(List<Guid> usersId)
         {
 
@@ -33,16 +41,18 @@ namespace New_Library.Data.Repository
 
         public async Task<Post?> GetByIdAsync(int Id)
         {
-             var post = await _dbContext.Posts.Include(p=>p.Comments).
-               Include(p=>p.Topic).ThenInclude(p=>p.User)
+             var post = await _dbContext.Posts.Include(p=>p.User).Include(p=>p.Comments).ThenInclude(c=>c.User).
+               Include(p=>p.Topic).ThenInclude(p=>p.User) 
                .FirstOrDefaultAsync(p => p.Id == Id && !p.IsDeleted);
 
 
             return post;
 
         }
-    
-    
-    
+
+        public async Task<Post?> GetDeleteOrNotPost(int Id)
+        {
+            return await _dbContext.Posts.IgnoreQueryFilters().Where(p => p.Id == Id).FirstOrDefaultAsync();
+        }
     }
 }

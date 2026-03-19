@@ -1,8 +1,23 @@
 ﻿@model CreateContentViewModel
-
 @{
+
     Layout = "_ForumLayout";
+
+    bool isEdit = Model.PostId > 0;
+
+    string title = isEdit ? "Edit" : "Create";
+
+    string formatAction = isEdit ? "EditPost" : "CreatePost";
+
+    string formatExitController = isEdit ? "Posts":"Topics" ;
+
+    string formatExitAction = isEdit ? "PostPreview":"Subcategory";
+
+    var exitId = isEdit ? Model.Id : Model.SubCategoryId;
+
+
 }
+
 <div class="container mt-4">
 
     <div class="row justify-content-center">
@@ -11,14 +26,14 @@
 
             <div class="card p-4">
 
-                <h4 class="mb-3">Create Comment</h4>
+                <h4 class="mb-3">@title Post</h4>
 
-                <form asp-action="CreateComment" method="post">
+                <form asp-action="@formatAction" method="post">
 
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label"></label>
                         <input asp-for="Title" class="form-control" />
-                        
+                        <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
@@ -28,9 +43,9 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary">
-                        Create
+                        @title
                     </button>
-                    <a asp-controller="Posts" asp-action="PostPreview" asp-route-id="@Model.PostId" class="btn btn-primary">Cancel</a>
+                    <a asp-controller="@formatExitController" asp-action="@formatExitAction" asp-route-Id="@exitId" class="btn btn-primary">Cancel</a>
                 </form>
 
             </div>

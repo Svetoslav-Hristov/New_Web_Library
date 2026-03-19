@@ -24,5 +24,7 @@ namespace New_Web_Library.ViewModels.Forum
 
         public bool IsAuthor { get; set; }
 
+        public int? TopicId { get; set; }
+
     }
 }

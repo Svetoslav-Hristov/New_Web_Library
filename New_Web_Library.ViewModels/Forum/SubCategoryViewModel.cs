@@ -3,18 +3,15 @@ using static New_Web_Library.GCommon.EntityValidations.Categories;
 
 namespace New_Web_Library.ViewModels.Forum
 {
-    public class CategoryFormModel
+    public class SubCategoryViewModel
     {
-       
-        public int? Id { get; set; }
-
         [Required]
         [StringLength(CategoryNameMaxLength,MinimumLength =CategoryNameMinLength)]
-        public string Name { get; set; } = null!;
+        public string CategoryName { get; set; } = null!;
 
-        [MaxLength(DescriptionMaxLength)]
-        public string? Description { get; set; }
-       
+        public int CategoryId { get; set; }
+
+        public List<SubCategoryForumModel> Posts { get; set; } = new List<SubCategoryForumModel>();
 
     }
 }

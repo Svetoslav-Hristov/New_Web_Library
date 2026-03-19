@@ -52,25 +52,26 @@
                    class="btn btn-outline-primary">
                     👤 Users List
                 </a>
-                <a class="btn btn-outline-primary btn-lg" asp-area="Identity" asp-page="/Account/Register">
+                <a class="btn btn-outline-success " asp-area="Identity" asp-page="/Account/Register">
                     + Add User
-                </a>
-
-                <a asp-controller="Books"
-                   asp-action="Index"
-                   class="btn btn-outline-secondary">
-                    📚 Books
-                </a>
-                <a class="btn btn-outline-primary"
-                   asp-controller="Books"
-                   asp-action="Create">
-                    + Add Book
                 </a>
                 <a asp-controller="Systems"
                    asp-action="CreateLoan"
                    class="btn btn-outline-success">
                     ➕ Create Loan
                 </a>
+
+                <a asp-controller="Books"
+                   asp-action="Index"
+                   class="btn btn-outline-primary">
+                    📚 Books Catalog
+                </a>
+                <a class="btn btn-outline-success"
+                   asp-controller="Books"
+                   asp-action="Create">
+                    + Add Book
+                </a>
+                
 
             </div>
         </aside>
