@@ -31,7 +31,7 @@ namespace New_Web_Library.Service.Core
 
 
         public async Task<ServiceResult<PostForumModel>> PostDetailModelsPreview(int Id, Guid? userId)
-         {
+        {
 
             Post? post = await _postsRepository.GetByIdAsync(Id);
 
@@ -94,7 +94,7 @@ namespace New_Web_Library.Service.Core
             if (userId != null)
             {
 
-                if (!model.Comments.Any() && model.UserId == userId )
+                if (!model.Comments.Any() && model.UserId == userId)
                 {
                     model.IsAuthor = true;
 
@@ -131,8 +131,8 @@ namespace New_Web_Library.Service.Core
 
             CreateContentViewModel model = new CreateContentViewModel()
             {
-                SubCategoryId=subCategory.Id
-                
+                SubCategoryId = subCategory.Id
+
 
             };
 
@@ -170,7 +170,7 @@ namespace New_Web_Library.Service.Core
                 CreatedOn = DateTime.UtcNow,
                 UserId = userId,
                 User = user,
-                TopicId =subCategory.Id 
+                TopicId = subCategory.Id
 
 
             };
@@ -194,7 +194,7 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            return new ServiceResult<int> { Success = true,Data=newPost.Id };
+            return new ServiceResult<int> { Success = true, Data = newPost.Id };
 
 
         }
@@ -214,7 +214,7 @@ namespace New_Web_Library.Service.Core
             {
                 Title = post.Title,
                 Description = post.Content,
-                PostId =post.Id
+                PostId = post.Id
 
 
             };
@@ -254,8 +254,7 @@ namespace New_Web_Library.Service.Core
             {
                 post.Title = model.Title;
                 post.Content = model.Description;
-                post.CreatedOn = DateTime.UtcNow;
-
+                post.UpdatedAt = DateTime.UtcNow;
                 await _postsRepository.UpdateAsync(post);
 
             }
@@ -274,7 +273,7 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<int>> SoftDeletePost(int Id ,Guid userId)
+        public async Task<ServiceResult<int>> SoftDeletePost(int Id, Guid userId)
         {
             var post = await _postsRepository.GetByIdAsync(Id);
 
@@ -284,7 +283,7 @@ namespace New_Web_Library.Service.Core
             }
 
             var user = await _usersRepository.FindByIdAsync(userId);
-            
+
             if (user == null)
             {
                 return new ServiceResult<int> { Success = false, ErrorMessage = "User not found!" };
@@ -300,17 +299,17 @@ namespace New_Web_Library.Service.Core
             {
 
                 post.IsDeleted = true;
-
+                post.DeleteAt = DateTime.UtcNow;
                 await _postsRepository.UpdateAsync(post);
 
 
             }
             catch (Exception)
             {
-                return new ServiceResult<int> 
+                return new ServiceResult<int>
                 {
                     Success = false,
-                    ErrorMessage = "Unexpected error is occurred while delete post! Please try again later." 
+                    ErrorMessage = "Unexpected error is occurred while delete post! Please try again later."
                 };
 
             }
@@ -349,6 +348,8 @@ namespace New_Web_Library.Service.Core
             {
 
                 post.IsDeleted = false;
+                post.DeleteAt = null;
+                post.UpdatedAt = DateTime.UtcNow;
                 await _postsRepository.UpdateAsync(post);
 
             }

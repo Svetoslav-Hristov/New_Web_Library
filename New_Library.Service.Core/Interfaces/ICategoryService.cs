@@ -19,9 +19,13 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<CategoryFormModel>> EditCategory(int Id);
 
-        Task<ServiceResult<Category>> ConfirmEditCategory(CategoryFormModel model,int Id );
+        Task<ServiceResult<Category>> ConfirmEditCategory(CategoryFormModel model, int Id);
 
         Task<ServiceResult<bool>> SoftDeleteCategory(int Id);
+
+        Task<ServiceResult<bool>> HardDeleteCategory(int Id);
+
+        Task<ServiceResult<bool>> RestoreSoftDeleteCategory(int Id);
 
     }
 }

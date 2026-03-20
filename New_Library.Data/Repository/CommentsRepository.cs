@@ -41,7 +41,7 @@ namespace New_Library.Data.Repository
               .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Comment?> GetDeleteComment(int Id)
+        public async Task<Comment?> GetSoftDeleteComment(int Id)
         {
             return await _dbContext.Comments.IgnoreQueryFilters().Where(c => c.Id == Id).FirstOrDefaultAsync();
            

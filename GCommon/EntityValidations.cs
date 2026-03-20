@@ -67,7 +67,9 @@ namespace New_Web_Library.GCommon
             public const int CategoryNameMaxLength = 50;
             public const int CategoryNameMinLength = 3;
             public const int DescriptionMaxLength = 500;
-           
+
+          
+
 
         }
         public static class Topics

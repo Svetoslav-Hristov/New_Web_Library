@@ -16,7 +16,7 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Comment> GetAllDeleteComments();
 
-        Task<Comment?> GetDeleteComment(int Id);
+        Task<Comment?> GetSoftDeleteComment(int Id);
 
     }
 }

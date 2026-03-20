@@ -17,5 +17,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<Topic?> GetDeleteOrNotSubCategory(int Id);
 
+        IQueryable<Topic>? GetAllCoveredSubCategories();
+
     }
 }

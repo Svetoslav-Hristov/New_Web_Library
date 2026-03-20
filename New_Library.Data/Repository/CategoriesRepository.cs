@@ -50,5 +50,10 @@ namespace New_Library.Data.Repository
             return  deleteCategories;
 
         }
+
+        public async Task<Category?> GetDeleteOrNotCategory(int Id)
+        {
+            return await _dbContext.Categories.IgnoreQueryFilters().Where(c => c.Id == Id).FirstOrDefaultAsync();
+        }
     }
 }

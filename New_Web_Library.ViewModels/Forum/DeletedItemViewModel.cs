@@ -18,6 +18,7 @@ namespace New_Web_Library.ViewModels.Forum
 
         public string? Description { get; set; }
 
+        public DateTime? DeleteAt { get; set; }
        
         public int? ParentId { get; set; }
 

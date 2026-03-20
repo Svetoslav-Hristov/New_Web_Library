@@ -1,14 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using New_Library.Data.Models.Forum;
+﻿using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static New_Web_Library.GCommon.EntityValidations.Categories;
 
 namespace New_Web_Library.Service.Core
 {
@@ -81,6 +76,7 @@ namespace New_Web_Library.Service.Core
 
                 Name = model.Name,
                 Description = model.Description,
+               
             };
 
             try
@@ -149,7 +145,7 @@ namespace New_Web_Library.Service.Core
             {
                 category.Name = model.Name;
                 category.Description = model.Description;
-
+                category.UpdatedAt = DateTime.UtcNow;
                 await _categoriesRepository.UpdateAsync(category);
 
             }
@@ -175,12 +171,13 @@ namespace New_Web_Library.Service.Core
 
             if (category == null)
             {
-                return new ServiceResult<bool> { Success = false, ErrorMessage = "Category not found" };
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Category not found!" };
             }
 
             try
             {
                 category.IsDeleted = true;
+                category.DeleteAt = DateTime.UtcNow;
 
                 await _categoriesRepository.UpdateAsync(category);
 
@@ -199,6 +196,74 @@ namespace New_Web_Library.Service.Core
             return new ServiceResult<bool> { Success = true };
 
           
+        }
+
+        public async Task<ServiceResult<bool>> HardDeleteCategory(int Id)
+        {
+            var category = await _categoriesRepository.GetDeleteOrNotCategory(Id);
+
+            if (category == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Category not found!" };
+            }
+
+            if (category.Topics.Any())
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Category is not empty!" };
+            }
+        
+
+
+
+            try
+            {
+
+                await _categoriesRepository.DeleteAsync(category);
+
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while hard delete category! Please try again later."
+                };
+            }
+
+            return new ServiceResult<bool> { Success = true };
+           
+        }
+
+        public async Task<ServiceResult<bool>> RestoreSoftDeleteCategory(int Id)
+        {
+            var category = await _categoriesRepository.GetDeleteOrNotCategory(Id);
+
+            if (category == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Category not found!" };
+            }
+
+            try
+            {
+                category.IsDeleted = false;
+                category.DeleteAt = null;
+                category.UpdatedAt = DateTime.UtcNow;
+
+                await _categoriesRepository.UpdateAsync(category);
+
+            }
+            catch(Exception)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while restore category! Please try again later."
+                };
+
+            }
+
+            return new ServiceResult<bool> { Success = true };
+
         }
     }
 }

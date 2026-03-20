@@ -4,14 +4,50 @@
 
     var errorRestoreComment = TempData["ErrorRestore"] as string;
 
-    var errorHardDeleteComment = TempData["ErrorHardDeleteComment"] as string;
+    var errorRestoreCategory = TempData["ErrorRestoreCategory"] as string;
 
     var errorRestorePost = TempData["ErrorRestorePost"] as string;
 
+    var errorHardDeleteComment = TempData["ErrorHardDeleteComment"] as string;
+
     var errorHardDeletePost = TempData["ErrorHardDeletePost"] as string;
 
+    var errorHardDeleteCategory = TempData["ErrorHardDeleteCategory"] as string;
+
+    var errorHardDeleteSubCategory = TempData["ErrorHardDeleteSubCategory"] as string;
+
+    var errorRestoreSubCategory = TempData["ErrorRestoreSubCategory"] as string;
 
 }
+
+
+
+@if (!string.IsNullOrEmpty(errorHardDeleteSubCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorHardDeleteSubCategory
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorRestoreCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorRestoreCategory
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorHardDeleteCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorHardDeleteCategory
+    </div>
+
+}
+
 
 @if (!string.IsNullOrEmpty(errorHardDeleteComment))
 {
@@ -76,7 +112,6 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Deleted On</th>
-                        <th>Deleted By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -101,11 +136,26 @@
                                         @item.Type
                                     </span>
                                 }
+                                else if (item.Type=="Covered/SubCategory")
+                                {
+                                    <span class="badge bg-danger">
+                                        @item.Type
+                                    </span>
+                                    
+                                }
                                 else if (item.Type == "Post")
                                 {
                                     <span class="badge bg-success">
                                         @item.Type
                                     </span>
+                                }
+                                else if (item.Type == "Covered/Post")
+                                {
+
+                                    <span class="badge bg-success">
+                                        @item.Type
+                                    </span>
+
                                 }
                                 else
                                 {
@@ -119,6 +169,7 @@
                             <td>@item.Name</td>
 
                             <td>@item.Description</td>
+                            <td>@(item.DeleteAt.HasValue? item.DeleteAt.Value.ToLocalTime().ToString(ForumTimeFormat):"N/A") </td>
 
                             <td>
                                 @if (item.Type == "Category")
@@ -179,6 +230,7 @@
                                         </form>
                                     </div>
                                 }
+
                                 else if (item.Type == "Post")
                                 {
                                     <div class="d-flex gap-2">
@@ -207,7 +259,7 @@
                                         </form>
                                     </div>
                                 }
-                                else
+                                else if(item.Type=="Comment")
                                 {
                                     <div class="d-flex gap-2">
                                         <form asp-controller="Comments"

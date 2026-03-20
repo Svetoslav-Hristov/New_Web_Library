@@ -17,6 +17,10 @@ namespace New_Library.Data.Models.Forum
         public DateTime CreatedOn { get; set; }
         public bool IsDeleted { get; set; }
 
+        public DateTime? DeleteAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
         [ForeignKey(nameof(Post))]
         public int PostId { get; set; }
         public virtual Post Post { get; set; } = null!;

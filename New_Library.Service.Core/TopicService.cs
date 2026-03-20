@@ -18,8 +18,8 @@ namespace New_Web_Library.Service.Core
         private readonly ITopicsRepository _topicsRepository;
         private readonly ICategoriesRepository _categoriesRepository;
         private readonly IUsersRepository _usersRepository;
-        public TopicService(ITopicsRepository topicsRepository,ICategoriesRepository categoriesRepository
-            ,IUsersRepository usersRepository)
+        public TopicService(ITopicsRepository topicsRepository, ICategoriesRepository categoriesRepository
+            , IUsersRepository usersRepository)
         {
             this._topicsRepository = topicsRepository;
             this._categoriesRepository = categoriesRepository;
@@ -70,7 +70,7 @@ namespace New_Web_Library.Service.Core
                 Title = model.TopicName,
                 UserId = user.Id,
                 CategoryId = model.CategoryId,
-                CreatedOn=DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow
 
 
             };
@@ -94,7 +94,7 @@ namespace New_Web_Library.Service.Core
             return new ServiceResult<Topic> { Success = true };
 
 
-           
+
         }
 
         public async Task<ServiceResult<CreateSubCategoryViewModel>> EditSubCategory(int Id)
@@ -103,15 +103,15 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<CreateSubCategoryViewModel> { Success = false, ErrorMessage = "Sub category not found!" };
+                return new ServiceResult<CreateSubCategoryViewModel> { Success = false, ErrorMessage = "SubCategory not found!" };
             }
 
             CreateSubCategoryViewModel model = new CreateSubCategoryViewModel()
             {
                 TopicName = subCategory.Title,
                 CategoryId = subCategory.CategoryId,
-                SubCategoryId=Id,
-               
+                SubCategoryId = Id,
+
 
 
             };
@@ -121,7 +121,7 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model ,int Id)
+        public async Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model, int Id)
         {
 
             Topic? subCategory = await _topicsRepository.GetByIdAsync<Topic>(Id);
@@ -131,7 +131,7 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "Invalid Sub Category!" };
             }
 
-            
+
             if (string.IsNullOrEmpty(model.TopicName))
             {
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "Invalid data!" };
@@ -140,22 +140,21 @@ namespace New_Web_Library.Service.Core
             try
             {
                 subCategory.Title = model.TopicName;
-
-
+                subCategory.UpdatedAt = DateTime.UtcNow;
                 await _topicsRepository.UpdateAsync(subCategory);
 
             }
             catch (Exception)
             {
-                return new ServiceResult<Topic> 
+                return new ServiceResult<Topic>
                 {
                     Success = false,
-                    ErrorMessage = "Unexpected error is occurred while edit sub-category! Please try again later." 
+                    ErrorMessage = "Unexpected error is occurred while edit sub-category! Please try again later."
                 };
 
             }
 
-            return new ServiceResult<Topic> { Success = true ,Data=subCategory };
+            return new ServiceResult<Topic> { Success = true, Data = subCategory };
 
         }
 
@@ -163,9 +162,9 @@ namespace New_Web_Library.Service.Core
         {
 
             List<Topic> subCategories = await _topicsRepository.GetAllSubCategoryWithComments(Id);
- 
-            Topic? subCategory = subCategories.FirstOrDefault(c => c.Id == Id); 
-           
+
+            Topic? subCategory = subCategories.FirstOrDefault(c => c.Id == Id);
+
             if (subCategory == null)
             {
                 return new ServiceResult<SubCategoryViewModel> { Success = false, ErrorMessage = "SubCategory not found!" };
@@ -174,7 +173,7 @@ namespace New_Web_Library.Service.Core
 
 
 
-            SubCategoryViewModel model =  new SubCategoryViewModel()
+            SubCategoryViewModel model = new SubCategoryViewModel()
             {
 
                 CategoryName = subCategory.Title,
@@ -194,7 +193,7 @@ namespace New_Web_Library.Service.Core
 
 
 
-            if (subCategory==null)
+            if (subCategory == null)
             {
 
                 return new ServiceResult<SubCategoryViewModel> { Success = false, ErrorMessage = "Not found!" };
@@ -202,7 +201,7 @@ namespace New_Web_Library.Service.Core
 
 
 
-            return new ServiceResult<SubCategoryViewModel> { Success = true, Data = model};
+            return new ServiceResult<SubCategoryViewModel> { Success = true, Data = model };
 
         }
 
@@ -218,21 +217,108 @@ namespace New_Web_Library.Service.Core
             try
             {
                 subCategory.IsDeleted = true;
+                subCategory.DeleteAt = DateTime.UtcNow;
                 await _topicsRepository.UpdateAsync(subCategory);
 
             }
             catch (Exception)
             {
-                return new ServiceResult<bool> 
+                return new ServiceResult<bool>
                 {
-                    Success=false,
-                    ErrorMessage= "Unexpected error is occurred while delete sub category! Please try again later."
-                };                
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while delete sub category! Please try again later."
+                };
 
             }
 
             return new ServiceResult<bool> { Success = true };
-           
+
+        }
+
+        public async Task<ServiceResult<bool>> HardDeleteSubCategory(int Id)
+        {
+            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(Id);
+
+            if (subCategory == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Sub Category not found!" };
+            }
+
+            if (subCategory.Posts.Any())
+            {
+
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Topic has posts" };
+
+            }
+
+
+            try
+            {
+                await _topicsRepository.DeleteAsync(subCategory);
+
+            }
+            catch (Exception)
+            {
+
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while hard delete SubCategory! Please try again later."
+                };
+
+            }
+
+            return new ServiceResult<bool> { Success = true };
+
+        }
+
+        public async Task<ServiceResult<bool>> RestoreSubCategory(int Id)
+        {
+            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(Id);
+
+            if (subCategory == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Sub Category not found!" };
+            }
+
+            var category = await _categoriesRepository.GetDeleteOrNotCategory(Id);
+
+            if (category != null)
+            {
+                if (category.IsDeleted)
+                {
+                    return new ServiceResult<bool>
+                    {
+                        Success = false,
+                        ErrorMessage = "You won't be able to return the SubCategory because the Category is also missing!"
+                    };
+                }
+
+            }
+
+
+            try
+            {
+                subCategory.IsDeleted = false;
+                subCategory.DeleteAt = null;
+                subCategory.UpdatedAt = DateTime.UtcNow;
+
+                await _topicsRepository.UpdateAsync(subCategory);
+
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while restore SubCategory! Please try again later."
+                };
+
+            }
+
+            return new ServiceResult<bool> { Success = true };
+
+
         }
     }
 }

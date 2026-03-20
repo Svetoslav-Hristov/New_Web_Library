@@ -17,5 +17,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<Post?> GetDeleteOrNotPost(int Id);
 
+        IQueryable<Post> CoveredPosts(List<int> coveredParentSub);
+
     }
 }

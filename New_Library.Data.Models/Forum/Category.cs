@@ -17,6 +17,9 @@ namespace New_Library.Data.Models.Forum
         public string? Description { get ; set ; }
         public bool IsDeleted { get ; set ; }
 
+        public DateTime? DeleteAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
         public virtual ICollection<Topic> Topics { get; set; } = new List<Topic>();
 
     }

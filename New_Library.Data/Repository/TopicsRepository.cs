@@ -17,6 +17,16 @@ namespace New_Library.Data.Repository
         {
         }
 
+        public  IQueryable<Topic>? GetAllCoveredSubCategories()
+        {
+            var subCategories =  _dbContext.Topics.IgnoreQueryFilters().Include(t=>t.Category)
+                .Where(t => !t.IsDeleted && t.Category.IsDeleted)
+                .OrderBy(t => t.CategoryId);
+
+
+            return subCategories;
+        }
+
         public IQueryable<Topic> GetAllDeleteSubCategories()
         {
             var deleteSubCategories = _dbContext.Topics.IgnoreQueryFilters().Where(c => c.IsDeleted);
@@ -26,9 +36,9 @@ namespace New_Library.Data.Repository
 
         public async Task<List<Topic>> GetAllSubCategoryWithComments(int topicId)
         {
-            var topic = await _dbContext.Topics.Where(t => t.Id == topicId)
-            .Include(t => t.User).Include(t => t.Posts).ThenInclude(p=>p.Comments)
-            .ThenInclude(p => p.User)
+            var topic =await  _dbContext.Topics.Where(t => t.Id == topicId)
+            .Include(t => t.User).Include(t => t.Posts).ThenInclude(p=>p.User).Include(t=>t.Posts).ThenInclude(p=>p.Comments)
+            .ThenInclude(c => c.User)
             .Include(t => t.Category).ToListAsync();
 
 

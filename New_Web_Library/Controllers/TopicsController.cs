@@ -80,6 +80,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditSubCategory(int Id)
         {
             var result = await _topicService.EditSubCategory(Id);
@@ -96,6 +97,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
+        [Authorize]
 
         public async Task<IActionResult> EditSubCategory(CreateSubCategoryViewModel model, [FromRoute] int Id)
         {
@@ -118,6 +120,8 @@ namespace New_Web_Library.Controllers
         }
 
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteSubCategory(int Id)
         {
             var result = await _topicService.SoftDeleteSubCategory(Id);
@@ -131,6 +135,41 @@ namespace New_Web_Library.Controllers
 
             return RedirectToAction("Index", "Categories");
 
+        }
+
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> HardDelete (int Id)
+        {
+            var result = await _topicService.HardDeleteSubCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorHardDeleteSubCategory"] = result.ErrorMessage;
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
+
+        }
+
+
+        [HttpPost]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> RestoreSubCategory (int Id)
+        {
+            var result = await _topicService.RestoreSubCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorRestoreSubCategory"] = result.ErrorMessage;
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
         }
 
     }

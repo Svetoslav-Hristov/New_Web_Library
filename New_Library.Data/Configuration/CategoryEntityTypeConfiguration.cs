@@ -28,7 +28,31 @@ namespace New_Library.Data.Configuration
                 Id = 4,
                 Name = "Fantasy",
                 Description = "Fantasy worlds and stories"
-            }
+            },
+            new Category {
+            Id = 5,
+            Name = "Science Fiction",
+            Description = "Sci-fi adventures and futuristic stories"
+            
+            },
+            new Category {
+            Id = 6,
+            Name = "Historical Fiction",
+            Description = "Stories set in historical periods"
+           
+           },
+           new Category {
+           Id = 7,
+           Name = "Mystery & Thriller",
+           Description = "Suspenseful and mysterious stories"
+            
+           },
+           new Category {
+           Id = 8,
+           Name = "Non-Fiction",
+           Description = "Informative and factual works"
+            
+           }
 
 
         };

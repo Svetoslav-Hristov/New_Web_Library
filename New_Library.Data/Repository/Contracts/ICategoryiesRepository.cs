@@ -12,5 +12,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<bool> ExistByName(string name,int Id);
 
+        Task<Category?> GetDeleteOrNotCategory(int Id);
+
     }
 }

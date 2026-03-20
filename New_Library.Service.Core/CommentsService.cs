@@ -98,6 +98,7 @@ namespace New_Web_Library.Service.Core
 
             try
             {
+                
                 await _commentRepository.AddAsync(newComment);
 
             }
@@ -163,8 +164,8 @@ namespace New_Web_Library.Service.Core
 
             try
             {
-                comment.CreatedOn = DateTime.UtcNow;
                 comment.Content = model.Description;
+                comment.UpdatedAt = DateTime.UtcNow;
                 await _commentRepository.UpdateAsync(comment);
 
             }
@@ -213,7 +214,7 @@ namespace New_Web_Library.Service.Core
             {
 
                 comment.IsDeleted = true;
-
+                comment.DeleteAt = DateTime.UtcNow;
                 await _commentRepository.UpdateAsync(comment);
 
             }
@@ -236,7 +237,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> RestoreDeleteComment(int Id)
         {
-            var comment = await _commentRepository.GetDeleteComment(Id);
+            var comment = await _commentRepository.GetSoftDeleteComment(Id);
 
             if (comment == null)
             {
@@ -263,6 +264,8 @@ namespace New_Web_Library.Service.Core
             {
 
                 comment.IsDeleted = false;
+                comment.DeleteAt = null;
+                comment.UpdatedAt = DateTime.UtcNow;
                 await _commentRepository.UpdateAsync(comment);
 
             }
@@ -283,7 +286,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> HardDeleteComment(int Id)
         {
-            var comment = await _commentRepository.GetDeleteComment(Id);
+            var comment = await _commentRepository.GetSoftDeleteComment(Id);
 
             if (comment == null)
             {
@@ -296,12 +299,12 @@ namespace New_Web_Library.Service.Core
                 await _commentRepository.DeleteAsync(comment);
 
             }
-            catch(Exception)
+            catch (Exception)
             {
-                return new ServiceResult<bool> 
-                { 
+                return new ServiceResult<bool>
+                {
                     Success = false,
-                    ErrorMessage = "Unexpected error is occurred while hard delete comment! Please try again later." 
+                    ErrorMessage = "Unexpected error is occurred while hard delete comment! Please try again later."
                 };
 
             }

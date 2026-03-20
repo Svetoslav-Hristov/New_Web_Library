@@ -566,7 +566,9 @@ namespace New_Library.Services.Core
                       Id = c.Id,
                       Name = c.Name,
                       Type = "Category",
-                      Description = c.Description
+                      Description = c.Description,
+                      DeleteAt=c.DeleteAt,
+                      
 
                   })
                   .ToListAsync();
@@ -580,10 +582,28 @@ namespace New_Library.Services.Core
                        Name = t.Title,
                        Type = "SubCategory",
                        Description = null,
+                       DeleteAt=t.DeleteAt,
                        ParentId = t.CategoryId,
                        ParentName = t.Category.Name
                    })
                    .ToListAsync();
+
+
+            var allCoveredSubCategories =await _topicsRepository.GetAllCoveredSubCategories().ToListAsync();
+
+            var coverSubCategories =  allCoveredSubCategories
+                   .Select(t => new DeletedItemViewModel
+                   {
+                       Id = t.Id,
+                       Name = t.Title,
+                       Type = "Covered/SubCategory",
+                       Description = null,
+                       ParentId = t.CategoryId,
+                       ParentName = t.Category?.Name ?? "Deleted category"
+                   })
+                   .ToList();
+
+
 
 
             var allDeletePosts = _postsRepository.AllDeletePost();
@@ -596,10 +616,33 @@ namespace New_Library.Services.Core
                 Name = p.Title,
                 Type = "Post",
                 Description = p.Content,
+                DeleteAt=p.DeleteAt,
                 ParentId = p.TopicId,
                 ParentName = p.Topic.Title
             })
             .ToListAsync();
+
+            List<int> coveredParentSub =  allCoveredSubCategories.Select(s => s.Id).Distinct().ToList();
+
+            var allCoveredPost = _postsRepository.CoveredPosts(coveredParentSub);
+
+            var coveredPosts = await allCoveredPost
+            .Select(p => new DeletedItemViewModel
+            {
+                Id = p.Id,
+                Name = p.Title,
+                Type = "Covered/Post",
+                Description = p.Content,
+                DeleteAt = p.DeleteAt,
+                ParentId = p.TopicId,
+                ParentName = p.Topic.Title
+            })
+            .ToListAsync();
+
+           
+
+
+
 
             IQueryable<Comment> allDeleteComments = _commentsRepository.GetAllDeleteComments();
 
@@ -610,6 +653,7 @@ namespace New_Library.Services.Core
                     Name = "Comment",
                     Type = "Comment",
                     Description = c.Content,
+                    DeleteAt=c.DeleteAt,
                     ParentId = c.PostId,
                     ParentName = c.Post.Title
                 })
@@ -618,7 +662,9 @@ namespace New_Library.Services.Core
 
             deleteItems.AddRange(categories);
             deleteItems.AddRange(subCategories);
+            deleteItems.AddRange(coverSubCategories);
             deleteItems.AddRange(posts);
+            deleteItems.AddRange(coveredPosts);
             deleteItems.AddRange(comments);
 
 

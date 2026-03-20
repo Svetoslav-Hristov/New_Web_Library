@@ -45,8 +45,6 @@ namespace New_Web_Library.Data
 
             modelBuilder.Entity<User>().HasIndex(u => u.PhoneNumber).IsUnique();
 
-            modelBuilder.Entity<User>().HasQueryFilter(c => !c.IsDeleted);
-
             modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
 
             modelBuilder.Entity<Topic>().HasQueryFilter(t => !t.IsDeleted);

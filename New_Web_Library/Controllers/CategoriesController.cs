@@ -127,6 +127,38 @@ namespace New_Web_Library.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> HardDeleteCategory(int Id)
+        {
+            var result = await _categoryService.HardDeleteCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorHardDeleteCategory"] = result.ErrorMessage;
+
+               return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
+        }
+
+        public async Task<IActionResult> RestoreCategory(int Id)
+        {
+            var result = await _categoryService.RestoreSoftDeleteCategory(Id);
+
+            if (!result.Success)
+            {
+                TempData["ErrorRestoreCategory"] = result.ErrorMessage;
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+
+            }
+
+            return RedirectToAction("ForumSupportPreview", "Systems");
+
+        }
+
+
 
     }
 }

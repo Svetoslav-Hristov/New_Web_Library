@@ -23,5 +23,9 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<bool>> SoftDeleteSubCategory(int Id);
 
+        Task<ServiceResult<bool>> HardDeleteSubCategory(int Id);
+
+        Task<ServiceResult<bool>> RestoreSubCategory(int Id);
+
     }
 }

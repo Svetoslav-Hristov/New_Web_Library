@@ -2,6 +2,7 @@
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
@@ -21,6 +22,18 @@ namespace New_Library.Data.Repository
 
             return allDelete;
            
+        }
+
+        public IQueryable<Post> CoveredPosts(List<int> coveredParentSub)
+        {
+            var coveredPost = _dbContext.Posts.IgnoreQueryFilters()
+                .Include(p => p.Topic).Where(p => !p.IsDeleted && p.Topic != null)
+                .Where(p => p.Topic.IsDeleted || coveredParentSub.Contains(p.TopicId))
+                .OrderBy(p => p.TopicId);
+
+
+
+            return coveredPost;
         }
 
         public async Task<Dictionary<Guid, int>> GetAllCountPosts(List<Guid> usersId)

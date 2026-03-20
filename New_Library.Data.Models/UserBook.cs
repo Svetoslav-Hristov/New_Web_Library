@@ -24,7 +24,7 @@ namespace New_Web_Library.Data.Models
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
 
-        public virtual User User { get; set; } = null!;
+        public virtual User User { get; set; }
 
         [ForeignKey(nameof(Book))]
         public Guid BookId { get; set; }

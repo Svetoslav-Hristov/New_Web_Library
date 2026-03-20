@@ -11,7 +11,7 @@ namespace New_Web_Library.ViewModels.Forum
 
         public int CategoryId { get; set; }
 
-        public List<SubCategoryForumModel> Posts { get; set; } = new List<SubCategoryForumModel>();
+        public List<SubCategoryForumModel>? Posts { get; set; } = new List<SubCategoryForumModel>();
 
     }
 }
