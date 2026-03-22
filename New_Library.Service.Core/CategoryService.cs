@@ -3,17 +3,19 @@ using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
-using static New_Web_Library.GCommon.EntityValidations.Categories;
+using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Web_Library.Service.Core
 {
     public class CategoryService : ICategoryService
     {
         private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ITopicsRepository _topicsRepository;
 
-        public CategoryService(ICategoriesRepository categoriesRepository)
+        public CategoryService(ICategoriesRepository categoriesRepository,ITopicsRepository topicsRepository)
         {
             this._categoriesRepository = categoriesRepository;
+            this._topicsRepository = topicsRepository;
             
         }
 
@@ -23,14 +25,21 @@ namespace New_Web_Library.Service.Core
 
            List<Category> allCategories =await _categoriesRepository.GetAllCategoriesWithSubCategories();
 
+            int specialCategoryId = 0;
+            
+            var specialCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
 
-
+            if (specialCategory != null)
+            {
+                specialCategoryId = specialCategory.Id;
+            }
+            
             IEnumerable<IndexForumModel> categories = allCategories.Select(c => new IndexForumModel()
              {
                  Id = c.Id,
                  Name = c.Name,
                  Description = c.Description,
-                 Topics = c.Topics.Select(t => new TopicForumModel()
+                 Topics = c.Topics.Where(t=>t.Title!=TopicSpecialName ).Select(t => new TopicForumModel()
                  {
 
                      Id = t.Id,
@@ -38,7 +47,9 @@ namespace New_Web_Library.Service.Core
                  }).ToArray(),
                  PostCount = c.Topics.SelectMany(t => t.Posts).Count(),
                  LastPostTitle = c.Topics.SelectMany(t => t.Posts).OrderByDescending(p => p.CreatedOn)
-                .Select(p => p.Title).FirstOrDefault()
+                .Where(p=>p.TopicId!=specialCategoryId).Select(p => p.Title).FirstOrDefault(),
+                 LastActive=c.Topics.SelectMany(t=>t.Posts).OrderByDescending(p=>p.CreatedOn).
+                 Where(p=>p.TopicId!=specialCategoryId).Select(p=>(DateTime?)p.CreatedOn).FirstOrDefault()
 
 
              }).ToList();

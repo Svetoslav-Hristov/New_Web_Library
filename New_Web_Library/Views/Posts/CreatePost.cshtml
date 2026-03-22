@@ -45,7 +45,11 @@
                     <button type="submit" class="btn btn-primary">
                         @title
                     </button>
-                    <a asp-controller="@formatExitController" asp-action="@formatExitAction" asp-route-Id="@exitId" class="btn btn-primary">Cancel</a>
+                    <a href="#"
+                       onclick="if (document.referrer) { history.back(); } else { window.location='Categories/Index'}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
                 </form>
 
             </div>

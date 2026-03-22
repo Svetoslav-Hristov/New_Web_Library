@@ -53,7 +53,16 @@ namespace New_Library.Data.Repository
 
         public async Task<Category?> GetDeleteOrNotCategory(int Id)
         {
-            return await _dbContext.Categories.IgnoreQueryFilters().Where(c => c.Id == Id).FirstOrDefaultAsync();
+            return await _dbContext.Categories.IgnoreQueryFilters().Include(c=>c.Topics).Where(c => c.Id == Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Category?> LastCategory()
+        {
+            var lastCategory = await _dbContext.Categories.OrderByDescending(c => c.Id).FirstOrDefaultAsync();
+
+
+            return lastCategory;
+
         }
     }
 }

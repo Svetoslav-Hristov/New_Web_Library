@@ -9,7 +9,7 @@ namespace New_Library.Data.Repository.Contracts
 {
     public interface ITopicsRepository:IBaseRepository
     {
-        Task<List<Topic>> GetAllSubCategoryWithComments(int topicId);
+        Task<Topic?> GetAllSubCategoryWithComments(int topicId);
 
         Task<bool> IsExistWithSameName(string title, int topicId);
 
@@ -18,6 +18,8 @@ namespace New_Library.Data.Repository.Contracts
         Task<Topic?> GetDeleteOrNotSubCategory(int Id);
 
         IQueryable<Topic>? GetAllCoveredSubCategories();
+
+        Task<Topic?> GetSubCategoryByName(string name);
 
     }
 }

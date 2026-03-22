@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using New_Library.Data.Models.Forum;
-using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
 using System.Security.Claims;
@@ -12,16 +10,19 @@ namespace New_Web_Library.Controllers
     {
 
         private readonly IPostsService _postsService;
+        private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IPostsService postsService)
+        public PostsController(IPostsService postsService, ILogger<PostsController> logger)
         {
             this._postsService = postsService;
+            this._logger = logger;
+
         }
 
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> PostPreview(int Id)
+        public async Task<IActionResult> PostPreview(int Id ,int pageNumber=1,int pageSize=4)
         {
             Guid? userId = null;
 
@@ -31,16 +32,17 @@ namespace New_Web_Library.Controllers
             }
 
 
-            var result = await _postsService.PostDetailModelsPreview(Id, userId);
+            var result = await _postsService.PostDetailModelsPreview(Id, userId,pageNumber,pageSize);
 
             if (!result.Success)
             {
-                TempData["ErrorPost"] = result.ErrorMessage;
 
-                return RedirectToAction("Index", "Categories");
+                _logger.LogError("Post not found: Id = {PostId}", Id);
+
+                return NotFound();
             }
 
-
+            ViewBag.Page = pageNumber;
 
             return View(result.Data);
         }
@@ -57,7 +59,9 @@ namespace New_Web_Library.Controllers
             {
                 TempData["ErrorPost"] = model.ErrorMessage;
 
-                return RedirectToAction("SubCategories", "Topics", new { Id });
+                _logger.LogWarning("{0} Id = {1}", model.ErrorMessage, Id);
+
+                return NotFound();
             }
 
             return View(model.Data);
@@ -81,9 +85,17 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                TempData["ErrorPost"] = result.ErrorMessage;
+                if (result.ErrorMessage.Contains("Unexpected"))
+                {
+                    _logger.LogError(result.ErrorMessage);
 
-                return RedirectToAction("SubCategories", "Topics", new { Id });
+                    return  StatusCode(500);
+                }
+
+
+                _logger.LogWarning(result.ErrorMessage);
+
+                return NotFound();
             }
 
 
@@ -99,14 +111,15 @@ namespace New_Web_Library.Controllers
         public async Task<IActionResult> EditPost(int Id)
         {
 
-
             var result = await _postsService.EditPost(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorEditPost"] = result.ErrorMessage;
+                _logger.LogWarning("{0} Id = {1}", result.ErrorMessage, Id);
 
-                return RedirectToAction(nameof(PostPreview), new { id = Id });
+                return NotFound();
+
+
             }
 
             return View("CreatePost", result.Data);
@@ -128,6 +141,20 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
+                if(result.ErrorMessage.Contains("not found!"))
+                {
+                    _logger.LogWarning(result.ErrorMessage);
+
+                    return NotFound();
+                }
+                else if (result.ErrorMessage.Contains("Unexpected"))
+                {
+                    _logger.LogError(result.ErrorMessage);
+
+                    return StatusCode(500);
+                }
+                
+
                 TempData["ErrorEditPost"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(PostPreview), new { id = topicId });
@@ -135,9 +162,6 @@ namespace New_Web_Library.Controllers
             }
 
             return RedirectToAction(nameof(PostPreview), new { id = Id });
-
-
-
 
         }
 
@@ -150,14 +174,41 @@ namespace New_Web_Library.Controllers
 
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+           
+
             var result = await _postsService.SoftDeletePost(Id, userId);
 
             if (!result.Success)
             {
-                TempData["ErrorDeletePost"] = result.ErrorMessage;
+                
+                if(result.ErrorMessage.Contains("not found!"))
+                {
+                    _logger.LogWarning(result.ErrorMessage);
+
+                    return NotFound();
+
+                }
+                else if (result.ErrorMessage.Contains("Unexpected"))
+                {
+                    _logger.LogError(result.ErrorMessage);
+
+                    return StatusCode(500);
+                }
+
+                
+
+                    TempData["ErrorDeletePost"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(PostPreview), new { id = Id });
+       
             }
+
+            if (result.Data == 9)
+            {
+                return RedirectToAction("ForumSupportPreview", "Systems");
+            }
+           
+
 
             return RedirectToAction("SubCategory", "Topics", new { id = result.Data });
 
@@ -195,6 +246,26 @@ namespace New_Web_Library.Controllers
             }
 
             return RedirectToAction("ForumSupportPreview", "Systems");
+
+        }
+
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> UserComplaint(int Id)
+        {
+            var post = await _postsService.GetUserComplaint(Id);
+
+            if (!post.Success)
+            {
+                _logger.LogWarning(post.ErrorMessage);
+
+                return RedirectToAction("ForumSupportPreview", "Systems");
+
+            }
+
+
+            return View(post.Data);
+
 
         }
 

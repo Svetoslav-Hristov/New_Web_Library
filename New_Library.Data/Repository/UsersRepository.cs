@@ -60,5 +60,14 @@ namespace New_Library.Data.Repository
 
             return  foundUser;
         }
+
+        public async Task<bool> AdminOrNot(Guid userId)
+        {
+            var isSysAdmin = await _dbContext.UserRoles.Where(ur => ur.UserId == userId).Join(_dbContext.Roles,
+              ur => ur.RoleId, r => r.Id,(ur, r) => r.Name).AnyAsync(name => name == "Admin");
+
+            return isSysAdmin;
+
+        }
     }
 }

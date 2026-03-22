@@ -18,5 +18,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<Comment?> GetSoftDeleteComment(int Id);
 
+        Task<int> GetAllCommentsCount(Guid userId);
+
     }
 }

@@ -20,5 +20,7 @@ namespace New_Web_Library.ViewModels.Forum
 
         public string? LastPostTitle { get; set; }
 
+        public DateTime? LastActive { get; set; }
+ 
     }
 }

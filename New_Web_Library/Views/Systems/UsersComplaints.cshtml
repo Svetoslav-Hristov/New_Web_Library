@@ -1,0 +1,71 @@
+﻿@model SubCategoryViewModel
+
+@{
+    Layout = "_ForumLayout";
+}
+
+
+<div class="container-fluid px-0">
+    <div class="row">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="border-end bg-light p-3" style="width: 180px; min-height: 100vh;">
+            <h5 class="mb-3">Menu</h5>
+            <div class="d-flex flex-column gap-2">
+                <a asp-controller="Systems"
+                   asp-action="ForumSupportPreview"
+                   class="btn btn-outline-primary">
+                    Back To Items
+                </a>
+            </div>
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div class="col">
+
+            <h3 class="category-title">@Model.CategoryName</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Post</th>
+                        <th>Author</th>
+                        <th>Created</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var post in Model.Posts)
+                    {
+                        <tr>
+                            <td>
+                                @if (post.CommentCount > 0)
+                                {
+                                    <span class="badge bg-primary">Complains</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">New Complains</span>
+                                }
+
+                                <a asp-controller="Posts"
+                                   asp-action="UserComplaint"
+                                   asp-route-id="@post.Id"
+                                   style="color: cornflowerblue; font-weight: bold; text-decoration: none;">
+                                    @post.PostTitle
+                                </a>
+                            </td>
+
+                            <td>@post.PostAuthor</td>
+                            <td>@post.CreatedOn.ToLocalTime().ToString(ForumTimeFormat)</td>
+                            <td>@post.CommentCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>

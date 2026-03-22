@@ -1,15 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using New_Library.Data.Models.Forum;
+﻿using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Web_Library.Service.Core
 {
@@ -161,9 +156,8 @@ namespace New_Web_Library.Service.Core
         public async Task<ServiceResult<SubCategoryViewModel>> SubCategoryIndexPreview(int Id)
         {
 
-            List<Topic> subCategories = await _topicsRepository.GetAllSubCategoryWithComments(Id);
+            Topic? subCategory = await _topicsRepository.GetAllSubCategoryWithComments(Id);
 
-            Topic? subCategory = subCategories.FirstOrDefault(c => c.Id == Id);
 
             if (subCategory == null)
             {
@@ -192,12 +186,6 @@ namespace New_Web_Library.Service.Core
 
 
 
-
-            if (subCategory == null)
-            {
-
-                return new ServiceResult<SubCategoryViewModel> { Success = false, ErrorMessage = "Not found!" };
-            }
 
 
 
@@ -247,7 +235,7 @@ namespace New_Web_Library.Service.Core
             if (subCategory.Posts.Any())
             {
 
-                return new ServiceResult<bool> { Success = false, ErrorMessage = "Topic has posts" };
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Sub Category has posts!" };
 
             }
 
@@ -285,7 +273,7 @@ namespace New_Web_Library.Service.Core
 
             if (category != null)
             {
-                if (category.IsDeleted)
+                if (!category.IsDeleted)
                 {
                     return new ServiceResult<bool>
                     {
@@ -320,5 +308,58 @@ namespace New_Web_Library.Service.Core
 
 
         }
+
+        public async Task<ServiceResult<Topic>> GetOrCreateSpecialSubCategory(Guid userId)
+        {
+           
+
+            var subCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
+
+            if (subCategory != null)
+            {
+
+                return new ServiceResult<Topic> { Success = true, Data = subCategory };
+            }
+
+
+            var lastCategory = await _categoriesRepository.LastCategory();
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            Topic special = new Topic()
+            {
+
+                Title = TopicSpecialName,
+                UserId = userId,
+                User = user,
+                Category = lastCategory,
+                CategoryId = lastCategory.Id,
+                CreatedOn = DateTime.UtcNow,
+            };
+
+
+            try
+            {
+                await _topicsRepository.AddAsync(special);
+
+            }
+            catch
+            {
+
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while create special SubCategory!Please try again later. "
+                };
+
+               
+
+            }
+
+            return new ServiceResult<Topic> { Success = true, Data = special };
+
+        }
+
+        
     }
 }

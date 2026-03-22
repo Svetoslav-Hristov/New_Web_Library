@@ -14,5 +14,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<Category?> GetDeleteOrNotCategory(int Id);
 
+        Task<Category?> LastCategory();
+
     }
 }

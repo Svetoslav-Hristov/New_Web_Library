@@ -17,6 +17,8 @@ namespace New_Library.Data.Repository.Contracts
 
         Task UpdateAsync<T>(T entity) where T : class;
 
+        Task UpdateRangeAsync<T>(IEnumerable<T> entities) where T : class;
+
         Task DeleteAsync<T>(T entity) where T : class;
     }
 }

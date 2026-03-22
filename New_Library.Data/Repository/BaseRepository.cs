@@ -34,10 +34,19 @@ namespace New_Library.Data.Repository
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task UpdateRangeAsync<T>(IEnumerable<T> entities) where T : class
+        {
+            _dbContext.Set<T>().UpdateRange(entities);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
         public async Task DeleteAsync<T>(T entity) where T : class
         {
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+
+
     }
 }

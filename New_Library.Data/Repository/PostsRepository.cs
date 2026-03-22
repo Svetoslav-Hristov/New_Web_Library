@@ -52,6 +52,11 @@ namespace New_Library.Data.Repository
 
         }
 
+        public async Task<int> GetAllPostCount(Guid userId)
+        {
+            return  await _dbContext.Posts.AsNoTracking().Where(p => p.UserId == userId).CountAsync();
+        }
+
         public async Task<Post?> GetByIdAsync(int Id)
         {
              var post = await _dbContext.Posts.Include(p=>p.User).Include(p=>p.Comments).ThenInclude(c=>c.User).

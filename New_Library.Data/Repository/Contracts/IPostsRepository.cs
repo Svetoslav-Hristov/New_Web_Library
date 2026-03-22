@@ -19,5 +19,7 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Post> CoveredPosts(List<int> coveredParentSub);
 
+         Task<int> GetAllPostCount(Guid userId);
+
     }
 }

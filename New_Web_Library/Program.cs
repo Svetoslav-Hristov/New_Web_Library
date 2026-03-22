@@ -14,7 +14,7 @@ using New_Web_Library.Services.Core.Interfaces;
 namespace New_Web_Library
 {
     using static New_Web_Library.GCommon.EntityValidations.Admin;
-
+    using static New_Web_Library.GCommon.EntityValidations.IdentitySession;
     public class Program
     {
         public static async Task Main(string[] args)
@@ -38,6 +38,22 @@ namespace New_Web_Library
                .AddRoles<IdentityRole<Guid>>()
                .AddEntityFrameworkStores<LibraryDbContext>();
 
+            builder.Services.ConfigureApplicationCookie(options =>   
+            {
+
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(SessionTimeOut);
+
+                options.SlidingExpiration = true;
+
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+
+                
+                options.Cookie.IsEssential = true;
+                options.Cookie.HttpOnly = true;
+            });
+
+
 
             builder.Services.AddControllersWithViews();
 
@@ -55,16 +71,15 @@ namespace New_Web_Library
 
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (!app.Environment.IsDevelopment())
             {
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Welcome/Error500"); // за 500
                 app.UseHsts();
             }
+        
+                app.UseStatusCodePagesWithReExecute("/Welcome/Error{0}");
+
+            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

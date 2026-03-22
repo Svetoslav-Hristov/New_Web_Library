@@ -1,4 +1,4 @@
-﻿@model PostForumModel
+﻿@model PostForumPagingModel
 @{
 
     Layout = "_ForumLayout";
@@ -65,7 +65,7 @@
 
             <a asp-controller="Comments"
                asp-action="CreateComment"
-               asp-route-Id="@Model.Id"
+               asp-route-Id="@Model.Post.Id"
                class="btn btn-outline-success mb-3">
                 Add Comment
             </a>
@@ -77,9 +77,15 @@
             </a>
             <a asp-controller="Topics"
                asp-action="SubCategory"
-               asp-route-Id="@Model.TopicId"
+               asp-route-Id="@Model.Post.TopicId"
                class="btn btn-outline-warning mb-3">
                 SubCategory
+            </a>
+
+            <a asp-controller="Topics"
+               asp-action="CreateUserComplaint"
+               class="btn btn-outline-danger mb-3">
+                Contact Support
             </a>
         </div>
     </div>
@@ -95,34 +101,34 @@
                          class="img-fluid rounded-circle mb-1"
                          style="width:60px;height:60px;" />
 
-                    <div class="fw-bold small">@Model.AuthorName</div>
-                    <div class="text-muted small">Posts: @Model.UserPostCount</div>
+                    <div class="fw-bold small">@Model.Post.AuthorName</div>
+                    <div class="text-muted small">Posts: @Model.Post.UserCommentCount</div>
                 </div>
 
                 <!-- Post content -->
                 <div class="col-md-10 p-2" style="background-color: #e6f0ff;">
-                    <h5 class="mb-1">@Model.Title</h5>
+                    <h5 class="mb-1">@Model.Post.Title</h5>
 
                     <div class="text-muted small mb-2">
-                        @Model.CreatedOn.ToLocalTime().ToString(ForumTimeFormat)
+                        @Model.Post.CreatedOn.ToLocalTime().ToString(ForumTimeFormat)
                     </div>
 
                     <div>
-                        @Model.Content
+                        @Model.Post.Content
                     </div>
                 </div>
 
             </div>
         </div>
-        @if (Model.IsAuthor)
+        @if (Model.Post.IsAuthor)
         {
             <div class="d-flex gap-2">
-                <a asp-action="EditPost" asp-route-id="@Model.Id" class="btn btn-outline-warning mb-3">
+                <a asp-action="EditPost" asp-route-id="@Model.Post.Id" class="btn btn-outline-warning mb-3">
                     Edit Post
                 </a>
                 <form asp-controller="Posts"
                       asp-action="DeletePost"
-                      asp-route-id="@Model.Id"
+                      asp-route-id="@Model.Post.Id"
                       method="post"
                       onsubmit="return confirm('Are you sure you want to delete this post?');">
                  
@@ -134,12 +140,12 @@
             </div>
         }
 
-        <div class="comments-section">
+        <div class="comments-section" style="min-height: 500px;">
             <h5>Comments (@Model.Comments.Count())</h5>
 
             @if (Model.Comments != null && Model.Comments.Any())
             {
-                @foreach (var comment in Model.Comments.OrderBy(c => c.CreatedOn))
+                @foreach (var comment in Model.Comments)
                 {
                     <div class="card mb-2">
                         <div class="row g-0">
@@ -179,7 +185,7 @@
                                         <form asp-controller="Comments"
                                               asp-action="DeleteComment"
                                               asp-route-id="@comment.Id"
-                                              asp-route-postId="@Model.Id"
+                                              asp-route-postId="@Model.Post.Id"
                                               method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit"
@@ -201,5 +207,35 @@
                 <p class="text-muted">No comments yet. Be the first to comment!</p>
             }
         </div>
+        <div class="d-flex justify-content-between mt-3">
+
+            @if (Model.CurrentPage > 1)
+            {
+                <a asp-action="PostPreview"
+                   asp-route-id="@Model.Post.Id"
+                   asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                   class="btn btn-outline-primary">
+                    ← Previous
+                </a>
+            }
+            else
+            {
+                <span></span>
+            }
+
+            <span>Page @Model.CurrentPage</span>
+
+            @if ((Model.CurrentPage * Model.PageSize) < Model.TotalCommentsCount)  @*<!-- pageSize -->*@
+            {
+                <a asp-action="PostPreview"
+                   asp-route-id="@Model.Post.Id"
+                   asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                   class="btn btn-outline-primary">
+                    Next →
+                </a>
+            }
+
+        </div>
 
     </div>
+    

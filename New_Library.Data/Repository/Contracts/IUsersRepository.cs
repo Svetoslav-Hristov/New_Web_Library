@@ -21,6 +21,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<User?> UserFullDetailsAndHistory(Guid userId);
 
+        Task<bool> AdminOrNot(Guid userId);
 
     }
 }

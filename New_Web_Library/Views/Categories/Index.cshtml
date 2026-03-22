@@ -91,12 +91,14 @@
 
 
 <div>
-
-    <a class="btn btn-outline-success"
-       asp-controller="Categories"
-       asp-action="CreateCategory">
-        + Add Category
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a class="btn btn-outline-success"
+        asp-controller="Categories"
+        asp-action="CreateCategory">
+            + Add Category
+        </a>
+    }
     <table class="table">
         <thead>
             <tr>
@@ -104,6 +106,7 @@
                 <th>Description</th>
                 <th>Posts</th>
                 <th>Last Post</th>
+                <th>Last Active</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -115,7 +118,7 @@
             {
                 <tr>
                     <td>
-                        <strong>@category.Name</strong>
+                        <strong class="text-black fw-bolder fs-5">@category.Name</strong>
 
                         @if (category.Topics != null && category.Topics.Any())
                         {
@@ -142,6 +145,8 @@
                     <td>@category.Description</td>
                     <td>@category.PostCount</td>
                     <td>@category.LastPostTitle</td>
+                    <td>@(category.LastActive.HasValue?category.LastActive.Value.ToLocalTime().ToString(ForumTimeFormat):"N/A") </td>
+                    
                     <td>
                         <a class="btn btn-outline-success"
                            asp-controller="Topics"
@@ -152,27 +157,31 @@
                     </td>
 
                     <td>
-                        <a class="btn btn-outline-warning"
-                           asp-controller="Categories"
-                           asp-action="EditCategory"
-                           asp-route-id="@category.Id">
-                             Edit Category
-                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-outline-warning"
+                            asp-controller="Categories"
+                            asp-action="EditCategory"
+                            asp-route-id="@category.Id">
+                                Edit Category
+                            </a>
+                        }
                     </td>
                     <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form asp-controller="Categories"
+                            asp-action="DeleteCategory"
+                            asp-route-id="@category.Id"
+                            method="post"
+                            onsubmit="return confirm('Are you sure you want to delete this category?');">
 
-                        <form asp-controller="Categories"
-                              asp-action="DeleteCategory"
-                              asp-route-id="@category.Id"
-                              method="post"
-                              onsubmit="return confirm('Are you sure you want to delete this category?');">
-
-                            <button type="submit"
-                                    class="btn btn-outline-danger">
-                                Delete Category
-                            </button>
-                        </form>
-
+                                <button type="submit"
+                                class="btn btn-outline-danger">
+                                    Delete Category
+                                </button>
+                            </form>
+                        }
                     </td>
                 </tr>
 

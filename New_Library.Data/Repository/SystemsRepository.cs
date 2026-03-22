@@ -26,7 +26,7 @@ namespace New_Library.Data.Repository
 
         public async Task<IEnumerable<UserBook>> CheckMissingReservation(List<int> recordsId)
         {
-            var reservations = await _dbContext.UsersBooks.Where(u => recordsId.Contains(u.Id)).ToListAsync();
+            var reservations = await _dbContext.UsersBooks.Include(ub=>ub.Book).Where(u => recordsId.Contains(u.Id)).ToListAsync();
 
             return reservations;
         }

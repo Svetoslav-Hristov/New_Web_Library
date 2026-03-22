@@ -18,6 +18,26 @@
 
     var errorRestoreSubCategory = TempData["ErrorRestoreSubCategory"] as string;
 
+    var errorUSersComplains = TempData["ErrorUserComplaints"] as string;
+
+  
+}
+
+
+@if (!string.IsNullOrEmpty(errorUSersComplains))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorUSersComplains
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(errorRestoreSubCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorRestoreSubCategory
+    </div>
+
 }
 
 
@@ -89,9 +109,9 @@
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
-                <a asp-controller="Users"
-                   asp-action="Index"
-                   class="btn btn-outline-primary">
+                <a asp-controller="Systems"
+                   asp-action="UsersComplaints"
+                  class="btn btn-outline-primary">
                     👤 Users Complaints
                 </a>
 
@@ -189,7 +209,7 @@
                                         </form>
 
                                         <form asp-controller="Categories"
-                                              asp-action="HardDeleteCategory"
+                                              asp-action="HardDelete"
                                               asp-route-id="@item.Id"
                                               method="post"
                                               onsubmit="return confirm('Are you sure you want to delete permanently this Category?');">
@@ -207,7 +227,7 @@
                                     <div class="d-flex gap-2">
                                         <form asp-controller="Topics"
                                               asp-action="RestoreSubCategory"
-                                              asp-route-id="@item.Id"
+                                              asp-route-Id="@item.Id"
                                               method="post"
                                               onsubmit="return confirm('Are you sure you want to restore this SubCategory ?');">
 
@@ -218,7 +238,7 @@
                                         </form>
 
                                         <form asp-controller="Topics"
-                                              asp-action="HardDeleteSubCategory"
+                                              asp-action="HardDelete"
                                               asp-route-id="@item.Id"
                                               method="post"
                                               onsubmit="return confirm('Are you sure you want to delete permanently this SubCategory ?');">

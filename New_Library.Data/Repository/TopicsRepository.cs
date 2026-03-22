@@ -17,6 +17,8 @@ namespace New_Library.Data.Repository
         {
         }
 
+       
+
         public  IQueryable<Topic>? GetAllCoveredSubCategories()
         {
             var subCategories =  _dbContext.Topics.IgnoreQueryFilters().Include(t=>t.Category)
@@ -34,12 +36,12 @@ namespace New_Library.Data.Repository
             return deleteSubCategories;
         }
 
-        public async Task<List<Topic>> GetAllSubCategoryWithComments(int topicId)
+        public async Task<Topic?> GetAllSubCategoryWithComments(int topicId)
         {
             var topic =await  _dbContext.Topics.Where(t => t.Id == topicId)
             .Include(t => t.User).Include(t => t.Posts).ThenInclude(p=>p.User).Include(t=>t.Posts).ThenInclude(p=>p.Comments)
             .ThenInclude(c => c.User)
-            .Include(t => t.Category).ToListAsync();
+            .Include(t => t.Category).FirstOrDefaultAsync();
 
 
             return topic;
@@ -47,7 +49,19 @@ namespace New_Library.Data.Repository
 
         public async Task<Topic?> GetDeleteOrNotSubCategory(int Id)
         {
-            return await _dbContext.Topics.IgnoreQueryFilters().Where(t => t.Id == Id).FirstOrDefaultAsync();
+            return await _dbContext.Topics.IgnoreQueryFilters().Include(c=>c.Category).Include(c=>c.User)
+                .Include(t=>t.Posts).Where(t => t.Id == Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Topic?> GetSubCategoryByName(string name)
+        {
+            var subCategory = await _dbContext.Topics.Where(t => t.Title == name)
+            .Include(t => t.User).Include(t => t.Posts).ThenInclude(p => p.User).Include(t => t.Posts).ThenInclude(p => p.Comments)
+            .ThenInclude(c => c.User)
+            .Include(t => t.Category).FirstOrDefaultAsync();
+
+            return subCategory;
+          
         }
 
         public async Task<bool> IsExistWithSameName(string title, int topicId)

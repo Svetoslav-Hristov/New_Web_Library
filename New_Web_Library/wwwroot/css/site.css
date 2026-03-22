@@ -81,3 +81,10 @@ category-title {
     font-weight: bold;
     background-color: #f8f9fa;
 }
+.category-title {
+    font-family: 'Georgia', serif; 
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50; 
+    letter-spacing: 0.5px;
+}

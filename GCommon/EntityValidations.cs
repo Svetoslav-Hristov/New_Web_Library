@@ -68,7 +68,7 @@ namespace New_Web_Library.GCommon
             public const int CategoryNameMinLength = 3;
             public const int DescriptionMaxLength = 500;
 
-          
+
 
 
         }
@@ -76,7 +76,7 @@ namespace New_Web_Library.GCommon
         {
             public const int TopicTitleMaxLength = 150;
             public const int TopicTitleMinLength = 5;
-
+            public const string TopicSpecialName = "Special";
         }
         public static class Posts
         {
@@ -85,7 +85,7 @@ namespace New_Web_Library.GCommon
             public const int ContentMaxLength = 5000;
             public const int ContentMinLength = 10;
             public const int CommentLifeTime = 15;
-            
+
 
         }
         public static class TimeFormat
@@ -93,8 +93,13 @@ namespace New_Web_Library.GCommon
             public const string ForumTimeFormat = "dd.MM.yyyy HH:mm";
 
         }
-       
-        
+        public static class IdentitySession
+        {
+            public const int SessionTimeOut = 15;
+
+
+        }
+
 
 
     }

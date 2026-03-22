@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using New_Library.Data.Models.Forum;
-using New_Library.Data.Repository;
+﻿using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
 using static New_Web_Library.GCommon.EntityValidations.Posts;
+using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Web_Library.Service.Core
 {
@@ -30,16 +29,45 @@ namespace New_Web_Library.Service.Core
         }
 
 
-        public async Task<ServiceResult<PostForumModel>> PostDetailModelsPreview(int Id, Guid? userId)
+        public async Task<ServiceResult<PostForumPagingModel>> PostDetailModelsPreview(
+            int Id, Guid? userId, int pageNumber, int pageSize)
         {
 
             Post? post = await _postsRepository.GetByIdAsync(Id);
 
+            Topic? specialCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
 
-            if (post == null)
+            if (post == null || (specialCategory != null && post.TopicId == specialCategory.Id))
             {
-                return new ServiceResult<PostForumModel> { Success = false, ErrorMessage = "Not Found!" };
+                return new ServiceResult<PostForumPagingModel>
+                {
+                    Success = false,
+                    ErrorMessage = "Not Found!"
+                };
             }
+
+
+
+            var allComments = post.Comments
+                        .Where(c => !c.IsDeleted)
+                        .OrderBy(c => c.CreatedOn)
+                        .ToList();
+
+            int totalCommentCount = allComments.Count();
+
+            var pagedComments = allComments
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new ContentDetailsModel
+                    {
+                        Id = c.Id,
+                        Title = $"Re:{post.Title}",
+                        Content = c.Content,
+                        CreatedOn = c.CreatedOn,
+                        AuthorName = $"{c.User.FirstName} {c.User.LastName}",
+                        UserId = c.UserId
+                    })
+                    .ToList();
 
 
             PostForumModel model = new PostForumModel()
@@ -51,20 +79,19 @@ namespace New_Web_Library.Service.Core
                 AuthorName = $"{post.User.FirstName} {post.User.LastName}",
                 UserId = post.UserId,
                 TopicId = post.TopicId,
-                Comments = post.Comments.Where(c => !c.IsDeleted).Select(c => new ContentDetailsModel()
-                {
-                    Id = c.Id,
-                    Title = $"Re:{post.Title}",
-                    Content = c.Content,
-                    CreatedOn = c.CreatedOn,
-                    AuthorName = $"{c.User.FirstName} {c.User.LastName}",
-                    UserId = c.UserId,
 
-                }).ToArray()
+
 
             };
 
-
+            PostForumPagingModel pagingModel = new PostForumPagingModel
+            {
+                Post = model,
+                Comments = pagedComments,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalCommentsCount = totalCommentCount
+            };
 
 
             var usersId = post.Comments.Select(p => p.UserId).Append(post.UserId).Distinct().ToList();
@@ -79,7 +106,7 @@ namespace New_Web_Library.Service.Core
             var countPosts = await _postsRepository.GetAllCountPosts(usersId);
 
 
-            foreach (var user in model.Comments)
+            foreach (var user in pagingModel.Comments)
             {
 
                 user.UserCommentCount = countComments.GetValueOrDefault(user.UserId);
@@ -94,14 +121,14 @@ namespace New_Web_Library.Service.Core
             if (userId != null)
             {
 
-                if (!model.Comments.Any() && model.UserId == userId)
+                if (!pagingModel.Comments.Any() && model.UserId == userId)
                 {
                     model.IsAuthor = true;
 
                 }
                 else
                 {
-                    var lastComment = model.Comments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
+                    var lastComment = pagingModel.Comments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
 
 
                     if (lastComment?.UserId == userId && DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))
@@ -112,7 +139,7 @@ namespace New_Web_Library.Service.Core
                 }
             }
 
-            return new ServiceResult<PostForumModel> { Success = true, Data = model };
+            return new ServiceResult<PostForumPagingModel> { Success = true, Data = pagingModel };
 
         }
 
@@ -230,7 +257,7 @@ namespace New_Web_Library.Service.Core
 
             if (user == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
 
             }
 
@@ -239,7 +266,7 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Post not found" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "Post not found!" };
             }
 
 
@@ -289,7 +316,10 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<int> { Success = false, ErrorMessage = "User not found!" };
             }
 
-            if (post.UserId != userId)
+
+            bool isAdmin = await _usersRepository.AdminOrNot(userId);
+
+            if (post.UserId != userId && !isAdmin )
             {
                 return new ServiceResult<int> { Success = false, ErrorMessage = "You don't have permission over this post." };
 
@@ -394,6 +424,37 @@ namespace New_Web_Library.Service.Core
             }
 
             return new ServiceResult<bool> { Success = true };
+        }
+
+        public async Task<ServiceResult<ContentDetailsModel>> GetUserComplaint(int Id)
+        {
+            var post = await _postsRepository.GetByIdAsync(Id);
+
+            if (post == null)
+            {
+                return new ServiceResult<ContentDetailsModel> { Success = false, ErrorMessage = "Post not found!" };
+            }
+
+            ContentDetailsModel model = new ContentDetailsModel()
+            {
+
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedOn = post.CreatedOn,
+                AuthorName = $"{post.User.FirstName} {post.User.LastName}",
+                UserId = post.UserId,
+                TopicId = post.TopicId
+            };
+
+
+            model.UserPostCount = await _postsRepository.GetAllPostCount(post.UserId);
+
+            model.UserCommentCount = await _commentsRepository.GetAllCommentsCount(post.UserId);
+
+            return new ServiceResult<ContentDetailsModel> { Success = true, Data = model };
+
+
         }
     }
 }

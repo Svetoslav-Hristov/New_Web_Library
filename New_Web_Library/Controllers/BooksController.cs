@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Logging;
 using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
@@ -14,15 +15,15 @@ namespace New_Web_Library.Controllers
 {
     public class BooksController : Controller
     {
-        
-        
-        private readonly IBooksService _bookService;
 
-        public BooksController(  IBooksService bookService)
+
+        private readonly IBooksService _bookService;
+        private readonly ILogger<BooksController> _logger;
+
+        public BooksController(IBooksService bookService, ILogger<BooksController> logger)
         {
-          
-         
             this._bookService = bookService;
+            this._logger = logger;
         }
 
 
@@ -46,10 +47,12 @@ namespace New_Web_Library.Controllers
 
             if (!newBook.Success)
             {
-                TempData["WrongBook"] = newBook.ErrorMessage;
-
-                return RedirectToAction(nameof(Index));
                 
+                _logger.LogWarning("{0} Id = {1}", newBook.ErrorMessage,Id );
+
+
+                return NotFound();
+
             }
 
 
@@ -58,7 +61,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
 
@@ -168,7 +171,7 @@ namespace New_Web_Library.Controllers
 
             }
 
-            
+
             var result = await _bookService.ConfirmEditChangesUsingBookFormModelAsync(Id, model);
 
             if (!result.Success)
@@ -195,10 +198,10 @@ namespace New_Web_Library.Controllers
             var result = await _bookService.DeleteCurrentBookAsync(Id);
 
 
-               if (!result.Success)
+            if (!result.Success)
             {
                 TempData["Error"] = result.ErrorMessage;
-              
+
                 return RedirectToAction(nameof(Details), new { Id });
             }
             else
@@ -206,7 +209,7 @@ namespace New_Web_Library.Controllers
                 TempData["SuccessDelete"] = "You have successfully deleted the book";
             }
 
-            
+
             return RedirectToAction(nameof(Index));
         }
 

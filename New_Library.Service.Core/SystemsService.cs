@@ -8,6 +8,7 @@ using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
 using New_Web_Library.ViewModels.System;
+using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Library.Services.Core
 {
@@ -446,7 +447,7 @@ namespace New_Library.Services.Core
 
                 }
 
-                await _usersRepository.UpdateAsync(users);
+                await _usersRepository.UpdateRangeAsync(users);
             }
 
 
@@ -462,7 +463,17 @@ namespace New_Library.Services.Core
 
                 var reservations = await _systemsRepository.CheckMissingReservation(missingReservation);
 
-                await _systemsRepository.DeleteAsync(reservations);
+                foreach (var reservation in reservations)
+                {
+
+                    reservation.Status = BookStatus.Expired;
+                    reservation.ReservationExpiresOn = today;
+
+
+                }
+
+
+                await _systemsRepository.UpdateRangeAsync(reservations);
 
             }
         }
@@ -670,6 +681,37 @@ namespace New_Library.Services.Core
 
             return deleteItems;
 
+        }
+
+        public async Task<ServiceResult<SubCategoryViewModel>> GetSpecialArea()
+        {
+            var specialSubCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
+
+            if (specialSubCategory == null)
+            {
+                return new ServiceResult<SubCategoryViewModel> { Success = false, ErrorMessage = "SubCategory is not created or found!" };
+            }
+
+            SubCategoryViewModel model = new SubCategoryViewModel()
+            {
+                CategoryId = specialSubCategory.Id,
+                CategoryName = specialSubCategory.Title,
+                Posts = specialSubCategory.Posts.Select(p => new SubCategoryForumModel()
+                {
+                    Id = p.Id,
+                    PostTitle = p.Title,
+                    PostAuthor = $"{p.User.FirstName} {p.User.LastName}",
+                    CreatedOn = p.CreatedOn,
+                    CommentCount = p.Comments.Count(),
+
+                }).ToList()
+
+
+            };
+
+
+            return new ServiceResult<SubCategoryViewModel> { Success = true, Data = model };
+            
         }
     }
 }

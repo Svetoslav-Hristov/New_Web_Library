@@ -6,7 +6,7 @@ namespace New_Web_Library.Service.Core.Interfaces
 {
     public interface IPostsService
     {
-        Task<ServiceResult<PostForumModel>> PostDetailModelsPreview(int Id, Guid? userId);
+        Task<ServiceResult<PostForumPagingModel>> PostDetailModelsPreview(int Id, Guid? userId,int pageNumber, int pageSize);
 
         Task<ServiceResult<CreateContentViewModel>> CreateNewPost(int categoryId);
 
@@ -21,6 +21,8 @@ namespace New_Web_Library.Service.Core.Interfaces
         Task<ServiceResult<bool>> RestoreDeletePost(int Id);
 
         Task<ServiceResult<bool>> HardDeletePost(int Id);
+
+        Task<ServiceResult<ContentDetailsModel>> GetUserComplaint(int Id);
 
     }
 }

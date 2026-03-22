@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Logging;
 using New_Library.Data.Models.Forum;
 using New_Web_Library.Data;
 using New_Web_Library.Service.Core.Interfaces;
+using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
 using System.Security.Claims;
 
@@ -11,9 +13,11 @@ namespace New_Web_Library.Controllers
     public class TopicsController : Controller
     {
         private readonly ITopicService _topicService;
-        public TopicsController(ITopicService topicService)
+        private readonly ILogger<TopicsController> _logger;
+        public TopicsController(ITopicService topicService,ILogger<TopicsController> logger)
         {
             this._topicService = topicService;
+            this._logger = logger;
         }
 
 
@@ -26,9 +30,11 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                TempData["WrongData"] = result.ErrorMessage;
+               
+                _logger.LogWarning("{0}: Id = {1} " ,result.ErrorMessage , Id);
 
-                return RedirectToAction("Index","Categories");
+                return NotFound();
+
             }
 
 
@@ -171,6 +177,38 @@ namespace New_Web_Library.Controllers
 
             return RedirectToAction("ForumSupportPreview", "Systems");
         }
+
+
+        public async Task<IActionResult> CreateUserComplaint()
+        {
+            int subCategoryId = -1;
+
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            
+               ServiceResult<Topic> result = await _topicService.GetOrCreateSpecialSubCategory(userId);
+
+                if (!result.Success)
+                {
+
+                    _logger.LogWarning(result.ErrorMessage);
+
+
+                }
+                else
+                {
+                    subCategoryId = result.Data.Id;
+                }
+
+               
+
+            
+
+
+            return RedirectToAction("CreatePost", "Posts", new { id = subCategoryId });
+
+        }
+
 
     }
 

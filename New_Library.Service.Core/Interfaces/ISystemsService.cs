@@ -27,6 +27,8 @@ namespace New_Web_Library.Services.Core.Interfaces
 
         Task<IEnumerable<DeletedItemViewModel>> GetAllDeleteItems();
 
+        Task<ServiceResult<SubCategoryViewModel>> GetSpecialArea();
+
     }
         
 }

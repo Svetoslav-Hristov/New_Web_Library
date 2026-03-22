@@ -128,7 +128,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> HardDeleteCategory(int Id)
+        public async Task<IActionResult> HardDelete(int Id)
         {
             var result = await _categoryService.HardDeleteCategory(Id);
 

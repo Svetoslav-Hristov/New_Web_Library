@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
 using New_Web_Library.GCommon.Enums;
+using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.System;
 using System.Security.Claims;
@@ -16,11 +17,15 @@ namespace New_Web_Library.Controllers
     {
       
         private readonly ISystemsService _systemsService;
+        private readonly ITopicService _topicService;
+        private readonly ILogger<SystemsController> _logger;
 
-        public SystemsController( ISystemsService systemsService)
+        public SystemsController( ISystemsService systemsService ,ITopicService topicService,ILogger<SystemsController> logger)
         {
            
             this._systemsService = systemsService;
+            this._topicService = topicService;
+            this._logger = logger;
         }
 
 
@@ -217,6 +222,27 @@ namespace New_Web_Library.Controllers
             return View(result);
 
         }
+
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> UsersComplaints()
+        {
+            var result = await _systemsService.GetSpecialArea();
+
+            if (!result.Success)
+            {
+                _logger.LogWarning(result.ErrorMessage);
+
+                TempData["ErrorUserComplaints"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(ForumSupportPreview));
+
+            }
+
+
+            return View(result.Data);
+        } 
+
 
 
 

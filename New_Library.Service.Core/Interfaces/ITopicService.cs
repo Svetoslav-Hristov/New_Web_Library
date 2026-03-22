@@ -27,5 +27,9 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<bool>> RestoreSubCategory(int Id);
 
+        Task<ServiceResult<Topic>> GetOrCreateSpecialSubCategory(Guid userId);
+
+
+
     }
 }

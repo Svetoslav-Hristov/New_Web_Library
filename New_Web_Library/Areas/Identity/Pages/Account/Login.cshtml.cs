@@ -71,13 +71,21 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            
-            
-            if (ModelState.IsValid)
+
+
+            if (!ModelState.IsValid)
             {
+                return Page();
+            }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(
+                    Input.Email,
+                    Input.Password,
+                    isPersistent:Input.RememberMe,
+                    lockoutOnFailure: false );
+               
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(returnUrl) && returnUrl != "/")
@@ -99,10 +107,10 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
-            }
+            
 
             // If we got this far, something failed, redisplay form
-            return Page();
+           
         }
     }
 }
