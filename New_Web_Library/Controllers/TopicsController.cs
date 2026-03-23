@@ -179,6 +179,8 @@ namespace New_Web_Library.Controllers
         }
 
 
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> CreateUserComplaint()
         {
             int subCategoryId = -1;
@@ -200,12 +202,7 @@ namespace New_Web_Library.Controllers
                     subCategoryId = result.Data.Id;
                 }
 
-               
-
-            
-
-
-            return RedirectToAction("CreatePost", "Posts", new { id = subCategoryId });
+            return RedirectToAction("CreatePost", "Posts", new { id= subCategoryId});
 
         }
 

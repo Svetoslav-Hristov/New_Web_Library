@@ -7,7 +7,7 @@ namespace New_Web_Library.Services.Core.Interfaces
 {
     public interface IBooksService
     {
-        Task<IEnumerable<FullPreviewModelBook>> GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre);
+        Task<BookPagingPreview> GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre, int page, int pageSize);
 
         Task<ServiceResult<FullPreviewModelBook>> GetCurrentModelAsync(Guid Id);
 

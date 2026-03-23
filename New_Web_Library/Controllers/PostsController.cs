@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
 using System.Security.Claims;
+using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Web_Library.Controllers
 {
@@ -97,6 +98,15 @@ namespace New_Web_Library.Controllers
 
                 return NotFound();
             }
+
+            if (result.Data.Topic.Title == TopicSpecialName)
+            {
+                TempData["SuccessMessage"] = "Your message has been successfully sent to the administrator.";
+
+                return RedirectToAction("Index","Categories");
+
+            }
+
 
 
             TempData["SuccessPost"] = "You have successfully created a new post.";

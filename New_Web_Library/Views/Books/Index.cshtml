@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FullPreviewModelBook>
+﻿@model BookPagingPreview
 @{
     ViewData["Title"] = "Books";
 
@@ -13,6 +13,7 @@
     </div>
 
 }
+
 
 
 <div class="d-flex">
@@ -39,7 +40,7 @@
                class="list-group-item list-group-item-action">
                 Romance
             </a>
-            <a asp-action="Index" asp-route-genre=" Mystery"
+            <a asp-action="Index" asp-route-genre="Mystery"
                class="list-group-item list-group-item-action">
                 Mystery
             </a>
@@ -83,14 +84,16 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 d-flex flex-column">
+       
         <div class="container">
 
             <!-- SEARCH -->
             <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
+                <input type="hidden" name="genre" value="@Model.Genre" />
                 <input type="text"
                        name="search"
-                       value="@Context.Request.Query["search"]"
+                       value="@Model.Search"
                        class="form-control"
                        placeholder="Search by title or author" />
 
@@ -106,7 +109,7 @@
             </div>
 
             <!-- TABLE -->
-            @if (!Model.Any())
+            @if (!Model.Books.Any())
             {
                 <p class="text-muted">No books yet.</p>
             }
@@ -123,7 +126,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (FullPreviewModelBook b in Model)
+                        @foreach (FullPreviewModelBook b in Model.Books)
                         {
                             <tr>
                                 <td>
@@ -146,8 +149,34 @@
                     </tbody>
                 </table>
             }
+            <div class="d-flex justify-content-center gap-2  mb-3">
+                @if (Model.CurrentPage > 1)
+                {
+                    <a asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-search="@Model.Search"
+                       asp-route-genre="@Model.Genre"
+                       class="btn btn-outline-primary">
+                        Previous
+                    </a>
+                }
 
+                <span class="align-self-center">
+                    Page @Model.CurrentPage of @Model.TotalPages
+                </span>
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-search="@Model.Search"
+                       asp-route-genre="@Model.Genre"
+                       class="btn btn-outline-primary">
+                        Next
+                    </a>
+                }
+
+            </div>
         </div>
     </div>
-
 </div>

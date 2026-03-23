@@ -10,7 +10,7 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<CreateContentViewModel>> CreateNewPost(int categoryId);
 
-        Task<ServiceResult<int>> ConfirmNewPost(CreateContentViewModel model,Guid userId ,int categoryId);
+        Task<ServiceResult<Post>> ConfirmNewPost(CreateContentViewModel model,Guid userId ,int categoryId);
 
         Task<ServiceResult<CreateContentViewModel>> EditPost(int Id);
 

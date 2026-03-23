@@ -26,7 +26,8 @@ namespace New_Web_Library.Services.Core
         }
 
 
-        public async Task<IEnumerable<FullPreviewModelBook>> GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre)
+        public async Task<BookPagingPreview> 
+                             GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre ,int page, int pageSize)
         {
 
             var allCollection = _booksRepository.GetAllBooks();
@@ -59,9 +60,27 @@ namespace New_Web_Library.Services.Core
 
             }
 
-            IEnumerable<FullPreviewModelBook> books = await allBooks.ToArrayAsync();
+            int totalCount = allBooks.Count();
 
-            return books;
+            var books = await allBooks.OrderBy(b => b.Title).ThenBy(b => b.AuthorName)
+                .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            BookPagingPreview pagingPreview = new BookPagingPreview()
+            {
+
+                Books = books,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                Search = search,
+                Genre = genre
+
+            };
+
+
+
+            //IEnumerable<FullPreviewModelBook> books = await allBooks.ToArrayAsync();
+
+            return pagingPreview;
         }
 
         public async Task<ServiceResult<FullPreviewModelBook>> GetCurrentModelAsync(Guid Id)

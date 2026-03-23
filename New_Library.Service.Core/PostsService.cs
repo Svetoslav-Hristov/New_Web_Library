@@ -168,25 +168,25 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<int>> ConfirmNewPost(CreateContentViewModel model, Guid userId, int categoryId)
+        public async Task<ServiceResult<Post>> ConfirmNewPost(CreateContentViewModel model, Guid userId, int categoryId)
         {
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "Invalid userId" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "Invalid userId" };
             }
 
             User? user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null)
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
             }
 
             Topic? subCategory = await _topicsRepository.GetByIdAsync<Topic>(categoryId);
 
             if (subCategory == null)
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "SubCategory not found!" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "SubCategory not found!" };
             }
 
             Post newPost = new Post()
@@ -212,7 +212,7 @@ namespace New_Web_Library.Service.Core
             catch (Exception)
             {
 
-                return new ServiceResult<int>
+                return new ServiceResult<Post>
                 {
                     Success = false,
                     ErrorMessage = "Unexpected error is occurred while create new post! Please try again later."
@@ -221,7 +221,7 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            return new ServiceResult<int> { Success = true, Data = newPost.Id };
+            return new ServiceResult<Post> { Success = true, Data = newPost };
 
 
         }

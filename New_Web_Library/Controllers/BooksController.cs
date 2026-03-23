@@ -29,12 +29,16 @@ namespace New_Web_Library.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? search, Genre? genre)
+        public async Task<IActionResult> Index(string? search, Genre? genre,int page=1)
         {
 
-            IEnumerable<FullPreviewModelBook> books = await _bookService
-                .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre);
+            int pagesize = 5;
 
+            BookPagingPreview books = await _bookService
+                .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre, page, pagesize);
+
+           
+            
             return View(books);
         }
 

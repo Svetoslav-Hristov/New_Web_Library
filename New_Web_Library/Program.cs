@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using New_Library.Data.Repository;
 using New_Library.Data.Repository.Contracts;
 using New_Library.Services.Core;
@@ -9,6 +10,7 @@ using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core;
 using New_Web_Library.Services.Core.Interfaces;
+using System.Security.Principal;
 
 
 namespace New_Web_Library
@@ -45,9 +47,10 @@ namespace New_Web_Library
 
                 options.SlidingExpiration = true;
 
-                options.LoginPath = "/Account/Login";
+                options.LoginPath = "/Identity /Account /Login";;
                 options.LogoutPath = "/Account/Logout";
-
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+              
                 
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
@@ -77,10 +80,7 @@ namespace New_Web_Library
                 app.UseHsts();
             }
         
-                app.UseStatusCodePagesWithReExecute("/Welcome/Error{0}");
-
             
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -89,6 +89,8 @@ namespace New_Web_Library
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseStatusCodePagesWithReExecute("/Welcome/Error{0}");
 
             app.MapControllerRoute(
                 name: "default",

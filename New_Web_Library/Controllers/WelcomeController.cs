@@ -54,11 +54,15 @@ namespace New_Web_Library.Controllers
 
         public IActionResult Error404()
         {
+            Response.StatusCode = 404;
+
             return View();
         }
 
         public IActionResult Error500()
         {
+            Response.StatusCode = 500;
+
             return View();
         }
 
