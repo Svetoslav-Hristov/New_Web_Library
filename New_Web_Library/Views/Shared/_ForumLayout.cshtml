@@ -22,14 +22,17 @@
                         Web_Library_Forum
                     </a>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <img src="~/images/CustomerSupport_Logo.png" style="height:26px;" />
-                    <a class="navbar-brand"
-                       asp-controller="Systems"
-                       asp-action="ForumSupportPreview">
-                        Forum_Support
-                    </a>
-                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="~/images/CustomerSupport_Logo.png" style="height:26px;" />
+                        <a class="navbar-brand"
+                        asp-controller="Systems"
+                        asp-action="ForumSupportPreview">
+                            Forum_Support
+                        </a>
+                    </div>
+                }
 
                 <!-- Center -->
                 <div class="mx-auto d-flex align-items-center gap-2">

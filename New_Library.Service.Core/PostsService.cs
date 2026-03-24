@@ -300,20 +300,22 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<int>> SoftDeletePost(int Id, Guid userId)
+        public async Task<ServiceResult<Topic>> SoftDeletePost(int Id, Guid userId)
         {
             var post = await _postsRepository.GetByIdAsync(Id);
 
             if (post == null)
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "Post not found!" };
+                return new ServiceResult<Topic> { Success = false, ErrorMessage = "Post not found!" };
             }
+
+            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(post.TopicId);
 
             var user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null)
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Topic> { Success = false, ErrorMessage = "User not found!" };
             }
 
 
@@ -321,7 +323,7 @@ namespace New_Web_Library.Service.Core
 
             if (post.UserId != userId && !isAdmin )
             {
-                return new ServiceResult<int> { Success = false, ErrorMessage = "You don't have permission over this post." };
+                return new ServiceResult<Topic> { Success = false, ErrorMessage = "You don't have permission over this post." };
 
             }
 
@@ -336,7 +338,7 @@ namespace New_Web_Library.Service.Core
             }
             catch (Exception)
             {
-                return new ServiceResult<int>
+                return new ServiceResult<Topic>
                 {
                     Success = false,
                     ErrorMessage = "Unexpected error is occurred while delete post! Please try again later."
@@ -344,7 +346,7 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            return new ServiceResult<int> { Success = true, Data = post.TopicId };
+            return new ServiceResult<Topic> { Success = true, Data = subCategory };
 
 
         }

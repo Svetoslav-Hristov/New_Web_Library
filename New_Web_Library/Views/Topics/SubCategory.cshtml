@@ -27,16 +27,19 @@
        class="btn btn-outline-success">
         Add New Post
     </a>
-
-    <a asp-controller="Topics"
-       asp-action="EditSubCategory"
-       asp-route-id="@Model.CategoryId"
-       class="btn btn-outline-warning">
-        Edit SubCategory
-    </a>
-
-    <form asp-controller="Topics"
-          asp-action="DeleteSubCategory"
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Topics"
+        asp-action="EditSubCategory"
+        asp-route-id="@Model.CategoryId"
+        class="btn btn-outline-warning">
+            Edit SubCategory
+        </a>
+    }
+    @if (User.IsInRole("Admin"))
+    {
+        <form asp-controller="Topics"
+        asp-action="DeleteSubCategory"
           asp-route-id="@Model.CategoryId"
           method="post"
           onsubmit="return confirm('Are you sure you want to delete this category?');">
@@ -46,7 +49,7 @@
         </button>
 
     </form>
-
+    }
 </div>
 <h3 class="category-title">@Model.CategoryName</h3>
 

@@ -6,8 +6,19 @@
 
     var successReservation = TempData["SuccessReservation"] as string;
 
+    var successEdit = TempData["SuccessEdit"] as string;
+
+
 }
 
+
+@if (!string.IsNullOrEmpty(successEdit))
+{
+    <div class="alert alert-success" role="alert">
+        @successEdit
+    </div>
+
+}
 
 @if (!string.IsNullOrEmpty(message))
 {
@@ -98,7 +109,7 @@
             <a asp-controller="Books"
                asp-action="Index"
                class="btn btn-outline-success">
-                BooksCatalog
+                 BooksCatalog
             </a>
 
             @if ((Model.BookStatus == BookStatus.Returned || Model.BookStatus == BookStatus.Expired))

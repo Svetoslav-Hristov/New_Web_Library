@@ -49,7 +49,7 @@ namespace New_Library.Data.Configuration
            },
            new Category {
            Id = 8,
-           Name = "Non-Fiction",
+           Name = "General Discussion",
            Description = "Informative and factual works"
             
            }

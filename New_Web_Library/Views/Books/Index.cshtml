@@ -16,9 +16,9 @@
 
 
 
-<div class="d-flex">
+<div class="d-flex" style="max-height: 80vh;">
 
-    <div class="border-end bg-light p-3" style="width: 230px; min-height: 100vh;">
+    <div class="border-end bg-light p-3" style="width: 230px; min-height: 85vh;">
         <h5>Genres</h5>
 
         <div class="list-group">
@@ -84,10 +84,9 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="flex-grow-1 d-flex flex-column">
-       
-        <div class="container">
+    <div class="container d-flex flex-column" style="min-height: 600px;">
 
+        <div class="container flex-grow-1 d-flex flex-column">
             <!-- SEARCH -->
             <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
                 <input type="hidden" name="genre" value="@Model.Genre" />
@@ -101,7 +100,7 @@
                     Search
                 </button>
             </form>
-
+            
             <!-- HEADER -->
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h1 class="mb-0">Books Catalog</h1>
@@ -109,47 +108,49 @@
             </div>
 
             <!-- TABLE -->
-            @if (!Model.Books.Any())
-            {
-                <p class="text-muted">No books yet.</p>
-            }
-            else
-            {
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th style="width:250px;">Book Cover</th>
-                            <th>Title</th>
-                            <th>Author Name</th>
-                            <th>Year of published</th>
-                            <th style="width:100px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (FullPreviewModelBook b in Model.Books)
-                        {
+            <div class="flex-grow-1 overflow-auto">
+                @if (!Model.Books.Any())
+                {
+                    <p class="text-muted">No books yet.</p>
+                }
+                else
+                {
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>
-                                    <img src="~/Images/@b.CoverImageUrl"
-                                         class="img-thumbnail book-cover-small" />
-                                </td>
-                                <td>@b.Title</td>
-                                <td>@b.AuthorName</td>
-                                <td>@b.YearOfPublished</td>
-                                <td>
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       asp-controller="Books"
-                                       asp-action="Details"
-                                       asp-route-id="@b.Id">
-                                        Details
-                                    </a>
-                                </td>
+                                <th style="width:250px;">Book Cover</th>
+                                <th>Title</th>
+                                <th>Author Name</th>
+                                <th>Year of published</th>
+                                <th style="width:100px;"></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            <div class="d-flex justify-content-center gap-2  mb-3">
+                        </thead>
+                        <tbody>
+                            @foreach (FullPreviewModelBook b in Model.Books)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="~/Images/@b.CoverImageUrl"
+                                             class="img-thumbnail book-cover-small" />
+                                    </td>
+                                    <td>@b.Title</td>
+                                    <td>@b.AuthorName</td>
+                                    <td>@b.YearOfPublished</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           asp-controller="Books"
+                                           asp-action="Details"
+                                           asp-route-id="@b.Id">
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="d-flex justify-content-center gap-2 mt-3 mb-3" style="flex-shrink: 0;">
                 @if (Model.CurrentPage > 1)
                 {
                     <a asp-action="Index"

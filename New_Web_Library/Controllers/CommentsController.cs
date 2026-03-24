@@ -12,10 +12,12 @@ namespace New_Web_Library.Controllers
     public class CommentsController : Controller
     {
         private readonly ICommentsService _commentsService;
+        private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(ICommentsService commentsService)
+        public CommentsController(ICommentsService commentsService, ILogger<CommentsController> logger)
         {
             this._commentsService = commentsService;
+            this._logger = logger;
         }
 
 
@@ -82,9 +84,11 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
+                _logger.LogWarning(result.ErrorMessage);
+
                 TempData["ErrorEdit"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Categories");
 
             }
 
@@ -106,39 +110,41 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
+                _logger.LogWarning(result.ErrorMessage);
+
                 TempData["ErrorEdit"] = result.ErrorMessage;
 
-                return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId});
+                return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId });
             }
 
             TempData["SuccessEditComment"] = "You have successfully edited your comment.";
 
 
-            return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId});
+            return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId });
 
 
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> DeleteComment(int Id,int postId)
+        public async Task<IActionResult> DeleteComment(int Id, int postId)
         {
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var result = await _commentsService.SoftDeleteComment(Id,postId ,userId);
+            var result = await _commentsService.SoftDeleteComment(Id, postId, userId);
 
             if (!result.Success)
             {
+                _logger.LogWarning(result.ErrorMessage);
 
                 TempData["ErrorDeleteComment"] = result.ErrorMessage;
-
 
                 return RedirectToAction("PostPreview", "Posts", new { Id = postId });
 
 
             }
 
-            return RedirectToAction("PostPreview", "Posts",new {Id=postId});
+            return RedirectToAction("PostPreview", "Posts", new { Id = postId });
 
         }
 
@@ -159,7 +165,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> HardDeleteComment (int Id)
+        public async Task<IActionResult> HardDeleteComment(int Id)
         {
             var result = await _commentsService.HardDeleteComment(Id);
 
@@ -170,7 +176,7 @@ namespace New_Web_Library.Controllers
                 return RedirectToAction("ForumSupportPreview", "Systems");
             }
 
-           
+
 
             return RedirectToAction("ForumSupportPreview", "Systems");
 

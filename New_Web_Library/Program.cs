@@ -24,7 +24,8 @@ namespace New_Web_Library
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             builder.Services.AddDbContext<LibraryDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -47,7 +48,7 @@ namespace New_Web_Library
 
                 options.SlidingExpiration = true;
 
-                options.LoginPath = "/Identity /Account /Login";;
+                options.LoginPath = "/Identity/Account/Login";
                 options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
               
@@ -131,6 +132,16 @@ namespace New_Web_Library
                 });
             }
 
+           
+            if (!await roleManager.RoleExistsAsync("User"))
+            {
+                await roleManager.CreateAsync(new IdentityRole<Guid>
+                {
+                    Name = "User"
+                });
+            }
+
+
             var admin = await userManager.FindByEmailAsync(adminEmail);
 
             if (admin == null)
@@ -154,8 +165,16 @@ namespace New_Web_Library
                 {
                     await userManager.AddToRoleAsync(admin, adminRole);
                 }
+
+
+
             }
+
+            
+
         }
+
+       
         private static void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<IBooksRepository, BooksRepository>();

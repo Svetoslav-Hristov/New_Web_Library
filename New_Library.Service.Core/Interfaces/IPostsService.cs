@@ -16,7 +16,7 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<Post>> ConfirmEditPost(CreateContentViewModel model, Guid userId,int Id);
 
-        Task<ServiceResult<int>> SoftDeletePost(int Id,Guid userId);
+        Task<ServiceResult<Topic>> SoftDeletePost(int Id,Guid userId);
 
         Task<ServiceResult<bool>> RestoreDeletePost(int Id);
 

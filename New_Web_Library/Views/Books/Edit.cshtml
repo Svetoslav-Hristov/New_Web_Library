@@ -1,66 +1,94 @@
 ﻿@model BookFormModel
 
 <div class="container">
-   
 
-    <form>
+    <h1>Edit Book</h1>
 
-        <h1>Edit Book</h1>
+    <form asp-action="Edit" method="post">
 
-        <form asp-action="Edit" method="post">
+        <div class="mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="Title"></label>
-                <input asp-for="Title" class="form-control" />
-            </div>
+        <div class="mb-3">
+            <label asp-for="Year"></label>
+            <input asp-for="Year" class="form-control" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="Year"></label>
-                <input asp-for="Year" class="form-control" />
-            </div>
+        <div class="mb-3">
+            <label asp-for="CoverImage"></label>
+            <select asp-for="CoverImage"
+                    asp-items="Model.Covers"
+                    class="form-select"
+                    id="coverSelect">
+                <option value="">-- Select cover --</option>
+            </select>
+        </div>
+        <div>
+            <img id="coverPreview"
+                 src="@(!string.IsNullOrEmpty(Model.CoverImage) ? "/Images/" + Model.CoverImage : "/Images/no-cover.png")"
+                 width="150"
+                 alt="Cover preview" />
 
-            <div class="mb-3">
-                <label asp-for="CoverImage"></label>
-                <select asp-for="CoverImage"
-                        asp-items="Model.Covers"
-                        class="form-select">
-                    <option value="">-- Select cover --</option>
-                </select>
-            </div>
-            <div>
-                <img src="~/Images/@Model.CoverImage"
-                     alt="Book cover"
-                     class="img-thumbnail" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="Description"></label>
-                <input asp-for="Description" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="Genre">Select Genre</label>
-                <select asp-for="Genre"
-                        asp-items="Model.Genres"
-                        class="form-select">
-                    <option value="">-- Select genre --</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label asp-for="SelectedAuthor">Select Author</label>
-                <select asp-for="SelectedAuthor"
-                        asp-items="Model.Authors"
-                        class="form-select">
-                    <option value="">-- Select author --</option>
-                </select>
-            </div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Genre">Select Genre</label>
+            <select asp-for="Genre"
+                    asp-items="Model.Genres"
+                    class="form-select">
+                <option value="">-- Select genre --</option>
+            </select>
+            <span asp-validation-for="Genre" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="SelectedAuthor">Select Author</label>
+            <select asp-for="SelectedAuthor"
+                    asp-items="Model.Authors"
+                    class="form-select">
+                <option value="">-- Select author --</option>
+            </select>
+            <span asp-validation-for="SelectedAuthor" class="text-danger"></span>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="NewAuthor">Or add new Author</label>
-                <input asp-for="NewAuthor" class="form-control" />
-            </div>
+        <div class="mb-3">
+            <label asp-for="NewAuthor">Or add new Author</label>
+            <input asp-for="NewAuthor" class="form-control" />
+        </div>
+        <span asp-validation-for="NewAuthor" class="text-danger"></span>
 
-            <button type="submit" class="btn btn-success">Save</button>
-            <a class="btn btn-secondary" asp-controller="Books" asp-action="Index">Cancel</a>
-        </form>
-
+        <button type="submit" class="btn btn-success">Save</button>
+        <a class="btn btn-secondary" asp-controller="Books" asp-action="Index">Cancel</a>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const select = document.getElementById("coverSelect");
+            const img = document.getElementById("coverPreview");
+
+            if (!select || !img) return;
+
+            if (select.value) {
+                img.src = "/Images/" + select.value;
+            }
+
+            select.addEventListener("change", function () {
+                if (this.value) {
+                    img.src = "/Images/" + this.value;
+                } else {
+                    img.src = "/Images/no-cover.png";
+                }
+            });
+        });
+    </script>
+}

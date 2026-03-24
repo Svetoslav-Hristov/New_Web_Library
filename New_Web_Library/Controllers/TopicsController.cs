@@ -14,7 +14,7 @@ namespace New_Web_Library.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly ILogger<TopicsController> _logger;
-        public TopicsController(ITopicService topicService,ILogger<TopicsController> logger)
+        public TopicsController(ITopicService topicService, ILogger<TopicsController> logger)
         {
             this._topicService = topicService;
             this._logger = logger;
@@ -30,8 +30,8 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-               
-                _logger.LogWarning("{0}: Id = {1} " ,result.ErrorMessage , Id);
+
+                _logger.LogWarning("{0}: Id = {1} ", result.ErrorMessage, Id);
 
                 return NotFound();
 
@@ -112,7 +112,7 @@ namespace New_Web_Library.Controllers
                 return View(model);
             }
 
-            var result = await _topicService.ConfirmEditSubCategory(model,Id);
+            var result = await _topicService.ConfirmEditSubCategory(model, Id);
 
             if (!result.Success)
             {
@@ -146,7 +146,7 @@ namespace New_Web_Library.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> HardDelete (int Id)
+        public async Task<IActionResult> HardDelete(int Id)
         {
             var result = await _topicService.HardDeleteSubCategory(Id);
 
@@ -163,8 +163,8 @@ namespace New_Web_Library.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> RestoreSubCategory (int Id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RestoreSubCategory(int Id)
         {
             var result = await _topicService.RestoreSubCategory(Id);
 
@@ -181,28 +181,30 @@ namespace New_Web_Library.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> CreateUserComplaint()
+        public async Task<IActionResult> CreateUserComplaint(int Id)
         {
             int subCategoryId = -1;
 
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+
+            ServiceResult<Topic> result = await _topicService.GetOrCreateSpecialSubCategory(userId);
+
+            if (!result.Success)
+            {
+
+                _logger.LogWarning(result.ErrorMessage);
+
+                TempData["Unexpected"] = result.ErrorMessage;
+
+                return RedirectToAction("PostPreview", "Posts", new { id = Id });
+
+            }
+           
+                subCategoryId = result.Data.Id;
             
-               ServiceResult<Topic> result = await _topicService.GetOrCreateSpecialSubCategory(userId);
 
-                if (!result.Success)
-                {
-
-                    _logger.LogWarning(result.ErrorMessage);
-
-
-                }
-                else
-                {
-                    subCategoryId = result.Data.Id;
-                }
-
-            return RedirectToAction("CreatePost", "Posts", new { id= subCategoryId});
+            return RedirectToAction("CreatePost", "Posts", new { id = subCategoryId });
 
         }
 

@@ -55,8 +55,10 @@ namespace New_Library.Data.Repository
 
         public async Task<User?> UserFullDetailsAndHistory(Guid userId)
         {
-            var foundUser = await _dbContext.Users.Include(u => u.UserBooks).ThenInclude(ub => ub.Book)
-                .AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+
+
+            var foundUser = await _dbContext.Users.AsNoTracking().Include(u => u.UserBooks).ThenInclude(ub => ub.Book)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
             return  foundUser;
         }

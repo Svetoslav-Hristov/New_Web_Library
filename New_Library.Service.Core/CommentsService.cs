@@ -40,9 +40,8 @@ namespace New_Web_Library.Service.Core
             }
 
 
-
-
             string commentTitle = $"Re:{post.Title}";
+            
             CreateContentViewModel model = new CreateContentViewModel()
             {
                 Title = commentTitle,
@@ -59,9 +58,9 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Comment>> ConfirmNewComment(CreateContentViewModel model, int Id, Guid userId)
         {
-            if (model == null)
+            if (string.IsNullOrEmpty(model.Description))
             {
-                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Invalid data!" };
+                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Content is required!" };
             }
 
             var post = await _postRepository.GetByIdAsync(Id);
@@ -98,7 +97,7 @@ namespace New_Web_Library.Service.Core
 
             try
             {
-                
+
                 await _commentRepository.AddAsync(newComment);
 
             }
@@ -130,7 +129,7 @@ namespace New_Web_Library.Service.Core
 
             if (comment.UserId != userId)
             {
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "Invalid request." };
+                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "You don't have permission over this comment." };
 
             }
 
@@ -148,9 +147,9 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Comment>> ConfirmEditComment(CreateContentViewModel model, int Id)
         {
-            if (model == null)
+            if (string.IsNullOrEmpty(model.Description))
             {
-                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Invalid data!" };
+                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Content is required!" };
             }
 
             Comment? comment = await _commentRepository.GetByIdAsync<Comment>(Id);
@@ -196,19 +195,31 @@ namespace New_Web_Library.Service.Core
 
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Not found!" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "Invalid user Id!" };
             }
 
             var user = await _usersRepository.FindByIdAsync(userId);
 
-            if (user == null || user.Id != comment.UserId)
+            if (user == null)
+            {
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
+            }
+
+            var isAdmin = await _usersRepository.AdminOrNot(userId);
+
+            if ( user.Id != comment.UserId || !isAdmin)
             {
 
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Invalid data!" };
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "You don't have permission over this comment." };
 
             }
 
             Post? post = await _postRepository.GetByIdAsync(postId);
+
+            if (post == null)
+            {
+                return new ServiceResult<Post> { Success = false, ErrorMessage = "Post not found!" };
+            }
 
             try
             {

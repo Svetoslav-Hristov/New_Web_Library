@@ -160,7 +160,7 @@ namespace New_Web_Library.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-
+                    await _userManager.AddToRoleAsync(user, "User");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

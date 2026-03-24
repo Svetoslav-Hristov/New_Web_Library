@@ -1,6 +1,8 @@
 ﻿@model PostForumPagingModel
 @{
 
+
+
     Layout = "_ForumLayout";
 
     var errorDeletePost = TempData["ErrorDeletePost"] as string;
@@ -13,6 +15,17 @@
 
     var errorDeleteComment = TempData["ErrorDeleteComment"] as string;
 
+
+
+    var errorCreateComplaints = TempData["Unexpected"] as string;
+
+}
+
+@if (!string.IsNullOrEmpty(errorCreateComplaints))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorCreateComplaints
+    </div>
 }
 
 
@@ -57,18 +70,21 @@
 }
 
 
+<div class="d-flex" style="max-height: 80vh;">
 
-<div class="d-flex">
 
-    <div class="border-end bg-light p-1" style="width: 230px; min-height: 100vh;">
+    <div class="border-end bg-light p-1" style="width: 230px; min-height: 85vh;">
         <div class="list-group">
 
-            <a asp-controller="Comments"
-               asp-action="CreateComment"
-               asp-route-Id="@Model.Post.Id"
-               class="btn btn-outline-success mb-3">
-                Add Comment
-            </a>
+            @if (User.IsInRole("User"))
+            {
+                <a asp-controller="Comments"
+                   asp-action="CreateComment"
+                   asp-route-Id="@Model.Post.Id"
+                   class="btn btn-outline-success mb-3">
+                    Add Comment
+                </a>
+            }
 
             <a asp-controller="Categories"
                asp-action="Index"
@@ -81,12 +97,14 @@
                class="btn btn-outline-warning mb-3">
                 SubCategory
             </a>
-
-            <a asp-controller="Topics"
-               asp-action="CreateUserComplaint"
-               class="btn btn-outline-danger mb-3">
-                Contact Support
-            </a>
+            @if (User.IsInRole("User"))
+            {
+                <a asp-controller="Topics"
+                   asp-action="CreateUserComplaint"
+                   class="btn btn-outline-danger mb-3">
+                    Contact Support
+                </a>
+            }
         </div>
     </div>
 
@@ -225,7 +243,8 @@
 
             <span>Page @Model.CurrentPage</span>
 
-            @if ((Model.CurrentPage * Model.PageSize) < Model.TotalCommentsCount)  @*<!-- pageSize -->*@
+            @if ((Model.CurrentPage * Model.PageSize) < Model.TotalCommentsCount)
+            @*<!-- pageSize -->*@
             {
                 <a asp-action="PostPreview"
                    asp-route-id="@Model.Post.Id"

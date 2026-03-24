@@ -32,7 +32,7 @@ namespace New_Web_Library.Controllers
         public async Task<IActionResult> Index(string? search, Genre? genre,int page=1)
         {
 
-            int pagesize = 5;
+            int pagesize = 4;
 
             BookPagingPreview books = await _bookService
                 .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre, page, pagesize);
@@ -149,7 +149,8 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles ="Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] Guid Id, BookFormModel model)
         {
 
@@ -187,7 +188,7 @@ namespace New_Web_Library.Controllers
 
             }
 
-
+        
 
             TempData["SuccessEdit"] = "You have successfully edited your book.";
 

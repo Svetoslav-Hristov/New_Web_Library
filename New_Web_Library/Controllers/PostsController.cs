@@ -23,7 +23,7 @@ namespace New_Web_Library.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> PostPreview(int Id ,int pageNumber=1,int pageSize=4)
+        public async Task<IActionResult> PostPreview(int Id, int pageNumber = 1, int pageSize = 4)
         {
             Guid? userId = null;
 
@@ -33,7 +33,7 @@ namespace New_Web_Library.Controllers
             }
 
 
-            var result = await _postsService.PostDetailModelsPreview(Id, userId,pageNumber,pageSize);
+            var result = await _postsService.PostDetailModelsPreview(Id, userId, pageNumber, pageSize);
 
             if (!result.Success)
             {
@@ -90,7 +90,7 @@ namespace New_Web_Library.Controllers
                 {
                     _logger.LogError(result.ErrorMessage);
 
-                    return  StatusCode(500);
+                    return StatusCode(500);
                 }
 
 
@@ -103,7 +103,7 @@ namespace New_Web_Library.Controllers
             {
                 TempData["SuccessMessage"] = "Your message has been successfully sent to the administrator.";
 
-                return RedirectToAction("Index","Categories");
+                return RedirectToAction("Index", "Categories");
 
             }
 
@@ -112,7 +112,7 @@ namespace New_Web_Library.Controllers
             TempData["SuccessPost"] = "You have successfully created a new post.";
 
 
-            return RedirectToAction(nameof(PostPreview), new { id = result.Data });
+            return RedirectToAction(nameof(PostPreview), new { id = result.Data.Id });
 
         }
 
@@ -151,7 +151,7 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                if(result.ErrorMessage.Contains("not found!"))
+                if (result.ErrorMessage.Contains("not found!"))
                 {
                     _logger.LogWarning(result.ErrorMessage);
 
@@ -163,7 +163,7 @@ namespace New_Web_Library.Controllers
 
                     return StatusCode(500);
                 }
-                
+
 
                 TempData["ErrorEditPost"] = result.ErrorMessage;
 
@@ -184,14 +184,14 @@ namespace New_Web_Library.Controllers
 
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-           
+
 
             var result = await _postsService.SoftDeletePost(Id, userId);
 
             if (!result.Success)
             {
-                
-                if(result.ErrorMessage.Contains("not found!"))
+
+                if (result.ErrorMessage.Contains("not found!"))
                 {
                     _logger.LogWarning(result.ErrorMessage);
 
@@ -205,22 +205,20 @@ namespace New_Web_Library.Controllers
                     return StatusCode(500);
                 }
 
-                
-
-                    TempData["ErrorDeletePost"] = result.ErrorMessage;
+                TempData["ErrorDeletePost"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(PostPreview), new { id = Id });
-       
+
             }
 
-            if (result.Data == 9)
+            if (result.Data.Title == TopicSpecialName)
             {
-                return RedirectToAction("ForumSupportPreview", "Systems");
+                return RedirectToAction("UsersComplaints", "Systems");
             }
-           
 
 
-            return RedirectToAction("SubCategory", "Topics", new { id = result.Data });
+
+            return RedirectToAction("SubCategory", "Topics", new { id = result.Data.Id });
 
 
         }
@@ -260,7 +258,7 @@ namespace New_Web_Library.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UserComplaint(int Id)
         {
             var post = await _postsService.GetUserComplaint(Id);

@@ -26,7 +26,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">BooksCatalog</a>
                         </li>
                         @if(User.IsInRole("Admin"))
-                       { 
+                        {
+                            <img src="~/images/CustomerSupport_Logo.png"
+                                 alt="Logo"
+                                 style="height: 30px; opacity: 0.9;" />
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Systems" asp-action="Register">LibrarySupport</a>
                         </li>
