@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.ViewModels"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{50B3C02F-75A0-4A76-9D99-0AB9642B2859}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Library.Data", "New_Library.Data\New_Library.Data.csproj", "{2086443B-6EBC-427D-8E27-E4AF0DAAE767}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.Data", "New_Library.Data\New_Web_Library.Data.csproj", "{2086443B-6EBC-427D-8E27-E4AF0DAAE767}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Library.Data.Models", "New_Library.Data.Models\New_Library.Data.Models.csproj", "{EE189BB3-6C23-4C9D-939E-52C70CAAA6B6}"
 EndProject

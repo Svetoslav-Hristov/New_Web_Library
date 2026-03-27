@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 namespace New_Web_Library.Data.Models
 {
     using static New_Web_Library.GCommon.EntityValidations.Users;
+    
+    
     public class User :IdentityUser<Guid>,IUser
     {
 

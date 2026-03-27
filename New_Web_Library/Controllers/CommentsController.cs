@@ -45,6 +45,7 @@ namespace New_Web_Library.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateComment(CreateContentViewModel model, int Id)
         {
             if (!ModelState.IsValid)
@@ -98,6 +99,7 @@ namespace New_Web_Library.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditComment(CreateContentViewModel model, int Id)
         {
             if (!ModelState.IsValid)
@@ -127,6 +129,7 @@ namespace New_Web_Library.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteComment(int Id, int postId)
         {
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -148,40 +151,7 @@ namespace New_Web_Library.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RestoreComment(int Id)
-        {
-            var result = await _commentsService.RestoreDeleteComment(Id);
-
-            if (!result.Success)
-            {
-                TempData["ErrorRestoreComment"] = result.ErrorMessage;
-
-                return RedirectToAction("ForumSupportPreview", "Systems");
-            }
-
-            return RedirectToAction("ForumSupportPreview", "Systems");
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> HardDeleteComment(int Id)
-        {
-            var result = await _commentsService.HardDeleteComment(Id);
-
-            if (!result.Success)
-            {
-                TempData["ErrorHardDeleteComment"] = result.ErrorMessage;
-
-                return RedirectToAction("ForumSupportPreview", "Systems");
-            }
-
-
-
-            return RedirectToAction("ForumSupportPreview", "Systems");
-
-        }
-
+       
 
     }
 }

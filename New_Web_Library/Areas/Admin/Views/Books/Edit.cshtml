@@ -1,7 +1,7 @@
-﻿@model BookFormModel
+﻿@model BookFormModel 
 
 <div class="container">
-
+   
     <h1>Edit Book</h1>
 
     <form asp-action="Edit" method="post">
@@ -64,7 +64,7 @@
         <span asp-validation-for="NewAuthor" class="text-danger"></span>
 
         <button type="submit" class="btn btn-success">Save</button>
-        <a class="btn btn-secondary" asp-controller="Books" asp-action="Index">Cancel</a>
+        <a class="btn btn-secondary" asp-area="" asp-controller="Books" asp-action="Index">Cancel</a>
     </form>
 </div>
 

@@ -13,7 +13,8 @@
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
-                <a asp-controller="Systems"
+                <a asp-area="Admin"
+                   asp-controller="Systems"
                    asp-action="ForumSupportPreview"
                    class="btn btn-outline-primary">
                     Delete Items
@@ -54,11 +55,15 @@
             </div>
 
             <div class="d-flex gap-2">
-                <a asp-controller="Systems" asp-action="UsersComplaints" class="btn btn-outline-warning mb-3">
+                <a asp-area="Admin"
+                   asp-controller="Systems"
+                   asp-action="UsersComplaints"
+                   class="btn btn-outline-warning mb-3">
                     Back
                 </a>
 
-                <form asp-controller="Posts"
+                <form asp-area="Admin" 
+                      asp-controller="Posts"
                       asp-action="DeletePost"
                       asp-route-id="@Model.Id"
                       method="post"

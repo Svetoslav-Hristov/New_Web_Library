@@ -5,18 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - New_Web_Library</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/New_Web_Library.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid d-flex align-items-center">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow mb-3">
+
+            <div class="container-fluid ">
 
                 <!-- Left -->
                 <div class="d-flex align-items-center gap-2">
-                    <img src="~/images/Forum_Logo.jpg" style="height:40px;" />
+                    <img src="~/images/Forum_Logo.png" style="height:40px;" />
                     <a class="navbar-brand"
+                      asp-area=""
                        asp-controller="Categories"
                        asp-action="Index">
                         Web_Library_Forum
@@ -25,10 +27,11 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="d-flex align-items-center gap-2">
-                        <img src="~/images/CustomerSupport_Logo.png" style="height:26px;" />
+                        <img src="~/images/CustomerSupport_Logo.png" style="height:30px;" />
                         <a class="navbar-brand"
-                        asp-controller="Systems"
-                        asp-action="ForumSupportPreview">
+                         asp-area="Admin"
+                           asp-controller="Systems"
+                           asp-action="ForumSupportPreview">
                             Forum_Support
                         </a>
                     </div>
@@ -36,8 +39,9 @@
 
                 <!-- Center -->
                 <div class="mx-auto d-flex align-items-center gap-2">
-                    <img src="~/images/Books_Logo.jpg" style="height:65px;" />
+                    <img src="~/images/Books_Logo.png" style="height:50px;" />
                     <a class="nav-link text-dark fw-bold"
+                      asp-area=""
                        asp-controller="Books"
                        asp-action="Index">
                         Back To Books
@@ -54,12 +58,11 @@
 
     </header>
     <div class="container-fluid px-0 d-flex flex-column flex-grow-1">
-        <main role="main" class="flex-grow-1 pb-3">
+        <main class="container-fluid pb-1">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted ">
+    <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2026 - New_Web_Library - <a asp-area="" asp-controller="Welcome" asp-action="Contacts">Contacts</a>
         </div>

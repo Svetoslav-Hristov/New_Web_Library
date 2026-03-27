@@ -20,7 +20,7 @@
 
     var errorUSersComplains = TempData["ErrorUserComplaints"] as string;
 
-  
+
 }
 
 
@@ -104,14 +104,15 @@
 
 <div class="container-fluid px-0">
     <div class="row g-0">
-        <div class="border-end bg-light p-1" style="width: 230px; min-height: 100vh;">
+        <div class="border-end bg-light p-1" style="width: 230px; min-height: 90vh;">
 
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
-                <a asp-controller="Systems"
+                <a asp-area="Admin"
+                    asp-controller="Systems"
                    asp-action="UsersComplaints"
-                  class="btn btn-outline-primary">
+                   class="btn btn-outline-primary">
                     👤 Users Complaints
                 </a>
 
@@ -156,12 +157,12 @@
                                         @item.Type
                                     </span>
                                 }
-                                else if (item.Type=="Covered/SubCategory")
+                                else if (item.Type == "Covered/SubCategory")
                                 {
                                     <span class="badge bg-danger">
                                         @item.Type
                                     </span>
-                                    
+
                                 }
                                 else if (item.Type == "Post")
                                 {
@@ -279,7 +280,7 @@
                                         </form>
                                     </div>
                                 }
-                                else if(item.Type=="Comment")
+                                else if (item.Type == "Comment")
                                 {
                                     <div class="d-flex gap-2">
                                         <form asp-controller="Comments"
@@ -316,3 +317,6 @@
                 </tbody>
 
             </table>
+        </main>
+    </div>
+</div>

@@ -1,25 +1,26 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
 .book-cover-small {
     width: 80px !important;
     height: auto;
@@ -81,10 +82,49 @@ category-title {
     font-weight: bold;
     background-color: #f8f9fa;
 }
+
 .category-title {
-    font-family: 'Georgia', serif; 
+    font-family: 'Georgia', serif;
     font-size: 1.2rem;
     font-weight: 600;
-    color: #2c3e50; 
+    color: #2c3e50;
     letter-spacing: 0.5px;
 }
+
+
+.main[role="main"] {
+    min-height: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+
+    .table th,
+    .table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+.table {
+    border-spacing: 0;
+}
+
+
+    .table tr {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+        .table tr:last-child {
+            border-bottom: none;
+        }
+    .table td:first-child,
+    .table th:first-child {
+        padding-left: 8px;
+    }
+

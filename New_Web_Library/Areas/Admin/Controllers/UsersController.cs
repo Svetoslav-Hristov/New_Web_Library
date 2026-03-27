@@ -1,34 +1,33 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
-using New_Web_Library.GCommon.Enums;
-using New_Web_Library.Services.Core;
-using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
-using New_Web_Library.ViewModels.User;
-using System.Security.Claims;
 
-namespace Web_Library.Controllers
+namespace New_Web_Library.Areas.Admin.Controllers
 {
+
+    [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class UsersController : Controller
     {
-       
         private readonly IUsersService _usersService;
         private readonly SignInManager<User> _signInManager;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController( IUsersService usersService, SignInManager<User> signInManager)
+        public UsersController(IUsersService usersService, SignInManager<User> signInManager,
+            ILogger<UsersController> logger)
         {
-           
             this._usersService = usersService;
             this._signInManager = signInManager;
+            this._logger = logger;
+
+            
         }
 
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string? search)
         {
 
@@ -49,7 +48,8 @@ namespace Web_Library.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(Guid Id)
         {
 
@@ -76,7 +76,7 @@ namespace Web_Library.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid Id)
         {
 
@@ -88,15 +88,15 @@ namespace Web_Library.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            
+
 
             return View(model.Data);
 
         }
 
-
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var result = await _usersService.DeleteUserProfileAsync(Id);
@@ -115,5 +115,11 @@ namespace Web_Library.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
+
+
+
+
     }
+
 }

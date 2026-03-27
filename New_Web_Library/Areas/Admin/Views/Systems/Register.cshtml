@@ -47,31 +47,33 @@
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
-                <a asp-controller="Users"
+                <a asp-area="Admin"
+                   asp-controller="Users"
                    asp-action="Index"
                    class="btn btn-outline-primary">
                     👤 Users List
                 </a>
-                <a class="btn btn-outline-success " asp-area="Identity" asp-page="/Account/Register">
-                    + Add User
-                </a>
-                <a asp-controller="Systems"
+                
+                <a asp-area="Admin"
+                    asp-controller="Systems"
                    asp-action="CreateLoan"
                    class="btn btn-outline-success">
                     ➕ Create Loan
                 </a>
 
-                <a asp-controller="Books"
+                <a asp-area=""
+                    asp-controller="Books"
                    asp-action="Index"
                    class="btn btn-outline-primary">
                     📚 Books Catalog
                 </a>
                 <a class="btn btn-outline-success"
+                   asp-area="Admin"
                    asp-controller="Books"
                    asp-action="Create">
                     + Add Book
                 </a>
-                
+
 
             </div>
         </aside>
@@ -79,7 +81,7 @@
 
             <h2 class="mb-4">📚 Borrowed Books Register</h2>
 
-           
+
             <form method="get" class="mb-3">
                 <div class="input-group">
                     <input type="text"
@@ -127,7 +129,8 @@
                                 </td>
 
                                 <td>
-                                    <a asp-controller="Books"
+                                    <a asp-area=""
+                                        asp-controller="Books"
                                        asp-action="Details"
                                        asp-route-id="@item.BookId">
                                         @item.BookTitle
@@ -150,7 +153,7 @@
                                     </td>
                                 }
 
-                                
+
                                 @if (item.PickUpDate != null)
                                 {
                                     <td>

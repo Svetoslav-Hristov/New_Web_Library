@@ -1,8 +1,6 @@
 ﻿@model CreateSubCategoryViewModel
 @{
 
-
-
     Layout = "_ForumLayout";
 
 
@@ -30,6 +28,10 @@
 
     <button type="submit" class="btn btn-outline-warning mt-3">@title</button>
 
-    <a asp-controller="@formatExitController" asp-action="@formatExitAction" asp-route-Id="@Model.SubCategoryId" class="btn btn-outline-primary mt-3"> Cancel </a>
+    <a asp-area="" 
+      asp-controller="@formatExitController" 
+      asp-action="@formatExitAction" 
+      asp-route-Id="@Model.SubCategoryId" 
+      class="btn btn-outline-primary mt-3"> Cancel </a>
 
 </form>

@@ -41,7 +41,7 @@ namespace New_Web_Library
                .AddRoles<IdentityRole<Guid>>()
                .AddEntityFrameworkStores<LibraryDbContext>();
 
-            builder.Services.ConfigureApplicationCookie(options =>   
+            builder.Services.ConfigureApplicationCookie(options =>
             {
 
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(SessionTimeOut);
@@ -51,8 +51,8 @@ namespace New_Web_Library
                 options.LoginPath = "/Identity/Account/Login";
                 options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-              
-                
+
+
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
             });
@@ -80,8 +80,8 @@ namespace New_Web_Library
                 app.UseExceptionHandler("/Welcome/Error500"); // за 500
                 app.UseHsts();
             }
-        
-            
+
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -92,6 +92,11 @@ namespace New_Web_Library
             app.UseAuthorization();
 
             app.UseStatusCodePagesWithReExecute("/Welcome/Error{0}");
+
+            app.MapControllerRoute(
+                name: "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 
             app.MapControllerRoute(
                 name: "default",
@@ -132,7 +137,7 @@ namespace New_Web_Library
                 });
             }
 
-           
+
             if (!await roleManager.RoleExistsAsync("User"))
             {
                 await roleManager.CreateAsync(new IdentityRole<Guid>
@@ -170,11 +175,11 @@ namespace New_Web_Library
 
             }
 
-            
+
 
         }
 
-       
+
         private static void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<IBooksRepository, BooksRepository>();

@@ -21,12 +21,12 @@
 
     var errorDeleteSubCategory = TempData["ErrorDeleteSubCategory"] as string;
 
-    
+
     var errorMessage = TempData["WrongData"] as string;
 
     var errorEdit = TempData["ErrorEdit"] as string;
 
-     // complains message //
+    // complains message //
     var successMessage = TempData["SuccessMessage"] as string;
 
 }
@@ -109,12 +109,15 @@
     @if (User.IsInRole("Admin"))
     {
         <a class="btn btn-outline-success"
+           asp-area="Admin"
            asp-controller="Categories"
            asp-action="CreateCategory">
             + Add Category
         </a>
     }
-    <table class="table">
+
+    <table class="table ">
+
         <thead>
             <tr>
                 <th>Category</th>
@@ -125,12 +128,14 @@
                 <th></th>
                 <th></th>
                 <th></th>
+
             </tr>
         </thead>
 
         <tbody>
             @foreach (var category in Model)
             {
+
                 <tr>
                     <td>
                         <strong class="text-black fw-bolder fs-5">@category.Name</strong>
@@ -162,13 +167,18 @@
                     <td>@category.LastPostTitle</td>
                     <td>@(category.LastActive.HasValue? category.LastActive.Value.ToLocalTime().ToString(ForumTimeFormat):"N/A") </td>
 
+
+
+
+
+
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-outline-success"
-                            asp-controller="Topics"
-                            asp-action="CreateSubCategory"
-                            asp-route-id="@category.Id">
+                               asp-controller="Topics"
+                               asp-action="CreateSubCategory"
+                               asp-route-id="@category.Id">
                                 + Add SubCategory
                             </a>
                         }
@@ -178,6 +188,7 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-outline-warning"
+                               asp-area="Admin"
                                asp-controller="Categories"
                                asp-action="EditCategory"
                                asp-route-id="@category.Id">
@@ -188,7 +199,8 @@
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <form asp-controller="Categories"
+                            <form asp-area="Admin"
+                                  asp-controller="Categories"
                                   asp-action="DeleteCategory"
                                   asp-route-id="@category.Id"
                                   method="post"
@@ -202,6 +214,7 @@
                         }
                     </td>
                 </tr>
+
 
             }
 

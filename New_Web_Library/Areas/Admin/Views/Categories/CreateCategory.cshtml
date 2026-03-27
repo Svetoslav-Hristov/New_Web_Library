@@ -29,9 +29,9 @@
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-   
+
     <button type="submit" class="btn btn-primary mt-3">@title</button>
-    <a asp-controller="Categories" asp-action="Index" class="btn btn-primary mt-3">Cancel</a>
+    <a asp-area="" asp-controller="Categories" asp-action="Index" class="btn btn-primary mt-3">Cancel</a>
 </form>
 
 @section Scripts {
