@@ -18,7 +18,7 @@ namespace New_Library.Services.Core
         private readonly IUsersRepository _usersRepository;
         private readonly ISystemsRepository _systemsRepository;
         public UsersService(UserManager<User> userManager, SignInManager<User> signInManager,
-            IUsersRepository usersRepository ,ISystemsRepository systemsRepository)
+            IUsersRepository usersRepository, ISystemsRepository systemsRepository)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
@@ -27,7 +27,7 @@ namespace New_Library.Services.Core
         }
 
 
-        public async Task<ServiceResult<IEnumerable<User>>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search)
+        public async Task<ServiceResult<UserPagingViewModel>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search ,int page,int pageSize)
         {
 
             IQueryable<User> allUsers = _usersRepository.GetAllUsers();
@@ -40,33 +40,62 @@ namespace New_Library.Services.Core
 
                 bool isValidAge = int.TryParse(search, out int age);
 
-                IEnumerable<User> foundUsers = await allUsers.AsNoTracking()
+                allUsers = allUsers.AsNoTracking()
                     .Where(u => !u.IsDeleted && (u.FirstName.ToLower().Contains(search) || u.LastName.ToLower()
-                    .Contains(search) || (isValidAge && u.Age == age))).ToArrayAsync();
-
-                if (!foundUsers.Any())
-                {
-
-
-                    return new ServiceResult<IEnumerable<User>> { Success = false, ErrorMessage = "User/s not found!", Data = foundUsers };
-                }
-
-                return new ServiceResult<IEnumerable<User>> { Success = true, Data = foundUsers };
+                    .Contains(search) || (isValidAge && u.Age == age)));
 
             }
 
 
-            IEnumerable<User> users = await allUsers.AsNoTracking().Where(u => !u.IsDeleted).ToArrayAsync();
+            int totalCount = await allUsers.CountAsync();
 
-            if (!users.Any())
+            if (totalCount == 0)
+            {
+                var emptyModel = new UserPagingViewModel
+                {
+                    Users = new List<PreviewUserModel>(),
+                    CurrentPage = page,
+                    TotalPages = 0,
+                    Search = search
+                };
+
+                return new ServiceResult<UserPagingViewModel>
+                {
+                    Success = false,
+                    ErrorMessage = "There are no added users in database!",
+                    Data = emptyModel
+                };
+            }
+
+
+            List<PreviewUserModel>? users = await allUsers.AsNoTracking().Skip((page - 1) * pageSize).Take(pageSize).Select(u => new PreviewUserModel()
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Age = u.Age,
+                Address = u.Address,
+                TelephoneNumber = u.PhoneNumber,
+                Email = u.Email,
+                IsBlocked = u.IsBlocked
+
+
+            }).ToListAsync();
+
+
+            UserPagingViewModel? model = new UserPagingViewModel()
             {
 
-                return new ServiceResult<IEnumerable<User>> { Success = false, ErrorMessage = "There no added users in data base!", Data = users };
+                Users = users,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                Search = search
 
+            };
 
-            }
+            
 
-            return new ServiceResult<IEnumerable<User>> { Success = true, Data = users };
+            return new ServiceResult<UserPagingViewModel> { Success = true, Data = model };
         }
 
         public async Task<ServiceResult<User>> ChangeUserStatusAsync(Guid Id)
@@ -126,7 +155,7 @@ namespace New_Library.Services.Core
 
 
             var foundUser = await _usersRepository.UserFullDetailsAndHistory(Id);
-             
+
 
 
             if (foundUser == null)
@@ -210,7 +239,7 @@ namespace New_Library.Services.Core
 
         }
 
-        
+
     }
 }
 

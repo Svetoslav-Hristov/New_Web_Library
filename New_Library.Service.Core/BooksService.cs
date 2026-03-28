@@ -1,13 +1,19 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Models.Contracts;
 using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
+using System.Numerics;
+using static New_Web_Library.GCommon.EntityValidations;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Services.Core
 {
@@ -16,18 +22,21 @@ namespace New_Web_Library.Services.Core
         private readonly IBooksRepository _booksRepository;
         private readonly ISystemsRepository _systemsRepository;
         private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<IBooksService> _logger;
+
       
         public BooksService(IBooksRepository booksRepository, IWebHostEnvironment environment,
-            ISystemsRepository systemsRepository)
+            ISystemsRepository systemsRepository ,ILogger<IBooksService> logger )
         {
             this._booksRepository = booksRepository;
             this._environment = environment;
             this._systemsRepository = systemsRepository;
+            this._logger = logger;
         }
 
 
-        public async Task<BookPagingPreview> 
-                             GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre ,int page, int pageSize)
+        public async Task<BookPagingPreview> GetAllBooksOrderedByTitleThanByAuthorAscAsync
+            (string? search, Genre? genre ,int page, int pageSize)
         {
 
             var allCollection = _booksRepository.GetAllBooks();
@@ -77,9 +86,6 @@ namespace New_Web_Library.Services.Core
             };
 
 
-
-            //IEnumerable<FullPreviewModelBook> books = await allBooks.ToArrayAsync();
-
             return pagingPreview;
         }
 
@@ -87,6 +93,8 @@ namespace New_Web_Library.Services.Core
         {
             if (Id == Guid.Empty)
             {
+
+                _logger.LogWarning("Invalid book id !");
 
                 return new ServiceResult<FullPreviewModelBook> { Success = false, ErrorMessage = "Invalid book id !" };
 
@@ -98,6 +106,8 @@ namespace New_Web_Library.Services.Core
 
             if (book == null)
             {
+                _logger.LogWarning("Book not found !");
+
                 return new ServiceResult<FullPreviewModelBook> { Success = false, ErrorMessage = "Book not found !" };
 
             }
@@ -143,6 +153,9 @@ namespace New_Web_Library.Services.Core
 
             if (model == null)
             {
+               
+
+               
                 return new ServiceResult<Book>
                 {
                     Success = false,
@@ -165,7 +178,12 @@ namespace New_Web_Library.Services.Core
 
             if (authorName == null)
             {
-                return new ServiceResult<Book> { Success = false, ErrorMessage = "Тhe book must have an author!" };
+                
+                return new ServiceResult<Book> 
+                {
+                    Success = false,
+                    ErrorMessage = "Тhe book must have an author!"
+                };
             }
 
 
@@ -188,13 +206,17 @@ namespace New_Web_Library.Services.Core
                 
 
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                
+                _logger.LogError(ex,"Error creating book with title {Title}", newBook.Title);
+
                 return new ServiceResult<Book> 
                 {
                     Success = false,
-                    ErrorMessage = "Unexpected error is occurred while create new book! Please try again later." 
+                    ErrorMessage = "Unexpected error is occurred while create new book! Please try again later."
                 };
+
 
             }
 
@@ -297,8 +319,10 @@ namespace New_Web_Library.Services.Core
                 await _booksRepository.UpdateAsync(book);
 
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+
+                _logger.LogError(ex, "Error edit book with title {Title}", book.Title);
 
                 return new ServiceResult<Book> 
                 {
@@ -359,8 +383,11 @@ namespace New_Web_Library.Services.Core
                 await _booksRepository.DeleteAsync(foundBook);
             
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+
+                _logger.LogError(ex, "Error edit book with title {Title}", foundBook.Title);
+
                 return new ServiceResult<bool> 
                 { 
                     Success = false,

@@ -14,7 +14,7 @@ namespace New_Web_Library.ViewModels.User
 
         public string LastName { get; set; } = null!;
 
-        public int Ade { get; set; }
+        public int Age { get; set; }
 
         public string Address { get; set; } = null!;
 
@@ -22,7 +22,7 @@ namespace New_Web_Library.ViewModels.User
 
         public string Email { get; set; } = null!;
 
-        public bool Status { get; set; }
+        public bool IsBlocked { get; set; }
 
 
     }

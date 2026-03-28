@@ -43,7 +43,7 @@
 
 <div class="container-fluid px-0">
     <div class="row g-0">
-        <aside class="col-md-3 col-lg-2 bg-light border-end min-vh-100 p-3">
+        <aside class="border-end bg-light p-3" style="width: 230px; height: 85vh; flex-shrink: 0;">
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
@@ -51,18 +51,18 @@
                    asp-controller="Users"
                    asp-action="Index"
                    class="btn btn-outline-primary">
-                    👤 Users List
+                    🙎‍ Users Register
                 </a>
-                
+
                 <a asp-area="Admin"
-                    asp-controller="Systems"
+                   asp-controller="Systems"
                    asp-action="CreateLoan"
                    class="btn btn-outline-success">
-                    ➕ Create Loan
+                   ✏ ➕ Create Loan
                 </a>
 
                 <a asp-area=""
-                    asp-controller="Books"
+                   asp-controller="Books"
                    asp-action="Index"
                    class="btn btn-outline-primary">
                     📚 Books Catalog
@@ -71,13 +71,13 @@
                    asp-area="Admin"
                    asp-controller="Books"
                    asp-action="Create">
-                    + Add Book
+                   📗 + Add Book
                 </a>
 
 
             </div>
         </aside>
-        <main class="col-md-9 col-lg-10 p-4">
+        <main class="col-md-9 col-lg-10 p-4 mx-auto">
 
             <h2 class="mb-4">📚 Borrowed Books Register</h2>
 
@@ -104,98 +104,101 @@
             }
             else
             {
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>User</th>
-                            <th>Book</th>
-                            <th>Pick-up date / ReservedOn</th>
-                            <th>Return date / ReservationExpiresOn</th>
-                            <th>Status</th>
-                            <th>Edit Loan</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+                <div style="max-height: 60vh; overflow-y: auto;">
+                    <table class="table table-bordered table-hover align-middle w-100">
+                        <thead class="table-light bg-light " style="position: sticky; top: 0; z-index: 2; ">
                             <tr>
-                                <td>
-                                    <a asp-controller="Users"
-                                       asp-action="Details"
-                                       asp-route-id="@item.UserId">
-                                        @item.UserFirstName @item.UserLastName
-                                    </a>
-                                </td>
-
-                                <td>
-                                    <a asp-area=""
-                                        asp-controller="Books"
-                                       asp-action="Details"
-                                       asp-route-id="@item.BookId">
-                                        @item.BookTitle
-                                    </a>
-                                </td>
-                                @if (item.PickUpDate != null && item.ReturnDate != null)
-                                {
-                                    <td>@(item.PickUpDate?.ToString("dd.MM.yyyy") ?? "-")</td>
-                                    <td>@(item.ReturnDate?.ToString("dd.MM.yyyy") ?? "-")</td>
-                                    <td>
-                                        <span class="badge bg-success">@item.Status</span>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@(item.ReservedOn?.ToString("dd.MM.yyyy") ?? "-")</td>
-                                    <td>@(item.ReservationExpiresOn?.ToString("dd.MM.yyyy") ?? "-")</td>
-                                    <td>
-                                        <span class="badge bg-warning">@item.Status</span>
-                                    </td>
-                                }
-
-
-                                @if (item.PickUpDate != null)
-                                {
-                                    <td>
-                                        <a asp-controller="Systems"
-                                           asp-action="EditLoan"
-                                           asp-route-id=" @item.LoanId "
-                                           class="btn btn-outline-warning">
-                                            Edit
-                                        </a>
-
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <a asp-controller="Systems"
-                                           asp-action="EditLoan"
-                                           asp-route-id=" @item.LoanId "
-                                           class="btn btn-outline-primary">
-                                            ConfirmLoan
-                                        </a>
-
-                                    </td>
-
-                                }
-                                <td>
-                                    <form asp-controller="Systems"
-                                          asp-action="DeleteLoan"
-                                          asp-route-id="@item.LoanId"
-                                          method="post"
-                                          onsubmit="return confirm('Are you sure you want to delete this LoanRecord?');">
-
-                                        <button type="submit" class="btn btn btn-outline-danger ">
-                                            Delete Loan
-                                        </button>
-                                    </form>
-                                </td>
+                                <th>User</th>
+                                <th>Book</th>
+                                <th>Pick-up date / ReservedOn</th>
+                                <th>Return date / ReservationExpiresOn</th>
+                                <th>Status</th>
+                                <th>Edit Loan</th>
+                                <th></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr style="background-color:white" >
+                                    <td>
+                                        <a asp-controller="Users"
+                                           asp-action="Details"
+                                           asp-route-id="@item.UserId">
+                                            @item.UserFirstName @item.UserLastName
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <a asp-area=""
+                                           asp-controller="Books"
+                                           asp-action="Details"
+                                           asp-route-id="@item.BookId">
+                                            @item.BookTitle
+                                        </a>
+                                    </td>
+                                    @if (item.PickUpDate != null && item.ReturnDate != null)
+                                    {
+                                        <td>@(item.PickUpDate?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>@(item.ReturnDate?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>
+                                            <span class="badge bg-success">@item.Status</span>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>@(item.ReservedOn?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>@(item.ReservationExpiresOn?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>
+                                            <span class="badge bg-warning">@item.Status</span>
+                                        </td>
+                                    }
+
+
+                                    @if (item.PickUpDate != null)
+                                    {
+                                        <td>
+                                            <a asp-controller="Systems"
+                                               asp-action="EditLoan"
+                                               asp-route-id=" @item.LoanId "
+                                               class="btn btn-outline-warning">
+                                                Edit
+                                            </a>
+
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a asp-controller="Systems"
+                                               asp-action="EditLoan"
+                                               asp-route-id=" @item.LoanId "
+                                               class="btn btn-outline-primary">
+                                                ConfirmLoan
+                                            </a>
+
+                                        </td>
+
+                                    }
+                                    <td>
+                                        <form asp-controller="Systems"
+                                              asp-action="DeleteLoan"
+                                              asp-route-id="@item.LoanId"
+                                              method="post"
+                                              onsubmit="return confirm('Are you sure you want to delete this LoanRecord?');">
+
+                                            <button type="submit" class="btn btn btn-outline-danger ">
+                                                Delete Loan
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             }
+
 
         </main>
 

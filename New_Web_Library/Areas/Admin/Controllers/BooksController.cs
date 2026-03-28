@@ -48,8 +48,6 @@ namespace New_Web_Library.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
 
-
-
                 await _bookService.BookModelDataFillingAsync(formModel);
 
                 return View(nameof(Create), formModel);

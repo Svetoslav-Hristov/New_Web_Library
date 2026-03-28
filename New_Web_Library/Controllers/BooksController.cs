@@ -18,13 +18,12 @@ namespace New_Web_Library.Controllers
         public BooksController(IBooksService bookService, ILogger<BooksController> logger)
         {
             this._bookService = bookService;
-            this._logger = logger;
         }
 
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? search, Genre? genre,int page=1)
+        public async Task<IActionResult> Index(string? search, Genre? genre, int page = 1)
         {
 
             int pagesize = 4;
@@ -32,8 +31,8 @@ namespace New_Web_Library.Controllers
             BookPagingPreview books = await _bookService
                 .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre, page, pagesize);
 
-           
-            
+
+
             return View(books);
         }
 
@@ -46,12 +45,10 @@ namespace New_Web_Library.Controllers
 
             if (!newBook.Success)
             {
-                
-                _logger.LogWarning("{0} Id = {1}", newBook.ErrorMessage,Id );
 
+                TempData["ErrorBook"] = newBook.ErrorMessage;
 
-                return NotFound();
-
+                return RedirectToAction(nameof(Index));
             }
 
 
@@ -59,7 +56,7 @@ namespace New_Web_Library.Controllers
 
         }
 
-       
+
 
     }
 }

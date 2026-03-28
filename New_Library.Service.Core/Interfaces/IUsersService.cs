@@ -8,7 +8,7 @@ namespace New_Web_Library.Services.Core.Interfaces
 {
     public interface IUsersService
     {
-        Task<ServiceResult<IEnumerable<User>>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search);
+        Task<ServiceResult<UserPagingViewModel>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search, int page, int pageSize);
 
         Task<ServiceResult<User>> ChangeUserStatusAsync(Guid Id);
 

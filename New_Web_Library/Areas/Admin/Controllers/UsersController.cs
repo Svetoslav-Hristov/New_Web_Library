@@ -28,10 +28,12 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(string? search, int page = 1)
         {
 
-            var usersCollection = await _usersService.GetAllUsersWithOrWithoutSearchCriteriaAsync(search);
+            int pageSize = 10;
+
+            var usersCollection = await _usersService.GetAllUsersWithOrWithoutSearchCriteriaAsync(search , page , pageSize);
 
 
             if (!usersCollection.Success)

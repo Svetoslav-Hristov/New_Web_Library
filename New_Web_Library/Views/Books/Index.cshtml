@@ -4,6 +4,17 @@
 
     var successRegistration = TempData["SuccessRegistration"] as string;
 
+    var errorBookDetails = TempData["ErrorBook"] as string;
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorBookDetails))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorBookDetails
+    </div>
+
 }
 
 @if (!string.IsNullOrEmpty(successRegistration))
@@ -18,7 +29,7 @@
 
 <div class="d-flex" style="max-height: 80vh;">
 
-    <div class="border-end bg-light p-3" style="width: 230px; min-height: 85vh;">
+    <div class="border-end  p-3 bg-light" style="width: 230px; min-height: 85vh;">
         <h5>Genres</h5>
 
         <div class="list-group">
@@ -100,7 +111,7 @@
                     Search
                 </button>
             </form>
-            
+
             <!-- HEADER -->
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h1 class="mb-0">Books Catalog</h1>
@@ -115,9 +126,9 @@
                 }
                 else
                 {
-                    <table class="table table-bordered">
+                    <table class="table table-bordered ">
                         <thead>
-                            <tr>
+                            <tr class="bg-light" >
                                 <th style="width:250px;">Book Cover</th>
                                 <th>Title</th>
                                 <th>Author Name</th>
@@ -128,7 +139,7 @@
                         <tbody>
                             @foreach (FullPreviewModelBook b in Model.Books)
                             {
-                                <tr>
+                                <tr style="background-color :white " >
                                     <td>
                                         <img src="~/Images/@b.CoverImageUrl"
                                              class="img-thumbnail book-cover-small" />
@@ -178,6 +189,7 @@
                 }
 
             </div>
+
         </div>
     </div>
 </div>
