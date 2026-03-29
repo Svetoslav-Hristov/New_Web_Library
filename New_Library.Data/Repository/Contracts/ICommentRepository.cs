@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface ICommentsRepository:IBaseRepository
+    public interface ICommentRepository:IBaseRepository
 
     {
         Task<Comment?> GetCommentWithPostAsync(int id);
@@ -16,7 +16,7 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Comment> GetAllDeleteComments();
 
-        Task<Comment?> GetSoftDeleteComment(int Id);
+        Task<Comment?> GetSoftDeleteCommentAsync(int Id);
 
         Task<int> GetAllCommentsCount(Guid userId);
 

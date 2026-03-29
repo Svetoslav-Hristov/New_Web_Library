@@ -4,7 +4,7 @@ using New_Web_Library.ViewModels.Forum;
 
 namespace New_Web_Library.Service.Core.Interfaces
 {
-    public interface IPostsService
+    public interface IPostService
     {
         Task<ServiceResult<PostForumPagingModel>> PostDetailModelsPreview(int Id, Guid? userId,int pageNumber, int pageSize);
 

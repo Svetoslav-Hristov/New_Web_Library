@@ -9,17 +9,17 @@ using static New_Web_Library.GCommon.EntityValidations.Topics;
 
 namespace New_Web_Library.Service.Core
 {
-    public class PostsService : IPostsService
+    public class PostService : IPostService
     {
 
-        private readonly IPostsRepository _postsRepository;
-        private readonly ICommentsRepository _commentsRepository;
-        private readonly ICategoriesRepository _categoriesRepository;
-        private readonly IUsersRepository _usersRepository;
-        private readonly ITopicsRepository _topicsRepository;
-        public PostsService(IPostsRepository postsRepository, ICommentsRepository commentsRepository,
-            ICategoriesRepository categoriesRepository, IUsersRepository usersRepository,
-            ITopicsRepository topicsRepository)
+        private readonly IPostRepository _postsRepository;
+        private readonly ICommentRepository _commentsRepository;
+        private readonly ICategoryRepository _categoriesRepository;
+        private readonly IUserRepository _usersRepository;
+        private readonly ITopicRepository _topicsRepository;
+        public PostService(IPostRepository postsRepository, ICommentRepository commentsRepository,
+            ICategoryRepository categoriesRepository, IUserRepository usersRepository,
+            ITopicRepository topicsRepository)
         {
             this._postsRepository = postsRepository;
             this._commentsRepository = commentsRepository;
@@ -319,7 +319,7 @@ namespace New_Web_Library.Service.Core
             }
 
 
-            bool isAdmin = await _usersRepository.AdminOrNot(userId);
+            bool isAdmin = await _usersRepository.AdminOrNotAsync(userId);
 
             if (post.UserId != userId && !isAdmin )
             {

@@ -10,10 +10,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
     public class SystemsController : Controller
     {
 
-        private readonly ISystemsService _systemsService;
+        private readonly ISystemService _systemsService;
         private readonly ILogger<SystemsController> _logger;
 
-        public SystemsController(ISystemsService systemsService,ILogger<SystemsController> logger)
+        public SystemsController(ISystemService systemsService,ILogger<SystemsController> logger)
         {
             this._systemsService = systemsService;
             this._logger = logger;

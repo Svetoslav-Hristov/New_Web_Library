@@ -11,14 +11,14 @@ using New_Web_Library.ViewModels.User;
 
 namespace New_Library.Services.Core
 {
-    public class UsersService : IUsersService
+    public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IUsersRepository _usersRepository;
-        private readonly ISystemsRepository _systemsRepository;
-        public UsersService(UserManager<User> userManager, SignInManager<User> signInManager,
-            IUsersRepository usersRepository, ISystemsRepository systemsRepository)
+        private readonly IUserRepository _usersRepository;
+        private readonly ISystemRepository _systemsRepository;
+        public UserService(UserManager<User> userManager, SignInManager<User> signInManager,
+            IUserRepository usersRepository, ISystemRepository systemsRepository)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;

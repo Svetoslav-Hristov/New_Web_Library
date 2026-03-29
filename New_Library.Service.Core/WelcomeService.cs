@@ -8,9 +8,9 @@ namespace New_Library.Services.Core
 {
     public class WelcomeService : IWelcomeService
     {
-        private readonly IBooksRepository _booksRepository;
+        private readonly IBookRepository _booksRepository;
 
-        public WelcomeService(IBooksRepository booksRepository)
+        public WelcomeService(IBookRepository booksRepository)
         {
             this._booksRepository = booksRepository;
         }

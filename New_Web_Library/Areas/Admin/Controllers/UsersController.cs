@@ -11,11 +11,11 @@ namespace New_Web_Library.Areas.Admin.Controllers
     [Authorize(Roles ="Admin")]
     public class UsersController : Controller
     {
-        private readonly IUsersService _usersService;
+        private readonly IUserService _usersService;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUsersService usersService, SignInManager<User> signInManager,
+        public UsersController(IUserService usersService, SignInManager<User> signInManager,
             ILogger<UsersController> logger)
         {
             this._usersService = usersService;

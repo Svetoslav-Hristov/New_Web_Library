@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
-    public class PostsRepository : BaseRepository,IPostsRepository
+    public class PostRepository : BaseRepository,IPostRepository
     {
         
 
-        public PostsRepository(LibraryDbContext dbContext) 
+        public PostRepository(LibraryDbContext dbContext) 
             : base(dbContext)
         {
 

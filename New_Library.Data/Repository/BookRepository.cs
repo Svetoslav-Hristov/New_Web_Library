@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
-    public class BooksRepository :BaseRepository,IBooksRepository
+    public class BookRepository :BaseRepository,IBookRepository
     {
-        public BooksRepository(LibraryDbContext dbContext)
+        public BookRepository(LibraryDbContext dbContext)
             : base(dbContext)
         {
         }

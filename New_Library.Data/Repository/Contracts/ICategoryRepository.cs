@@ -2,7 +2,7 @@
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface ICategoriesRepository:IBaseRepository
+    public interface ICategoryRepository:IBaseRepository
     {
         Task<List<Category>> GetAllCategoriesWithSubCategories(int? Id=null);
 
@@ -12,7 +12,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<bool> ExistByName(string name,int Id);
 
-        Task<Category?> GetDeleteOrNotCategory(int Id);
+        Task<Category?> GetDeleteOrNotCategoryAsync(int Id);
 
         Task<Category?> LastCategory();
 

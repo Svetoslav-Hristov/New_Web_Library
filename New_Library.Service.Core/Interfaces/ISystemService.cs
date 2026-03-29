@@ -5,7 +5,7 @@ using New_Web_Library.ViewModels.System;
 
 namespace New_Web_Library.Services.Core.Interfaces
 {
-    public interface ISystemsService
+    public interface ISystemService
     {
         Task<IEnumerable<RegisterModelView>> AllUserWhoHaveActiveLoanOrReservationAsync(string? search);
 

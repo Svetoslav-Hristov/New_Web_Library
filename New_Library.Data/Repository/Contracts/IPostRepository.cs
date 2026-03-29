@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface IPostsRepository:IBaseRepository
+    public interface IPostRepository:IBaseRepository
     {
         Task<Post?> GetByIdAsync(int id);
 

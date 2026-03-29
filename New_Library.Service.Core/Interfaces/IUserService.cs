@@ -6,7 +6,7 @@ using New_Web_Library.ViewModels.User;
 
 namespace New_Web_Library.Services.Core.Interfaces
 {
-    public interface IUsersService
+    public interface IUserService
     {
         Task<ServiceResult<UserPagingViewModel>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search, int page, int pageSize);
 

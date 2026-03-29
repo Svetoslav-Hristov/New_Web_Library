@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace New_Web_Library.Service.Core.Interfaces
 {
-    public interface ICommentsService
+    public interface ICommentService
     {
         Task<ServiceResult<CreateContentViewModel>> CreateNewComment(int Id);
         Task<ServiceResult<Comment>> ConfirmNewComment(CreateContentViewModel model, int Id, Guid userId);

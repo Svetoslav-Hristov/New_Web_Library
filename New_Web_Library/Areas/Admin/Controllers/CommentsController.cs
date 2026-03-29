@@ -7,14 +7,14 @@ namespace New_Web_Library.Areas.Admin.Controllers
     [Area("Admin")]
     public class CommentsController : Controller
     {
-        private readonly ICommentsService _commentsService;
+        private readonly ICommentService _commentsService;
         private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(ICommentsService commentsService ,ILogger<CommentsController> logger)
+        public CommentsController(ICommentService commentsService, ILogger<CommentsController> logger)
         {
             this._commentsService = commentsService;
             this._logger = logger;
-            
+
         }
 
 
@@ -24,13 +24,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreComment(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _commentsService.RestoreDeleteComment(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorRestoreComment"] = result.ErrorMessage;
+                TempData["ErrorComment"] = result.ErrorMessage;
 
-                return RedirectToAction("ForumSupportPreview", "Systems");
+
+            }
+            else
+            {
+                TempData["SuccessComment"] = "Successfully restored the deleted comment";
+
             }
 
             return RedirectToAction("ForumSupportPreview", "Systems");
@@ -44,16 +54,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HardDeleteComment(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _commentsService.HardDeleteComment(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorHardDeleteComment"] = result.ErrorMessage;
+                TempData["ErrorComment"] = result.ErrorMessage;
 
-                return RedirectToAction("ForumSupportPreview", "Systems");
             }
+            else
+            {
+                TempData["SuccessComment"] = "Successfully permanently deleted the comment";
 
-
+            }
 
             return RedirectToAction("ForumSupportPreview", "Systems");
 

@@ -12,11 +12,11 @@ namespace New_Web_Library.Areas.Admin.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoriesController> _logger;
 
-        public CategoriesController(ICategoryService categoryService ,ILogger<CategoriesController> logger)
+        public CategoriesController(ICategoryService categoryService, ILogger<CategoriesController> logger)
         {
             this._categoryService = categoryService;
             this._logger = logger;
-            
+
         }
 
 
@@ -29,7 +29,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                return Redirect(nameof(Index));
+                return RedirectToAction("Index","Categories",new {area=""});
             }
 
 
@@ -53,16 +53,17 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                TempData["ErrorCategory"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", result.ErrorMessage);
+
+                return View(model);
 
             }
 
 
             TempData["SuccessCategory"] = "Тhe new category was created successfully.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index","Categories",new {area=""});
 
         }
 
@@ -74,7 +75,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                TempData["ErrorCategoryEdit"] = result.ErrorMessage;
+                TempData["ErrorCategory"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(Index));
             }
@@ -93,19 +94,29 @@ namespace New_Web_Library.Areas.Admin.Controllers
                 return View(model);
             }
 
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
+
             var result = await _categoryService.ConfirmEditCategory(model, Id);
 
             if (!result.Success)
             {
-                TempData["ErrorCategoryEdit"] = result.ErrorMessage;
+                if (!result.Success && result.ErrorMessage == "Category not found!")
+                {
+                    return NotFound();
+                }
 
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", result.ErrorMessage);
 
+                return View(model);
             }
 
+            TempData["SuccessCategory"] = "Category updated successfully.";
 
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index","Categories",new {area=""});
 
         }
 
@@ -115,15 +126,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _categoryService.SoftDeleteCategory(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorDeleteCategory"] = result.ErrorMessage;
+                TempData["ErrorCategory"] = result.ErrorMessage;
+            }
+            else
+            {
+                TempData["SuccessCategory"] = "Successfully deleted the selected category";
             }
 
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Categories", new {area=""});
 
 
         }
@@ -133,14 +152,25 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HardDelete(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _categoryService.HardDeleteCategory(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorHardDeleteCategory"] = result.ErrorMessage;
+                TempData["ErrorCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("ForumSupportPreview", "Systems");
+
             }
+            else
+            {
+                TempData["SuccessCategory"] = "Successfully hard delete category ";
+
+            }
+
 
             return RedirectToAction("ForumSupportPreview", "Systems");
         }
@@ -150,14 +180,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreCategory(int Id)
         {
+
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _categoryService.RestoreSoftDeleteCategory(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorRestoreCategory"] = result.ErrorMessage;
-
-                return RedirectToAction("ForumSupportPreview", "Systems");
-
+                TempData["ErrorCategory"] = result.ErrorMessage;
+            
+            }
+            else
+            {
+                TempData["SuccessCategory"] = "Successfully restored the selected category";
+            
             }
 
             return RedirectToAction("ForumSupportPreview", "Systems");

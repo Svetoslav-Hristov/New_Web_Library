@@ -93,7 +93,7 @@ category-title {
 
 
 .main[role="main"] {
-    min-height: auto;
+    min-height: 0;
     margin-bottom: 0;
     padding-bottom: 0;
 }
@@ -128,3 +128,7 @@ category-title {
         padding-left: 8px;
     }
 
+
+div.table-wrapper {
+    padding-bottom: 0;
+}

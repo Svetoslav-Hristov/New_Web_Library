@@ -4,12 +4,12 @@
     Layout = "_ForumLayout";
 
 
-    //  category//
-    var errorCategory = TempData["ErrorCategory"] as string;
-
+    //  category create, edit - success  //
     var successCategory = TempData["SuccessCategory"] as string;
 
-    var errorEditCategory = TempData["ErrorCategoryEdit"] as string;
+    //category create edit - error //
+
+    var errorCategory = TempData["ErrorCategoryEdit"] as string;
 
     // subcategory//
 
@@ -20,6 +20,12 @@
     var errorEditSubCategory = TempData["ErrorEditSubCategory"] as string;
 
     var errorDeleteSubCategory = TempData["ErrorDeleteSubCategory"] as string;
+
+    //comments//
+
+    var errorComment = TempData["ErrorComment"] as string;
+
+ 
 
 
     var errorMessage = TempData["WrongData"] as string;
@@ -51,10 +57,10 @@
     </div>
 }
 
-@if (!string.IsNullOrEmpty(errorEditCategory))
+@if (!string.IsNullOrEmpty(errorCategory))
 {
     <div class="alert alert-danger" role="alert">
-        @errorEditCategory
+        @errorCategory
     </div>
 }
 
@@ -111,14 +117,16 @@
         <a class="btn btn-outline-success"
            asp-area="Admin"
            asp-controller="Categories"
-           asp-action="CreateCategory">
+           asp-action="CreateCategory"
+           style="background-color:lemonchiffon">
             + Add Category
         </a>
     }
 
-    <table class="table  ">
 
-        <thead>
+    <table class="table">
+
+        <thead style="background: lemonchiffon;">
             <tr>
                 <th>Category</th>
                 <th>Description</th>
@@ -145,6 +153,7 @@
                             <div style="margin-left:15px;">
 
                                 <p>SubCategories</p>
+
                                 @foreach (var sub in category.Topics)
                                 {
                                     <div>
@@ -221,4 +230,5 @@
 
         </tbody>
     </table>
+
 </div>

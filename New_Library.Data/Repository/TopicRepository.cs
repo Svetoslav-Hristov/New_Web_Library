@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
-    public class TopicsRepository : BaseRepository, ITopicsRepository
+    public class TopicRepository : BaseRepository, ITopicRepository
     {
-        public TopicsRepository(LibraryDbContext dbContext) 
+        public TopicRepository(LibraryDbContext dbContext) 
             : base(dbContext)
         {
         }

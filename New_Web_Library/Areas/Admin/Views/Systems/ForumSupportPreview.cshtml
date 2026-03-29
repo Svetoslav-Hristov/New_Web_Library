@@ -2,26 +2,72 @@
 @{
     Layout = "_ForumLayout";
 
-    var errorRestoreComment = TempData["ErrorRestore"] as string;
+    //comment//
 
-    var errorRestoreCategory = TempData["ErrorRestoreCategory"] as string;
+    var errorComment = TempData["ErrorComment"] as string;
 
-    var errorRestorePost = TempData["ErrorRestorePost"] as string;
+    var successComment = TempData["SuccessComment"] as string;
 
     var errorHardDeleteComment = TempData["ErrorHardDeleteComment"] as string;
 
+    // category
+    var errorCategory = TempData["ErrorCategory"] as string;
+
+    var successCategory = TempData["SuccessCategory"] as string;
+
+    // post //
+
+    var errorRestorePost = TempData["ErrorRestorePost"] as string;
+
     var errorHardDeletePost = TempData["ErrorHardDeletePost"] as string;
 
-    var errorHardDeleteCategory = TempData["ErrorHardDeleteCategory"] as string;
-
+    //subCategory //
+    
     var errorHardDeleteSubCategory = TempData["ErrorHardDeleteSubCategory"] as string;
 
     var errorRestoreSubCategory = TempData["ErrorRestoreSubCategory"] as string;
 
+    
     var errorUSersComplains = TempData["ErrorUserComplaints"] as string;
 
 
 }
+
+@if (!string.IsNullOrEmpty(errorCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorCategory
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(successCategory))
+{
+    <div class="alert alert-success" role="alert">
+        @successCategory
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(successComment))
+{
+    <div class="alert alert-success" role="alert">
+        @successComment
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorComment))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorComment
+    </div>
+
+}
+
+
 
 
 @if (!string.IsNullOrEmpty(errorUSersComplains))
@@ -51,22 +97,6 @@
 }
 
 
-@if (!string.IsNullOrEmpty(errorRestoreCategory))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorRestoreCategory
-    </div>
-
-}
-
-
-@if (!string.IsNullOrEmpty(errorHardDeleteCategory))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorHardDeleteCategory
-    </div>
-
-}
 
 
 @if (!string.IsNullOrEmpty(errorHardDeleteComment))
@@ -81,13 +111,6 @@
 {
     <div class="alert alert-danger" role="alert">
         @errorHardDeletePost
-    </div>
-
-}
-@if (!string.IsNullOrEmpty(errorRestoreComment))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorRestoreComment
     </div>
 
 }
@@ -110,7 +133,7 @@
 
             <div class="d-flex flex-column gap-2">
                 <a asp-area="Admin"
-                    asp-controller="Systems"
+                   asp-controller="Systems"
                    asp-action="UsersComplaints"
                    class="btn btn-outline-primary">
                     😥 Users Complaints

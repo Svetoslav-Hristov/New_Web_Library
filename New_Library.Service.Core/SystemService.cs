@@ -13,20 +13,20 @@ using static New_Web_Library.GCommon.EntityValidations.Topics;
 namespace New_Library.Services.Core
 {
     using static New_Web_Library.GCommon.EntityValidations.UsersBooks;
-    public class SystemsService : ISystemsService
+    public class SystemService : ISystemService
     {
 
-        private readonly ISystemsRepository _systemsRepository;
-        private readonly IUsersRepository _usersRepository;
-        private readonly IBooksRepository _booksRepository;
-        private readonly ICategoriesRepository _categoriesRepository;
-        private readonly ITopicsRepository _topicsRepository;
-        private readonly IPostsRepository _postsRepository;
-        private readonly ICommentsRepository _commentsRepository;
+        private readonly ISystemRepository _systemsRepository;
+        private readonly IUserRepository _usersRepository;
+        private readonly IBookRepository _booksRepository;
+        private readonly ICategoryRepository _categoriesRepository;
+        private readonly ITopicRepository _topicsRepository;
+        private readonly IPostRepository _postsRepository;
+        private readonly ICommentRepository _commentsRepository;
 
-        public SystemsService(ISystemsRepository systemsRepository, IUsersRepository usersRepository,
-            IBooksRepository booksRepository, ICategoriesRepository categoriesRepository,
-            ITopicsRepository topicsRepository, IPostsRepository postsRepository, ICommentsRepository commentsRepository)
+        public SystemService(ISystemRepository systemsRepository, IUserRepository usersRepository,
+            IBookRepository booksRepository, ICategoryRepository categoriesRepository,
+            ITopicRepository topicsRepository, IPostRepository postsRepository, ICommentRepository commentsRepository)
         {
             this._systemsRepository = systemsRepository;
             this._usersRepository = usersRepository;

@@ -10,11 +10,11 @@ namespace New_Web_Library.Service.Core
 {
     public class TopicService : ITopicService
     {
-        private readonly ITopicsRepository _topicsRepository;
-        private readonly ICategoriesRepository _categoriesRepository;
-        private readonly IUsersRepository _usersRepository;
-        public TopicService(ITopicsRepository topicsRepository, ICategoriesRepository categoriesRepository
-            , IUsersRepository usersRepository)
+        private readonly ITopicRepository _topicsRepository;
+        private readonly ICategoryRepository _categoriesRepository;
+        private readonly IUserRepository _usersRepository;
+        public TopicService(ITopicRepository topicsRepository, ICategoryRepository categoriesRepository
+            , IUserRepository usersRepository)
         {
             this._topicsRepository = topicsRepository;
             this._categoriesRepository = categoriesRepository;
@@ -269,7 +269,7 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Sub Category not found!" };
             }
 
-            var category = await _categoriesRepository.GetDeleteOrNotCategory(Id);
+            var category = await _categoriesRepository.GetDeleteOrNotCategoryAsync(Id);
 
             if (category != null)
             {

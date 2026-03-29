@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface IBooksRepository:IBaseRepository
+    public interface IBookRepository:IBaseRepository
     {
        
 

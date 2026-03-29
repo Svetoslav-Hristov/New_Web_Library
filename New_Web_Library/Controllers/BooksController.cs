@@ -12,10 +12,10 @@ namespace New_Web_Library.Controllers
     {
 
 
-        private readonly IBooksService _bookService;
+        private readonly IBookService _bookService;
         private readonly ILogger<BooksController> _logger;
 
-        public BooksController(IBooksService bookService, ILogger<BooksController> logger)
+        public BooksController(IBookService bookService, ILogger<BooksController> logger)
         {
             this._bookService = bookService;
         }

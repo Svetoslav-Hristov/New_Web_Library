@@ -5,9 +5,9 @@ using New_Web_Library.Data;
 
 namespace New_Library.Data.Repository
 {
-    public class CategoriesRepository : BaseRepository, ICategoriesRepository
+    public class CategoryRepository : BaseRepository, ICategoryRepository
     {
-        public CategoriesRepository(LibraryDbContext dbContext)
+        public CategoryRepository(LibraryDbContext dbContext)
             : base(dbContext)
         {
         }
@@ -51,7 +51,7 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<Category?> GetDeleteOrNotCategory(int Id)
+        public async Task<Category?> GetDeleteOrNotCategoryAsync(int Id)
         {
             return await _dbContext.Categories.IgnoreQueryFilters().Include(c=>c.Topics).Where(c => c.Id == Id).FirstOrDefaultAsync();
         }

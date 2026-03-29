@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
-    public class SystemsRepository : BaseRepository, ISystemsRepository
+    public class SystemRepository : BaseRepository, ISystemRepository
     {
-        public SystemsRepository(LibraryDbContext dbContext) 
+        public SystemRepository(LibraryDbContext dbContext) 
             : base(dbContext)
         {
         }

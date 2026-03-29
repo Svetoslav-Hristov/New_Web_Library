@@ -17,16 +17,16 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Services.Core
 {
-    public class BooksService : IBooksService
+    public class BookService : IBookService
     {
-        private readonly IBooksRepository _booksRepository;
-        private readonly ISystemsRepository _systemsRepository;
+        private readonly IBookRepository _booksRepository;
+        private readonly ISystemRepository _systemsRepository;
         private readonly IWebHostEnvironment _environment;
-        private readonly ILogger<IBooksService> _logger;
+        private readonly ILogger<IBookService> _logger;
 
       
-        public BooksService(IBooksRepository booksRepository, IWebHostEnvironment environment,
-            ISystemsRepository systemsRepository ,ILogger<IBooksService> logger )
+        public BookService(IBookRepository booksRepository, IWebHostEnvironment environment,
+            ISystemRepository systemsRepository ,ILogger<IBookService> logger )
         {
             this._booksRepository = booksRepository;
             this._environment = environment;

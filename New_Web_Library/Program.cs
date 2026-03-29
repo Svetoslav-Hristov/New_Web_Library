@@ -182,30 +182,30 @@ namespace New_Web_Library
 
         private static void RegisterRepositories(IServiceCollection services)
         {
-            services.AddScoped<IBooksRepository, BooksRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
 
-            services.AddScoped<ISystemsRepository, SystemsRepository>();
+            services.AddScoped<ISystemRepository, SystemRepository>();
 
-            services.AddScoped<IUsersRepository, UsersRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
-            services.AddScoped<ITopicsRepository, TopicsRepository>();
+            services.AddScoped<ITopicRepository, TopicRepository>();
 
-            services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-            services.AddScoped<ICommentsRepository, CommentsRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
-            services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
 
 
 
         }
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IBooksService, BooksService>();
+            services.AddScoped<IBookService, BookService>();
 
-            services.AddScoped<ISystemsService, SystemsService>();
+            services.AddScoped<ISystemService, SystemService>();
 
-            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IWelcomeService, WelcomeService>();
 
@@ -213,9 +213,9 @@ namespace New_Web_Library
 
             services.AddScoped<ICategoryService, CategoryService>();
 
-            services.AddScoped<ICommentsService, CommentsService>();
+            services.AddScoped<ICommentService, CommentService>();
 
-            services.AddScoped<IPostsService, PostsService>();
+            services.AddScoped<IPostService, PostService>();
 
         }
     }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface ISystemsRepository:IBaseRepository
+    public interface ISystemRepository:IBaseRepository
     {
       
         Task<BookStatus?> ReturnStatus (Guid bookId);

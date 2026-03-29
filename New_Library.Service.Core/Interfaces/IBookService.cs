@@ -5,7 +5,7 @@ using New_Web_Library.ViewModels.Book;
 
 namespace New_Web_Library.Services.Core.Interfaces
 {
-    public interface IBooksService
+    public interface IBookService
     {
         Task<BookPagingPreview> GetAllBooksOrderedByTitleThanByAuthorAscAsync(string? search, Genre? genre, int page, int pageSize);
 

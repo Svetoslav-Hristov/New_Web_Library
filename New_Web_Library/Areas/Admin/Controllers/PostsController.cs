@@ -8,10 +8,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
     [Area("Admin")]
     public class PostsController : Controller
     {
-        private readonly IPostsService _postsService;
+        private readonly IPostService _postsService;
         private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IPostsService postsService ,ILogger<PostsController> logger)
+        public PostsController(IPostService postsService ,ILogger<PostsController> logger)
         {
             this._postsService = postsService;
             this._logger = logger;

@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
@@ -11,20 +13,22 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Service.Core
 {
-    public class CommentsService : ICommentsService
+    public class CommentService : ICommentService
     {
 
-        private readonly ICommentsRepository _commentRepository;
-        private readonly IPostsRepository _postRepository;
-        private readonly IUsersRepository _usersRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _usersRepository;
+        private readonly ILogger<ICommentService> _logger;
 
-        public CommentsService(ICommentsRepository commentRepository, IPostsRepository postRepository,
-            IUsersRepository usersRepository)
+        public CommentService(ICommentRepository commentRepository, IPostRepository postRepository,
+            IUserRepository usersRepository,ILogger<ICommentService> logger)
 
         {
             this._commentRepository = commentRepository;
             this._postRepository = postRepository;
             this._usersRepository = usersRepository;
+            this._logger = logger;
         }
 
 
@@ -35,7 +39,11 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "Post not found!" };
+                return new ServiceResult<CreateContentViewModel> 
+                { 
+                    Success = false,
+                    ErrorMessage = "Post not found!" 
+                };
 
             }
 
@@ -58,9 +66,13 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Comment>> ConfirmNewComment(CreateContentViewModel model, int Id, Guid userId)
         {
-            if (string.IsNullOrEmpty(model.Description))
+            if (string.IsNullOrWhiteSpace(model.Description))
             {
-                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Content is required!" };
+                return new ServiceResult<Comment> 
+                {
+                    Success = false,
+                    ErrorMessage = "Content is required!" 
+                };
             }
 
             var post = await _postRepository.GetByIdAsync(Id);
@@ -89,7 +101,7 @@ namespace New_Web_Library.Service.Core
             {
 
                 CreatedOn = DateTime.UtcNow,
-                Content = model.Description,
+                Content = model.Description.Trim(),
                 UserId = userId,
                 PostId = Id
 
@@ -101,8 +113,9 @@ namespace New_Web_Library.Service.Core
                 await _commentRepository.AddAsync(newComment);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating comment create by {0} {1}", user.FirstName, user.LastName);
 
                 return new ServiceResult<Comment>
                 {
@@ -112,7 +125,7 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            return new ServiceResult<Comment> { Success = true };
+            return new ServiceResult<Comment> { Success = true,Data=newComment};
 
         }
 
@@ -123,13 +136,21 @@ namespace New_Web_Library.Service.Core
             if (comment == null)
             {
 
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "Comment not found !" };
+                return new ServiceResult<CreateContentViewModel> 
+                { 
+                    Success = false,
+                    ErrorMessage = "Comment not found !" 
+                };
 
             }
 
             if (comment.UserId != userId)
             {
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "You don't have permission over this comment." };
+                return new ServiceResult<CreateContentViewModel> 
+                {
+                    Success = false,
+                    ErrorMessage = "You don't have permission over this comment." 
+                };
 
             }
 
@@ -190,27 +211,43 @@ namespace New_Web_Library.Service.Core
 
             if (comment == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Comment not found!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "Comment not found!" 
+                };
             }
 
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Invalid user Id!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user Id!" 
+                };
             }
 
             var user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!" 
+                };
             }
 
-            var isAdmin = await _usersRepository.AdminOrNot(userId);
+            var isAdmin = await _usersRepository.AdminOrNotAsync(userId);
 
-            if ( user.Id != comment.UserId || !isAdmin)
+            if ( user.Id != comment.UserId && !isAdmin)
             {
 
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "You don't have permission over this comment." };
+                return new ServiceResult<Post> 
+                {
+                    Success = false, 
+                    ErrorMessage = "You don't have permission over this comment." 
+                };
 
             }
 
@@ -218,7 +255,11 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Post not found!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Post not found!" 
+                };
             }
 
             try
@@ -229,8 +270,9 @@ namespace New_Web_Library.Service.Core
                 await _commentRepository.UpdateAsync(comment);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error soft deleting comment  by user  {0} {1}", comment.User?.FirstName, comment.User?.LastName);
 
                 return new ServiceResult<Post>
                 {
@@ -248,25 +290,24 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> RestoreDeleteComment(int Id)
         {
-            var comment = await _commentRepository.GetSoftDeleteComment(Id);
+            var comment = await _commentRepository.GetSoftDeleteCommentAsync(Id);
 
             if (comment == null)
             {
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Comment not found!" };
             }
 
-            Post? post = await _postRepository.GetDeleteOrNotPost(Id);
+            Post? post = await _postRepository.GetDeleteOrNotPost(comment.PostId);
 
-            if (post != null)
+            if (post?.IsDeleted==true)
             {
-                if (post.IsDeleted)
-                {
+                
                     return new ServiceResult<bool>
                     {
                         Success = false,
                         ErrorMessage = "You won't be able to return the comment because the post is also missing!"
                     };
-                }
+                
             }
 
 
@@ -280,8 +321,9 @@ namespace New_Web_Library.Service.Core
                 await _commentRepository.UpdateAsync(comment);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error restoring comment delete by user  {0} {1}", comment.User?.FirstName, comment.User?.LastName);
 
                 return new ServiceResult<bool>
                 {
@@ -297,21 +339,24 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> HardDeleteComment(int Id)
         {
-            var comment = await _commentRepository.GetSoftDeleteComment(Id);
+            var comment = await _commentRepository.GetSoftDeleteCommentAsync(Id);
 
             if (comment == null)
             {
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Comment not found!" };
             }
 
+            
             try
             {
 
                 await _commentRepository.DeleteAsync(comment);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error hard deleting comment  by user  {0} {1}",comment.User?.FirstName,comment.User?.LastName);
+
                 return new ServiceResult<bool>
                 {
                     Success = false,

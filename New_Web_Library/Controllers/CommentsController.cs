@@ -11,10 +11,10 @@ namespace New_Web_Library.Controllers
 {
     public class CommentsController : Controller
     {
-        private readonly ICommentsService _commentsService;
+        private readonly ICommentService _commentsService;
         private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(ICommentsService commentsService, ILogger<CommentsController> logger)
+        public CommentsController(ICommentService commentsService, ILogger<CommentsController> logger)
         {
             this._commentsService = commentsService;
             this._logger = logger;
@@ -27,6 +27,11 @@ namespace New_Web_Library.Controllers
         [Authorize]
         public async Task<IActionResult> CreateComment(int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _commentsService.CreateNewComment(Id);
 
             if (!result.Success)
@@ -34,7 +39,7 @@ namespace New_Web_Library.Controllers
 
                 TempData["ErrorComment"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(Post), new { Id });
+                return RedirectToAction("Index","Categories");
 
             }
 
@@ -46,8 +51,13 @@ namespace New_Web_Library.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateComment(CreateContentViewModel model, int Id)
+        public async Task<IActionResult> CreateComment(CreateContentViewModel model, [FromRoute]int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -63,11 +73,17 @@ namespace New_Web_Library.Controllers
             {
                 TempData["ErrorComment"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(Post), new { Id });
+                
+            }
+            else
+            {
+                TempData["SuccessComment"] = "You have successfully commented on this post.";
+
             }
 
 
-            return RedirectToAction("PostPreview", "Posts", new { id = Id });
+
+                return RedirectToAction("PostPreview", "Posts", new { id = Id });
 
 
         }

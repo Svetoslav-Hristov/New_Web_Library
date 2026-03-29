@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository
 {
-    public class UsersRepository : BaseRepository, IUsersRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
-        public UsersRepository(LibraryDbContext dbContext)
+        public UserRepository(LibraryDbContext dbContext)
             : base(dbContext)
         {
         }
@@ -63,7 +63,7 @@ namespace New_Library.Data.Repository
             return  foundUser;
         }
 
-        public async Task<bool> AdminOrNot(Guid userId)
+        public async Task<bool> AdminOrNotAsync(Guid userId)
         {
             var isSysAdmin = await _dbContext.UserRoles.Where(ur => ur.UserId == userId).Join(_dbContext.Roles,
               ur => ur.RoleId, r => r.Id,(ur, r) => r.Name).AnyAsync(name => name == "Admin");

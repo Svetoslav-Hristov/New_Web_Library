@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
-    public interface ITopicsRepository:IBaseRepository
+    public interface ITopicRepository:IBaseRepository
     {
         Task<Topic?> GetAllSubCategoryWithComments(int topicId);
 

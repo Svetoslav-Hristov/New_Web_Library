@@ -11,9 +11,9 @@ namespace New_Web_Library.Areas.Admin.Controllers
     [Area("Admin")]
     public class BooksController : Controller
     {
-        private readonly IBooksService _bookService;
+        private readonly IBookService _bookService;
         private readonly ILogger<BooksController> _logger;
-        public BooksController(IBooksService bookService, ILogger<BooksController> logger)
+        public BooksController(IBookService bookService, ILogger<BooksController> logger)
         {
             this._bookService = bookService;
             this._logger = logger;
