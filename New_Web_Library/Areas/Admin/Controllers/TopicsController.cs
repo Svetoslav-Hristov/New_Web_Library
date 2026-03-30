@@ -126,7 +126,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Categories");
             }
 
-            return RedirectToAction("Index", "Categories");
+            return RedirectToAction("Index", "Categories",new {area=""});
 
         }
 

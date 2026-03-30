@@ -13,19 +13,17 @@ namespace New_Web_Library.Areas.Admin.Controllers
         private readonly ISystemService _systemsService;
         private readonly ILogger<SystemsController> _logger;
 
-        public SystemsController(ISystemService systemsService,ILogger<SystemsController> logger)
+        public SystemsController(ISystemService systemsService, ILogger<SystemsController> logger)
         {
             this._systemsService = systemsService;
             this._logger = logger;
-            
+
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register(string? search)
         {
-
-
             IEnumerable<RegisterModelView> currentRecords = await _systemsService.AllUserWhoHaveActiveLoanOrReservationAsync(search);
 
             return View(currentRecords);
@@ -173,7 +171,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
         }
 
-        
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ForumSupportPreview()
@@ -185,7 +183,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
         }
 
-        
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UsersComplaints()

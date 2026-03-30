@@ -121,25 +121,37 @@ namespace New_Web_Library.Service.Core
             model.UserPostCount = countPosts.GetValueOrDefault(post.UserId);
             model.UserCommentCount = countComments.GetValueOrDefault(post.UserId);
 
+            bool isAdmin = false;
+            
+            if (userId!=null && userId != Guid.Empty)
+            {
+                isAdmin = await _usersRepository.AdminOrNotAsync(userId.Value);
+            }
            
-            if (userId != null && DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))
+
+           
+            if ((userId != null && DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))|| isAdmin)
             {
 
-                if (!pagingModel.Comments.Any() && model.UserId == userId)
+                if (userId.HasValue)
                 {
-                    model.IsAuthor = true;
 
-                }
-                else
-                {
-                    var lastComment = pagingModel.Comments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
-
-
-                    if (lastComment?.UserId == userId && DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))
+                    if (!pagingModel.Comments.Any() && (model.UserId == userId.Value || isAdmin))
                     {
-                        lastComment.IsAuthor = true;
-                    }
+                        model.IsAuthor = true;
 
+                    }
+                    else
+                    {
+                        var lastComment = pagingModel.Comments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
+
+
+                        if ((lastComment?.UserId == userId && DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))||isAdmin)
+                        {
+                            lastComment.IsAuthor = true;
+                        }
+
+                    }
                 }
             }
 

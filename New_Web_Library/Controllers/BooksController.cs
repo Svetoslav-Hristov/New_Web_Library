@@ -40,6 +40,11 @@ namespace New_Web_Library.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+
 
             var newBook = await _bookService.GetCurrentModelAsync(Id);
 

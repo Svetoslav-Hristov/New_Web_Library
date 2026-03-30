@@ -89,6 +89,11 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+
             var model = await _bookService.EditBookUsingBookFormModelAsync(Id);
 
             if (!model.Success)
@@ -107,7 +112,8 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] Guid Id, BookFormModel model)
         {
-
+           
+           
 
             if (!ModelState.IsValid)
             {
@@ -153,6 +159,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
 
             var result = await _bookService.DeleteCurrentBookAsync(Id);
 

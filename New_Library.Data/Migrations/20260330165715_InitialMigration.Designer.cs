@@ -9,11 +9,11 @@ using New_Web_Library.Data;
 
 #nullable disable
 
-namespace New_Library.Data.Migrations
+namespace New_Web_Library.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260302164046_AddDeleteUserAndUniqueEmail")]
-    partial class AddDeleteUserAndUniqueEmail
+    [Migration("20260330165715_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,223 @@ namespace New_Library.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Modern literary works",
+                            IsDeleted = false,
+                            Name = "Modern Literature"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Timeless classics",
+                            IsDeleted = false,
+                            Name = "Classical Literature"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Poems and verse",
+                            IsDeleted = false,
+                            Name = "Poetry"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Fantasy worlds and stories",
+                            IsDeleted = false,
+                            Name = "Fantasy"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Sci-fi adventures and futuristic stories",
+                            IsDeleted = false,
+                            Name = "Science Fiction"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Stories set in historical periods",
+                            IsDeleted = false,
+                            Name = "Historical Fiction"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Suspenseful and mysterious stories",
+                            IsDeleted = false,
+                            Name = "Mystery & Thriller"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Informative and factual works",
+                            IsDeleted = false,
+                            Name = "General Discussion"
+                        });
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Topic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Title", "CategoryId")
+                        .IsUnique();
+
+                    b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("New_Web_Library.Data.Models.Book", b =>
@@ -517,6 +734,9 @@ namespace New_Library.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
@@ -526,7 +746,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Mladost 1",
                             Age = 26,
-                            ConcurrencyStamp = "a3a465e4-7609-40bb-96d7-6ae72029e983",
+                            ConcurrencyStamp = "f269957b-5691-4753-a68a-fe93ad96bd6b",
                             Email = "ivan.petrov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Ivan",
@@ -544,7 +764,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Lozenets",
                             Age = 32,
-                            ConcurrencyStamp = "ecbd63ed-9eb8-4d2d-9f41-7e40ca0143a8",
+                            ConcurrencyStamp = "ce501836-8b32-4eee-a585-f3032a66d18e",
                             Email = "maria.georgieva@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Maria",
@@ -562,7 +782,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Nadezhda",
                             Age = 41,
-                            ConcurrencyStamp = "01d75dd5-64b7-4666-aeb6-ac9907a0971b",
+                            ConcurrencyStamp = "5ba41430-2d44-4a1a-8adf-afa061203715",
                             Email = "georgi.ivanov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Georgi",
@@ -580,7 +800,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Studentski Grad",
                             Age = 29,
-                            ConcurrencyStamp = "d6771b93-f9f3-40fd-894f-268f3653809e",
+                            ConcurrencyStamp = "0960fedc-a600-4cda-88ba-5b6cf882d30e",
                             Email = "elena.dimitrova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Elena",
@@ -598,7 +818,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Krasno Selo",
                             Age = 35,
-                            ConcurrencyStamp = "0587382b-2097-44cf-82b6-53f76ee1fb12",
+                            ConcurrencyStamp = "c2196b70-cbd0-4c64-a8e6-ee00d83d5af4",
                             Email = "nikolay.stoyanov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Nikolay",
@@ -616,7 +836,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Druzhba 2",
                             Age = 23,
-                            ConcurrencyStamp = "6bf9e7b3-7701-403c-9b25-72bd0121f3d4",
+                            ConcurrencyStamp = "3c2b8f54-de5d-43d3-8dd7-fc7a3130aab7",
                             Email = "petya.koleva@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Petya",
@@ -634,7 +854,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Obelya",
                             Age = 46,
-                            ConcurrencyStamp = "e9018f28-ed55-45ea-9bac-6c439d0a62d8",
+                            ConcurrencyStamp = "e5d5dd0a-f177-4f5d-83c9-cea8b728cb38",
                             Email = "dimitar.hristov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Dimitar",
@@ -652,7 +872,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Geo Milev",
                             Age = 30,
-                            ConcurrencyStamp = "026ccefc-932f-4ef2-9ede-74a0d7a94788",
+                            ConcurrencyStamp = "39cfe6ac-bdf8-4110-82d8-7e8cb51b6d6b",
                             Email = "radostina.nikolova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Radostina",
@@ -670,7 +890,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Lyulin 5",
                             Age = 34,
-                            ConcurrencyStamp = "2a6fc747-2e31-4aad-be84-7c36e153d933",
+                            ConcurrencyStamp = "aedfac48-dbbf-49cc-a6f3-57019b353821",
                             Email = "vladimir.angelov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Vladimir",
@@ -688,7 +908,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Center",
                             Age = 27,
-                            ConcurrencyStamp = "3506b296-eeed-41d5-a779-8891e7df4baa",
+                            ConcurrencyStamp = "3278c7bb-8db9-41ed-b071-ef4b6144daa5",
                             Email = "desislava.popova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Desislava",
@@ -791,6 +1011,63 @@ namespace New_Library.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Comment", b =>
+                {
+                    b.HasOne("New_Library.Data.Models.Forum.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("New_Web_Library.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Post", b =>
+                {
+                    b.HasOne("New_Library.Data.Models.Forum.Topic", "Topic")
+                        .WithMany("Posts")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("New_Web_Library.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Topic", b =>
+                {
+                    b.HasOne("New_Library.Data.Models.Forum.Category", "Category")
+                        .WithMany("Topics")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("New_Web_Library.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("New_Web_Library.Data.Models.UserBook", b =>
                 {
                     b.HasOne("New_Web_Library.Data.Models.Book", "Book")
@@ -808,6 +1085,21 @@ namespace New_Library.Data.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Category", b =>
+                {
+                    b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Post", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("New_Library.Data.Models.Forum.Topic", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("New_Web_Library.Data.Models.Book", b =>

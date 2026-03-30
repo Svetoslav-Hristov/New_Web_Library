@@ -71,6 +71,11 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditCategory(int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _categoryService.EditCategory(Id);
 
             if (!result.Success)

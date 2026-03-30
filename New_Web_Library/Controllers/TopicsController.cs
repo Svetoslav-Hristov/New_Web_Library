@@ -27,14 +27,19 @@ namespace New_Web_Library.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SubCategory(int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _topicService.SubCategoryIndexPreview(Id);
 
             if (!result.Success)
             {
 
-                _logger.LogWarning("{0}: Id = {1} ", result.ErrorMessage, Id);
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return NotFound();
+                return RedirectToAction("Index", "Categories");
 
             }
 

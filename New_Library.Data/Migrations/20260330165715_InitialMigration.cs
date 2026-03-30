@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace New_Library.Data.Migrations
+namespace New_Web_Library.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -36,10 +36,11 @@ namespace New_Library.Data.Migrations
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     IsBlocked = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -72,6 +73,23 @@ namespace New_Library.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Books", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,21 +229,113 @@ namespace New_Library.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Topics",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Topics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Topics_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Topics_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TopicId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Posts_Topics_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topics",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsBlocked", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsBlocked", "IsDeleted", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"), 0, "Sofia, Lozenets", 32, "b03512e8-48ea-46ce-90a2-fa0b23f0f40f", "maria.georgieva@library.bg", false, "Maria", false, "Georgieva", false, null, null, null, null, "+359887654321", false, null, false, null },
-                    { new Guid("30460549-2e0d-40c7-90ff-6f435900d186"), 0, "Sofia, Nadezhda", 41, "9578811a-2a63-45bf-bf84-fb2e987fc74a", "georgi.ivanov@library.bg", false, "Georgi", true, "Ivanov", false, null, null, null, null, "+359889777888", false, null, false, null },
-                    { new Guid("376b646e-7761-428b-b62b-21c58734fca7"), 0, "Sofia, Obelya", 46, "34d6d104-0d41-4395-9689-89eb1f1794f0", "dimitar.hristov@library.bg", false, "Dimitar", true, "Hristov", false, null, null, null, null, "+359883111222", false, null, false, null },
-                    { new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"), 0, "Sofia, Geo Milev", 30, "8ea6c40a-8b43-4045-920c-eb1da699f101", "radostina.nikolova@library.bg", false, "Radostina", false, "Nikolova", false, null, null, null, null, "+359882444555", false, null, false, null },
-                    { new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"), 0, "Sofia, Lyulin 5", 34, "64156c43-aaf5-4ff8-9d51-ae5b4071e778", "vladimir.angelov@library.bg", false, "Vladimir", false, "Angelov", false, null, null, null, null, "+359881666777", false, null, false, null },
-                    { new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"), 0, "Sofia, Center", 27, "c4bb942c-97fb-4a1c-a42f-dd2044f0d4a7", "desislava.popova@library.bg", false, "Desislava", false, "Popova", false, null, null, null, null, "+359880888999", false, null, false, null },
-                    { new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"), 0, "Sofia, Druzhba 2", 23, "03cf7ee4-2d1b-497a-9ab8-81e245445e9a", "petya.koleva@library.bg", false, "Petya", false, "Koleva", false, null, null, null, null, "+359884222333", false, null, false, null },
-                    { new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"), 0, "Sofia, Krasno Selo", 35, "566b1f19-c770-4f8b-baf9-2e9d5ae0af31", "nikolay.stoyanov@library.bg", false, "Nikolay", false, "Stoyanov", false, null, null, null, null, "+359885999000", false, null, false, null },
-                    { new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"), 0, "Sofia, Studentski Grad", 29, "807e77de-db88-40d8-812a-ba5d2cbfdafd", "elena.dimitrova@library.bg", false, "Elena", false, "Dimitrova", false, null, null, null, null, "+359886333444", false, null, false, null },
-                    { new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"), 0, "Sofia, Mladost 1", 26, "40818565-55a8-4534-9e47-22a51d5ee188", "ivan.petrov@library.bg", false, "Ivan", false, "Petrov", false, null, null, null, null, "+359888123456", false, null, false, null }
+                    { new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"), 0, "Sofia, Lozenets", 32, "ce501836-8b32-4eee-a585-f3032a66d18e", "maria.georgieva@library.bg", false, "Maria", false, false, "Georgieva", false, null, null, null, null, "+359887654321", false, null, false, null },
+                    { new Guid("30460549-2e0d-40c7-90ff-6f435900d186"), 0, "Sofia, Nadezhda", 41, "5ba41430-2d44-4a1a-8adf-afa061203715", "georgi.ivanov@library.bg", false, "Georgi", true, false, "Ivanov", false, null, null, null, null, "+359889777888", false, null, false, null },
+                    { new Guid("376b646e-7761-428b-b62b-21c58734fca7"), 0, "Sofia, Obelya", 46, "e5d5dd0a-f177-4f5d-83c9-cea8b728cb38", "dimitar.hristov@library.bg", false, "Dimitar", true, false, "Hristov", false, null, null, null, null, "+359883111222", false, null, false, null },
+                    { new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"), 0, "Sofia, Geo Milev", 30, "39cfe6ac-bdf8-4110-82d8-7e8cb51b6d6b", "radostina.nikolova@library.bg", false, "Radostina", false, false, "Nikolova", false, null, null, null, null, "+359882444555", false, null, false, null },
+                    { new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"), 0, "Sofia, Lyulin 5", 34, "aedfac48-dbbf-49cc-a6f3-57019b353821", "vladimir.angelov@library.bg", false, "Vladimir", false, false, "Angelov", false, null, null, null, null, "+359881666777", false, null, false, null },
+                    { new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"), 0, "Sofia, Center", 27, "3278c7bb-8db9-41ed-b071-ef4b6144daa5", "desislava.popova@library.bg", false, "Desislava", false, false, "Popova", false, null, null, null, null, "+359880888999", false, null, false, null },
+                    { new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"), 0, "Sofia, Druzhba 2", 23, "3c2b8f54-de5d-43d3-8dd7-fc7a3130aab7", "petya.koleva@library.bg", false, "Petya", false, false, "Koleva", false, null, null, null, null, "+359884222333", false, null, false, null },
+                    { new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"), 0, "Sofia, Krasno Selo", 35, "c2196b70-cbd0-4c64-a8e6-ee00d83d5af4", "nikolay.stoyanov@library.bg", false, "Nikolay", false, false, "Stoyanov", false, null, null, null, null, "+359885999000", false, null, false, null },
+                    { new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"), 0, "Sofia, Studentski Grad", 29, "0960fedc-a600-4cda-88ba-5b6cf882d30e", "elena.dimitrova@library.bg", false, "Elena", false, false, "Dimitrova", false, null, null, null, null, "+359886333444", false, null, false, null },
+                    { new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"), 0, "Sofia, Mladost 1", 26, "f269957b-5691-4753-a68a-fe93ad96bd6b", "ivan.petrov@library.bg", false, "Ivan", false, false, "Petrov", false, null, null, null, null, "+359888123456", false, null, false, null }
                 });
 
             migrationBuilder.InsertData(
@@ -259,6 +369,21 @@ namespace New_Library.Data.Migrations
                     { new Guid("f315b770-aba6-4dd3-b9f0-c8b3d0dce787"), "Yuval Noah Harari", "Sapiens.jpg", null, 6, "Sapiens", 2011 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "DeleteAt", "Description", "IsDeleted", "Name", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, null, "Modern literary works", false, "Modern Literature", null },
+                    { 2, null, "Timeless classics", false, "Classical Literature", null },
+                    { 3, null, "Poems and verse", false, "Poetry", null },
+                    { 4, null, "Fantasy worlds and stories", false, "Fantasy", null },
+                    { 5, null, "Sci-fi adventures and futuristic stories", false, "Science Fiction", null },
+                    { 6, null, "Stories set in historical periods", false, "Historical Fiction", null },
+                    { 7, null, "Suspenseful and mysterious stories", false, "Mystery & Thriller", null },
+                    { 8, null, "Informative and factual works", false, "General Discussion", null }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -289,7 +414,15 @@ namespace New_Library.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
-                column: "NormalizedEmail");
+                column: "NormalizedEmail",
+                unique: true,
+                filter: "[NormalizedEmail] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_PhoneNumber",
+                table: "AspNetUsers",
+                column: "PhoneNumber",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -297,6 +430,42 @@ namespace New_Library.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_PostId",
+                table: "Comments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_TopicId",
+                table: "Posts",
+                column: "TopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_UserId",
+                table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_CategoryId",
+                table: "Topics",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_Title_CategoryId",
+                table: "Topics",
+                columns: new[] { "Title", "CategoryId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_UserId",
+                table: "Topics",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsersBooks_BookId",
@@ -328,16 +497,28 @@ namespace New_Library.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "UsersBooks");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Topics");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

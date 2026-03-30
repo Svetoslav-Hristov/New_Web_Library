@@ -9,11 +9,11 @@ using New_Web_Library.Data;
 
 #nullable disable
 
-namespace New_Library.Data.Migrations
+namespace New_Web_Library.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260307000900_ForumAdded")]
-    partial class ForumAdded
+    [Migration("20260330174117_InitialDataSeed")]
+    partial class InitialDataSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,6 +168,9 @@ namespace New_Library.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -179,6 +182,9 @@ namespace New_Library.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -212,6 +218,34 @@ namespace New_Library.Data.Migrations
                             Description = "Fantasy worlds and stories",
                             IsDeleted = false,
                             Name = "Fantasy"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Sci-fi adventures and futuristic stories",
+                            IsDeleted = false,
+                            Name = "Science Fiction"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Stories set in historical periods",
+                            IsDeleted = false,
+                            Name = "Historical Fiction"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Suspenseful and mysterious stories",
+                            IsDeleted = false,
+                            Name = "Mystery & Thriller"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Informative and factual works",
+                            IsDeleted = false,
+                            Name = "General Discussion"
                         });
                 });
 
@@ -231,11 +265,17 @@ namespace New_Library.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -247,6 +287,98 @@ namespace New_Library.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "I think 2026 has some really strong releases already.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9445),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "Any recommendations for modern drama novels?",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9456),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Content = "I've recently read a great psychological novel, highly recommend!",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9459),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Content = "Modern literature is getting more diverse, which is awesome.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9622),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Content = "Do you prefer physical books or eBooks?",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9625),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Content = "I feel like modern novels focus more on characters than plot.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9628),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Content = "Can someone suggest a good mystery novel from 2026?",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9631),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Content = "Audiobooks are also becoming very popular lately.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9634),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Content = "I love how modern authors experiment with storytelling.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9636),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Content = "Looking forward to your suggestions!",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(9638),
+                            IsDeleted = false,
+                            PostId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        });
                 });
 
             modelBuilder.Entity("New_Library.Data.Models.Forum.Post", b =>
@@ -265,6 +397,9 @@ namespace New_Library.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -275,6 +410,9 @@ namespace New_Library.Data.Migrations
 
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -292,7 +430,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 1,
                             Content = "Let's discuss the best modern novels of 2026.",
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 756, DateTimeKind.Utc).AddTicks(9760),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 525, DateTimeKind.Utc).AddTicks(9880),
                             IsDeleted = false,
                             Title = "Modern novel discussion",
                             TopicId = 1,
@@ -302,7 +440,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 2,
                             Content = "Share your favorite classical books.",
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 756, DateTimeKind.Utc).AddTicks(9771),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 525, DateTimeKind.Utc).AddTicks(9895),
                             IsDeleted = false,
                             Title = "Classical books you love",
                             TopicId = 2,
@@ -312,7 +450,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 3,
                             Content = "Which poets inspire you?",
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 756, DateTimeKind.Utc).AddTicks(9773),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 525, DateTimeKind.Utc).AddTicks(9897),
                             IsDeleted = false,
                             Title = "Poetry recommendations",
                             TopicId = 3,
@@ -322,10 +460,50 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 4,
                             Content = "Discuss your favorite fantasy series.",
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 756, DateTimeKind.Utc).AddTicks(9775),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(13),
                             IsDeleted = false,
                             Title = "Fantasy recommendations",
                             TopicId = 4,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Content = "Which modern short stories are worth reading?",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(16),
+                            IsDeleted = false,
+                            Title = "Modern short story debate",
+                            TopicId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Content = "Share insights on contemporary novels you've read recently.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(18),
+                            IsDeleted = false,
+                            Title = "Contemporary novels insights",
+                            TopicId = 1,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Content = "Let's explore the themes in classic literature.",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(20),
+                            IsDeleted = false,
+                            Title = "Exploring classic literature",
+                            TopicId = 2,
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Content = "Who are your favorite classic authors and why?",
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(22),
+                            IsDeleted = false,
+                            Title = "Favorite classic authors",
+                            TopicId = 2,
                             UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
                         });
                 });
@@ -344,6 +522,9 @@ namespace New_Library.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -351,6 +532,9 @@ namespace New_Library.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -361,6 +545,9 @@ namespace New_Library.Data.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("Title", "CategoryId")
+                        .IsUnique();
+
                     b.ToTable("Topics");
 
                     b.HasData(
@@ -368,7 +555,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 757, DateTimeKind.Utc).AddTicks(1546),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2748),
                             IsDeleted = false,
                             Title = "Best modern novels 2026",
                             UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
@@ -377,7 +564,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 2,
                             CategoryId = 2,
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 757, DateTimeKind.Utc).AddTicks(1551),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2757),
                             IsDeleted = false,
                             Title = "Top 10 classical books",
                             UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
@@ -386,7 +573,7 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 3,
                             CategoryId = 3,
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 757, DateTimeKind.Utc).AddTicks(1553),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2759),
                             IsDeleted = false,
                             Title = "Favorite poets",
                             UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
@@ -395,9 +582,72 @@ namespace New_Library.Data.Migrations
                         {
                             Id = 4,
                             CategoryId = 4,
-                            CreatedOn = new DateTime(2026, 3, 7, 0, 8, 59, 757, DateTimeKind.Utc).AddTicks(1554),
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2762),
                             IsDeleted = false,
                             Title = "Epic fantasy series",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 1,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2764),
+                            IsDeleted = false,
+                            Title = "Modern short stories",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CategoryId = 1,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2767),
+                            IsDeleted = false,
+                            Title = "Contemporary novels discussion",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CategoryId = 2,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2770),
+                            IsDeleted = false,
+                            Title = "Shakespeare's works",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CategoryId = 2,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2772),
+                            IsDeleted = false,
+                            Title = "Greek and Roman classics",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CategoryId = 5,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2775),
+                            IsDeleted = false,
+                            Title = "Future tech and space exploration",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CategoryId = 6,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2778),
+                            IsDeleted = false,
+                            Title = "World War II novels",
+                            UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CategoryId = 7,
+                            CreatedOn = new DateTime(2026, 3, 30, 17, 41, 15, 526, DateTimeKind.Utc).AddTicks(2780),
+                            IsDeleted = false,
+                            Title = "Detective series discussion",
                             UserId = new Guid("8fd866b1-9516-429a-3aaf-08de7ab2efc7")
                         });
                 });
@@ -771,7 +1021,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Mladost 1",
                             Age = 26,
-                            ConcurrencyStamp = "c45aa78a-d536-4de2-87c9-8f96eaf8e446",
+                            ConcurrencyStamp = "60c7dfc7-f62f-4072-926b-8a6622a4dbf7",
                             Email = "ivan.petrov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Ivan",
@@ -789,7 +1039,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Lozenets",
                             Age = 32,
-                            ConcurrencyStamp = "403479a2-0583-4dbd-aa8a-246caf55cabb",
+                            ConcurrencyStamp = "915b93fa-a251-426c-9bbd-a3bb9df23186",
                             Email = "maria.georgieva@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Maria",
@@ -807,7 +1057,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Nadezhda",
                             Age = 41,
-                            ConcurrencyStamp = "0bd9a0bc-4133-457a-b795-55b8b0ddd48c",
+                            ConcurrencyStamp = "1b8c1f13-9094-42c7-ad20-e4d80fe200aa",
                             Email = "georgi.ivanov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Georgi",
@@ -825,7 +1075,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Studentski Grad",
                             Age = 29,
-                            ConcurrencyStamp = "5b2b6554-9490-4ddf-bf2d-ca8c12fb0b60",
+                            ConcurrencyStamp = "88d81210-c809-40e6-8cfc-55b7e0d38dcf",
                             Email = "elena.dimitrova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Elena",
@@ -843,7 +1093,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Krasno Selo",
                             Age = 35,
-                            ConcurrencyStamp = "5420847b-3d84-47bd-bb77-a1a8821cf650",
+                            ConcurrencyStamp = "40d550fc-d0f1-4d9b-9abc-c028559b9656",
                             Email = "nikolay.stoyanov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Nikolay",
@@ -861,7 +1111,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Druzhba 2",
                             Age = 23,
-                            ConcurrencyStamp = "3c89d0df-3f6e-4ec2-8ae2-6e981b21f5c3",
+                            ConcurrencyStamp = "634d6f92-340e-4d86-9963-28c3b7995821",
                             Email = "petya.koleva@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Petya",
@@ -879,7 +1129,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Obelya",
                             Age = 46,
-                            ConcurrencyStamp = "9ad1336f-867e-4da4-9bf7-a772c345c4e0",
+                            ConcurrencyStamp = "78e8d2e8-fa41-4cd4-a549-1592ebc291a5",
                             Email = "dimitar.hristov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Dimitar",
@@ -897,7 +1147,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Geo Milev",
                             Age = 30,
-                            ConcurrencyStamp = "bfe6a928-f691-46f5-981c-e5763d300a1d",
+                            ConcurrencyStamp = "e65daacf-5414-428c-9ef7-393f504da0d3",
                             Email = "radostina.nikolova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Radostina",
@@ -915,7 +1165,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Lyulin 5",
                             Age = 34,
-                            ConcurrencyStamp = "434064b8-fd69-442a-8bec-9c717d92895a",
+                            ConcurrencyStamp = "ce57b2f2-0d64-42ed-80d2-f44685e0b146",
                             Email = "vladimir.angelov@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Vladimir",
@@ -933,7 +1183,7 @@ namespace New_Library.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "Sofia, Center",
                             Age = 27,
-                            ConcurrencyStamp = "f10fbc60-6e0f-4631-a6b6-898fead52dcf",
+                            ConcurrencyStamp = "18c25e33-017f-4a10-afc7-b9accec430c3",
                             Email = "desislava.popova@library.bg",
                             EmailConfirmed = false,
                             FirstName = "Desislava",

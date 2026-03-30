@@ -153,6 +153,7 @@ namespace New_Web_Library
             {
                 admin = new User
                 {
+                    Id=adminId,
                     FirstName = adminFirstName,
                     LastName = adminLastName,
                     UserName = adminEmail,

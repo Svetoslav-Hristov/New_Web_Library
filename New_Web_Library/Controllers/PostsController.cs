@@ -207,7 +207,7 @@ namespace New_Web_Library.Controllers
 
             if (result.Data.Title == TopicSpecialName)
             {
-                return RedirectToAction("UsersComplaints", "Systems");
+                return RedirectToAction("UsersComplaints", "Systems", new{area="Admin"} );
             }
 
 

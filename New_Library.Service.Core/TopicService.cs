@@ -1,4 +1,5 @@
-﻿using New_Library.Data.Models.Forum;
+﻿using Microsoft.Extensions.Logging;
+using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
 using New_Web_Library.Service.Core.Interfaces;
@@ -13,12 +14,14 @@ namespace New_Web_Library.Service.Core
         private readonly ITopicRepository _topicsRepository;
         private readonly ICategoryRepository _categoriesRepository;
         private readonly IUserRepository _usersRepository;
+        private readonly ILogger<ITopicService> _logger;
         public TopicService(ITopicRepository topicsRepository, ICategoryRepository categoriesRepository
-            , IUserRepository usersRepository)
+            , IUserRepository usersRepository,ILogger<ITopicService> logger)
         {
             this._topicsRepository = topicsRepository;
             this._categoriesRepository = categoriesRepository;
             this._usersRepository = usersRepository;
+            this._logger = logger;
         }
         public async Task<ServiceResult<CreateSubCategoryViewModel>> CreateNewSubCategory(int Id)
         {
@@ -161,7 +164,11 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<SubCategoryViewModel> { Success = false, ErrorMessage = "SubCategory not found!" };
+                return new ServiceResult<SubCategoryViewModel> 
+                {
+                    Success = false,
+                    ErrorMessage = "SubCategory not found!" 
+                };
 
             }
 
@@ -269,11 +276,11 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Sub Category not found!" };
             }
 
-            var category = await _categoriesRepository.GetDeleteOrNotCategoryAsync(Id);
+            var category = await _categoriesRepository.GetDeleteOrNotCategoryAsync(subCategory.CategoryId);
 
             if (category != null)
             {
-                if (!category.IsDeleted)
+                if (category.IsDeleted)
                 {
                     return new ServiceResult<bool>
                     {
@@ -324,7 +331,34 @@ namespace New_Web_Library.Service.Core
 
             var lastCategory = await _categoriesRepository.LastCategory();
 
+            if (lastCategory == null)
+            {
+                return new ServiceResult<Topic> 
+                {
+                    Success = false,
+                    ErrorMessage = "No category found to assign  the special sub category!" 
+                };
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<Topic> 
+                {
+                    Success = false,
+                    ErrorMessage="Invalid user ID!"
+                };
+            }
+
             var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<Topic> 
+                {
+                    Success = false, 
+                    ErrorMessage = "User not found!" 
+                };
+            }
 
             Topic special = new Topic()
             {
@@ -343,8 +377,10 @@ namespace New_Web_Library.Service.Core
                 await _topicsRepository.AddAsync(special);
 
             }
-            catch
+            catch(Exception ex)
             {
+
+                _logger.LogError(ex, "Error  creating special sub category by user  {0} {1}", user?.FirstName, user?.LastName);
 
                 return new ServiceResult<Topic>
                 {

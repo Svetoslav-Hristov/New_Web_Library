@@ -52,6 +52,8 @@ namespace New_Web_Library.Data
             modelBuilder.Entity<Post>().HasQueryFilter(p => !p.IsDeleted);
 
             modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
+            
+            modelBuilder.Entity<Topic>().HasIndex(t => new { t.Title, t.CategoryId }).IsUnique();
 
             modelBuilder.Entity<Post>().HasOne(p => p.Topic).WithMany(t => t.Posts)
                         .HasForeignKey(p => p.TopicId).OnDelete(DeleteBehavior.NoAction);
