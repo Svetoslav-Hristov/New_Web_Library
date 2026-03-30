@@ -47,7 +47,7 @@ namespace New_Library.Data.Repository
             return topic;
         }
 
-        public async Task<Topic?> GetDeleteOrNotSubCategory(int Id)
+        public async Task<Topic?> GetDeleteOrNotSubCategoryAsync(int Id)
         {
             return await _dbContext.Topics.IgnoreQueryFilters().Include(c=>c.Category).Include(c=>c.User)
                 .Include(t=>t.Posts).Where(t => t.Id == Id).FirstOrDefaultAsync();
@@ -62,6 +62,11 @@ namespace New_Library.Data.Repository
 
             return subCategory;
           
+        }
+
+        public async Task<bool> IsExistCategoryByNameAsync(string name)
+        {
+            return await _dbContext.Topics.AnyAsync(t=>t.Title.ToLower()==name.ToLower());
         }
 
         public async Task<bool> IsExistWithSameName(string title, int topicId)

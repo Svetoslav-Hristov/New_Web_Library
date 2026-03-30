@@ -68,7 +68,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
             }
             else
             {
-                TempData["SuccessComment"] = "Successfully permanently deleted the comment";
+                TempData["SuccessComment"] = "Comment has been deleted permanently.";
 
             }
 

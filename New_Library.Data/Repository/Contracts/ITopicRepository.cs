@@ -15,11 +15,13 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Topic> GetAllDeleteSubCategories();
 
-        Task<Topic?> GetDeleteOrNotSubCategory(int Id);
+        Task<Topic?> GetDeleteOrNotSubCategoryAsync(int Id);
 
         IQueryable<Topic>? GetAllCoveredSubCategories();
 
         Task<Topic?> GetSubCategoryByName(string name);
+
+        Task<bool> IsExistCategoryByNameAsync(string name);
 
     }
 }

@@ -9,17 +9,16 @@
 
     var errorComment = TempData["ErrorComment"] as string;
 
-    var successEditComment = TempData["SuccessComment"] as string;
-
-    
+    var successComment = TempData["SuccessComment"] as string;
 
     //post//
 
-    var errorDeletePost = TempData["ErrorDeletePost"] as string;
-
+    var errorDeletePost = TempData["ErrorPost"] as string;
 
     var successCreatePost = TempData["SuccessPost"] as string;
-  
+
+    //complaints//
+
     var errorCreateComplaints = TempData["Unexpected"] as string;
 
 }
@@ -50,10 +49,10 @@
     </div>
 }
 
-@if (!string.IsNullOrEmpty(successEditComment))
+@if (!string.IsNullOrEmpty(successComment))
 {
     <div class="alert alert-success" role="alert">
-        @successEditComment
+        @successComment
     </div>
 }
 

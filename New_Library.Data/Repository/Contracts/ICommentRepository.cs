@@ -20,5 +20,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<int> GetAllCommentsCount(Guid userId);
 
+        Task<Comment?> GetCommentWithUserAsync (int Id);
+
     }
 }

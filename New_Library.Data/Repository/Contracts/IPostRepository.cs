@@ -15,7 +15,7 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Post> AllDeletePost();
 
-        Task<Post?> GetDeleteOrNotPost(int Id);
+        Task<Post?> GetDeleteOrNotPostAsync(int Id);
 
         IQueryable<Post> CoveredPosts(List<int> coveredParentSub);
 

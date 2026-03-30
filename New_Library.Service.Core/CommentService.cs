@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Models.Contracts;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
@@ -168,29 +169,39 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Comment>> ConfirmEditComment(CreateContentViewModel model, int Id)
         {
-            if (string.IsNullOrEmpty(model.Description))
+            if (string.IsNullOrWhiteSpace(model.Description))
             {
-                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Content is required!" };
+                return new ServiceResult<Comment> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Content is required!" 
+                };
             }
 
-            Comment? comment = await _commentRepository.GetByIdAsync<Comment>(Id);
+            Comment? comment = await _commentRepository.GetCommentWithUserAsync(Id);
 
 
 
             if (comment == null)
             {
-                return new ServiceResult<Comment> { Success = false, ErrorMessage = "Comment not found!" };
+                return new ServiceResult<Comment> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Comment not found!" 
+                };
             }
 
             try
             {
-                comment.Content = model.Description;
+                comment.Content = model.Description.Trim();
                 comment.UpdatedAt = DateTime.UtcNow;
                 await _commentRepository.UpdateAsync(comment);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error editing comment create by {0} {1}", comment.User.FirstName, comment.User.LastName);
+
                 return new ServiceResult<Comment>
                 {
                     Success = false,
@@ -205,7 +216,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Post>> SoftDeleteComment(int Id, int postId, Guid userId)
         {
-            var comment = await _commentRepository.GetByIdAsync<Comment>(Id);
+            var comment = await _commentRepository.GetCommentWithUserAsync(Id);
 
 
 
@@ -297,7 +308,7 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Comment not found!" };
             }
 
-            Post? post = await _postRepository.GetDeleteOrNotPost(comment.PostId);
+            Post? post = await _postRepository.GetDeleteOrNotPostAsync(comment.PostId);
 
             if (post?.IsDeleted==true)
             {

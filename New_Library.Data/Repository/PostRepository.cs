@@ -68,9 +68,9 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<Post?> GetDeleteOrNotPost(int Id)
+        public async Task<Post?> GetDeleteOrNotPostAsync(int Id)
         {
-            return await _dbContext.Posts.IgnoreQueryFilters().Where(p => p.Id == Id).FirstOrDefaultAsync();
+            return await _dbContext.Posts.IgnoreQueryFilters().Include(p=>p.User).FirstOrDefaultAsync(p=>p.Id==Id);
         }
     }
 }

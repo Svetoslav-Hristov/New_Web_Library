@@ -25,6 +25,11 @@ namespace New_Web_Library.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> PostPreview(int Id, int pageNumber = 1, int pageSize = 4)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             Guid? userId = null;
 
             if (User.Identity.IsAuthenticated && User.Identity.IsAuthenticated)
@@ -37,8 +42,7 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-
-                _logger.LogError("Post not found: Id = {PostId}", Id);
+                _logger.LogWarning("Post not found: Id = {PostId}", Id);
 
                 return NotFound();
             }
@@ -52,17 +56,22 @@ namespace New_Web_Library.Controllers
         [Authorize]
         public async Task<IActionResult> CreatePost(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var model = await _postsService.CreateNewPost(Id);
 
 
 
             if (!model.Success)
             {
+
                 TempData["ErrorPost"] = model.ErrorMessage;
 
-                _logger.LogWarning("{0} Id = {1}", model.ErrorMessage, Id);
+                return RedirectToAction("SubCategory", "Topics", new { id = Id });
 
-                return NotFound();
             }
 
             return View(model.Data);
@@ -75,6 +84,11 @@ namespace New_Web_Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePost(CreateContentViewModel model, int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
 
@@ -87,17 +101,11 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                if (result.ErrorMessage.Contains("Unexpected"))
-                {
-                    _logger.LogError(result.ErrorMessage);
 
-                    return StatusCode(500);
-                }
+                TempData["ErrorPost"] = result.ErrorMessage;
 
+                return RedirectToAction("SubCategory", "Topics", new { id = Id });
 
-                _logger.LogWarning(result.ErrorMessage);
-
-                return NotFound();
             }
 
             if (result.Data.Topic.Title == TopicSpecialName)
@@ -121,16 +129,17 @@ namespace New_Web_Library.Controllers
         [Authorize]
         public async Task<IActionResult> EditPost(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
 
             var result = await _postsService.EditPost(Id);
 
             if (!result.Success)
             {
-                _logger.LogWarning("{0} Id = {1}", result.ErrorMessage, Id);
 
                 return NotFound();
-
-
             }
 
             return View("CreatePost", result.Data);
@@ -141,6 +150,10 @@ namespace New_Web_Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(CreateContentViewModel model, [FromRoute] int Id, [FromRoute] int topicId)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
 
             if (!ModelState.IsValid)
             {
@@ -153,25 +166,13 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                if (result.ErrorMessage.Contains("not found!"))
-                {
-                    _logger.LogWarning(result.ErrorMessage);
+                TempData["ErrorPost"] = result.ErrorMessage;
 
-                    return NotFound();
-                }
-                else if (result.ErrorMessage.Contains("Unexpected"))
-                {
-                    _logger.LogError(result.ErrorMessage);
-
-                    return StatusCode(500);
-                }
-
-
-                TempData["ErrorEditPost"] = result.ErrorMessage;
-
-                return RedirectToAction(nameof(PostPreview), new { id = topicId });
+                return RedirectToAction("SubCategory", "Topics", new { id = topicId });
 
             }
+
+            TempData["SuccessPost"] = "You have successfully edited your post.";
 
             return RedirectToAction(nameof(PostPreview), new { id = Id });
 
@@ -179,36 +180,26 @@ namespace New_Web_Library.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles ="Admin,User")]
+        [Authorize(Roles = "Admin,User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePost(int Id)
         {
 
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
 
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-
 
             var result = await _postsService.SoftDeletePost(Id, userId);
 
             if (!result.Success)
             {
 
-                if (result.ErrorMessage.Contains("not found!"))
-                {
-                    _logger.LogWarning(result.ErrorMessage);
 
-                    return NotFound();
-
-                }
-                else if (result.ErrorMessage.Contains("Unexpected"))
-                {
-                    _logger.LogError(result.ErrorMessage);
-
-                    return StatusCode(500);
-                }
-
-                TempData["ErrorDeletePost"] = result.ErrorMessage;
+                TempData["ErrorPost"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(PostPreview), new { id = Id });
 

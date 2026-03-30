@@ -47,9 +47,15 @@ namespace New_Library.Data.Repository
               .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Comment?> GetCommentWithUserAsync(int Id)
+        {
+            return await _dbContext.Comments.Include(c => c.User).FirstOrDefaultAsync(c=>c.Id==Id);
+        }
+
         public async Task<Comment?> GetSoftDeleteCommentAsync(int Id)
         {
-            return await _dbContext.Comments.IgnoreQueryFilters().Where(c => c.Id == Id).Include(c=>c.User).FirstOrDefaultAsync();
+            return await _dbContext.Comments.IgnoreQueryFilters().Include(c=>c.User)
+             .FirstOrDefaultAsync(c=>c.Id==Id);
            
         }
     }

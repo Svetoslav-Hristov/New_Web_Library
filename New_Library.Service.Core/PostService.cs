@@ -1,11 +1,16 @@
-﻿using New_Library.Data.Models.Forum;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Models.Contracts;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
+using static New_Web_Library.GCommon.EntityValidations;
 using static New_Web_Library.GCommon.EntityValidations.Posts;
 using static New_Web_Library.GCommon.EntityValidations.Topics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Service.Core
 {
@@ -17,15 +22,17 @@ namespace New_Web_Library.Service.Core
         private readonly ICategoryRepository _categoriesRepository;
         private readonly IUserRepository _usersRepository;
         private readonly ITopicRepository _topicsRepository;
+        private readonly ILogger<IPostService> _logger;
         public PostService(IPostRepository postsRepository, ICommentRepository commentsRepository,
             ICategoryRepository categoriesRepository, IUserRepository usersRepository,
-            ITopicRepository topicsRepository)
+            ITopicRepository topicsRepository,ILogger<IPostService> logger)
         {
             this._postsRepository = postsRepository;
             this._commentsRepository = commentsRepository;
             this._categoriesRepository = categoriesRepository;
             this._usersRepository = usersRepository;
             this._topicsRepository = topicsRepository;
+            this._logger = logger;
         }
 
 
@@ -97,9 +104,6 @@ namespace New_Web_Library.Service.Core
             var usersId = post.Comments.Select(p => p.UserId).Append(post.UserId).Distinct().ToList();
 
 
-
-
-
             var countComments = await _commentsRepository.GetAllCountComments(usersId);
 
 
@@ -117,8 +121,8 @@ namespace New_Web_Library.Service.Core
             model.UserPostCount = countPosts.GetValueOrDefault(post.UserId);
             model.UserCommentCount = countComments.GetValueOrDefault(post.UserId);
 
-            // && DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime)
-            if (userId != null)
+           
+            if (userId != null && DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))
             {
 
                 if (!pagingModel.Comments.Any() && model.UserId == userId)
@@ -153,7 +157,11 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "SubCategory not found!" };
+                return new ServiceResult<CreateContentViewModel> 
+                {
+                    Success = false,
+                    ErrorMessage = "SubCategory not found!" 
+                };
             }
 
             CreateContentViewModel model = new CreateContentViewModel()
@@ -170,30 +178,65 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Post>> ConfirmNewPost(CreateContentViewModel model, Guid userId, int categoryId)
         {
+            
+            if (string.IsNullOrWhiteSpace(model.Title))
+            {
+                return new ServiceResult<Post> 
+                { 
+                    Success = false, 
+                    ErrorMessage = "Title is required." 
+                };
+
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Description))
+            {
+
+                return new ServiceResult<Post> 
+                { 
+                    Success = false, 
+                    ErrorMessage = "The post must have content." 
+                };
+            }
+
+
+
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Invalid userId" };
+                return new ServiceResult<Post> 
+                { 
+                    Success = false,
+                    ErrorMessage = "Invalid user ID." 
+                };
             }
 
             User? user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!" 
+                };
             }
 
             Topic? subCategory = await _topicsRepository.GetByIdAsync<Topic>(categoryId);
 
             if (subCategory == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "SubCategory not found!" };
+                return new ServiceResult<Post> 
+                { 
+                    Success = false,
+                    ErrorMessage = "SubCategory not found!" 
+                };
             }
 
             Post newPost = new Post()
             {
 
-                Title = model.Title,
-                Content = model.Description,
+                Title = model.Title.Trim(),
+                Content = model.Description.Trim(),
                 CreatedOn = DateTime.UtcNow,
                 UserId = userId,
                 User = user,
@@ -209,8 +252,10 @@ namespace New_Web_Library.Service.Core
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error  creating post by user  {0} {1}", user?.FirstName, user?.LastName);
 
                 return new ServiceResult<Post>
                 {
@@ -232,7 +277,11 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<CreateContentViewModel> { Success = false, ErrorMessage = "Post not found" };
+                return new ServiceResult<CreateContentViewModel> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Post not found" 
+                };
             }
 
 
@@ -253,40 +302,77 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Post>> ConfirmEditPost(CreateContentViewModel model, Guid userId, int Id)
         {
-            var user = await _usersRepository.FindByIdAsync(userId);
 
-            if (user == null)
+            if (string.IsNullOrWhiteSpace(model.Title))
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "User not found!" };
-
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "Title is required." 
+                };
             }
+
+            if (string.IsNullOrWhiteSpace(model.Description))
+            {
+                return new ServiceResult<Post>
+                {
+                    Success = false,
+                    ErrorMessage = "The post must have content."
+                };
+            }
+
+
+            if (userId == Guid.Empty)
+            {
+
+                return new ServiceResult<Post> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Invalid user ID." 
+                };
+            }
+
+
+           
+            
 
             var post = await _postsRepository.GetByIdAsync<Post>(Id);
 
 
             if (post == null)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Post not found!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "Post not found!" 
+                };
             }
 
+            bool isAdmin = await _usersRepository.AdminOrNotAsync(userId);
 
 
-            if (post.UserId != user.Id)
+            if (post.UserId != userId && !isAdmin)
             {
-                return new ServiceResult<Post> { Success = false, ErrorMessage = "Тhis post belongs to another user!" };
+                return new ServiceResult<Post> 
+                {
+                    Success = false,
+                    ErrorMessage = "You don't have permission over this post."
+                };
             }
 
 
             try
             {
-                post.Title = model.Title;
-                post.Content = model.Description;
+                post.Title = model.Title.Trim();
+                post.Content = model.Description.Trim();
                 post.UpdatedAt = DateTime.UtcNow;
                 await _postsRepository.UpdateAsync(post);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex,"Error editing post by user {UserId}", userId);
 
                 return new ServiceResult<Post>
                 {
@@ -309,18 +395,21 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "Post not found!" };
             }
 
-            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(post.TopicId);
-
-            var user = await _usersRepository.FindByIdAsync(userId);
-
-            if (user == null)
+            var subCategory = await _topicsRepository.GetByIdAsync<Topic>(post.TopicId);
+            
+            if (userId==Guid.Empty)
             {
-                return new ServiceResult<Topic> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Topic> 
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user Id" 
+                };
             }
 
 
             bool isAdmin = await _usersRepository.AdminOrNotAsync(userId);
 
+           
             if (post.UserId != userId && !isAdmin )
             {
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "You don't have permission over this post." };
@@ -336,8 +425,10 @@ namespace New_Web_Library.Service.Core
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error deleting post with Id {0}", post.Id);
+
                 return new ServiceResult<Topic>
                 {
                     Success = false,
@@ -353,25 +444,24 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> RestoreDeletePost(int Id)
         {
-            var post = await _postsRepository.GetDeleteOrNotPost(Id);
+            var post = await _postsRepository.GetDeleteOrNotPostAsync(Id);
 
             if (post == null)
             {
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "Post not found!" };
             }
 
-            Topic? subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(post.TopicId);
+            Topic? subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(post.TopicId);
 
-            if (subCategory != null)
+            
+            if (subCategory?.IsDeleted== true)
             {
-                if (subCategory.IsDeleted)
-                {
-                    return new ServiceResult<bool>
+                   return new ServiceResult<bool>
                     {
                         Success = false,
-                        ErrorMessage = "You won't be able to return the Post because the SubCategory is also missing!"
-                    };
-                }
+                        ErrorMessage = "You can't restore the post because the subcategory is deleted."
+                   };
+                
             }
 
 
@@ -385,8 +475,10 @@ namespace New_Web_Library.Service.Core
                 await _postsRepository.UpdateAsync(post);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error restoring post delete by user  {0} {1}", post.User?.FirstName, post.User?.LastName);
 
                 return new ServiceResult<bool>
                 {
@@ -402,7 +494,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> HardDeletePost(int Id)
         {
-            var post = await _postsRepository.GetDeleteOrNotPost(Id);
+            var post = await _postsRepository.GetDeleteOrNotPostAsync(Id);
 
             if (post == null)
             {
@@ -415,8 +507,12 @@ namespace New_Web_Library.Service.Core
                 await _postsRepository.DeleteAsync(post);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error hard deleting post by user  {0} {1}", post.User?.FirstName, post.User?.LastName);
+
+
                 return new ServiceResult<bool>
                 {
                     Success = false,
@@ -434,7 +530,11 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<ContentDetailsModel> { Success = false, ErrorMessage = "Post not found!" };
+                return new ServiceResult<ContentDetailsModel> 
+                {
+                    Success = false, 
+                    ErrorMessage = "Post not found!" 
+                };
             }
 
             ContentDetailsModel model = new ContentDetailsModel()

@@ -564,8 +564,15 @@ namespace New_Library.Services.Core
 
         }
 
-        public async Task<IEnumerable<DeletedItemViewModel>> GetAllDeleteItems()
+        public async Task<DeletedItemsViewModel> GetAllDeleteItems()
         {
+            var isExistSpecialSubCategory = await _topicsRepository.IsExistCategoryByNameAsync(TopicSpecialName);
+
+            DeletedItemsViewModel model = new DeletedItemsViewModel()
+            {
+                IsExistSpecialSubCategory = isExistSpecialSubCategory,
+
+            };
 
             List<DeletedItemViewModel> deleteItems = new List<DeletedItemViewModel>();
 
@@ -679,7 +686,9 @@ namespace New_Library.Services.Core
             deleteItems.AddRange(comments);
 
 
-            return deleteItems;
+            model.DeleteItems = deleteItems;
+
+            return model;
 
         }
 

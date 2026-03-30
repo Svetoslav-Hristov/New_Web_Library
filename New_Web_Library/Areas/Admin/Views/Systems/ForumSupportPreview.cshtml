@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DeletedItemViewModel>
+﻿@model DeletedItemsViewModel
 @{
     Layout = "_ForumLayout";
 
@@ -8,8 +8,6 @@
 
     var successComment = TempData["SuccessComment"] as string;
 
-    var errorHardDeleteComment = TempData["ErrorHardDeleteComment"] as string;
-
     // category
     var errorCategory = TempData["ErrorCategory"] as string;
 
@@ -17,17 +15,17 @@
 
     // post //
 
-    var errorRestorePost = TempData["ErrorRestorePost"] as string;
+    var errorPost = TempData["ErrorPost"] as string;
 
-    var errorHardDeletePost = TempData["ErrorHardDeletePost"] as string;
+    var successPost = TempData["SuccessPost"] as string;
 
     //subCategory //
-    
+
     var errorHardDeleteSubCategory = TempData["ErrorHardDeleteSubCategory"] as string;
 
     var errorRestoreSubCategory = TempData["ErrorRestoreSubCategory"] as string;
 
-    
+
     var errorUSersComplains = TempData["ErrorUserComplaints"] as string;
 
 
@@ -67,6 +65,22 @@
 
 }
 
+@if (!string.IsNullOrEmpty(successPost))
+{
+    <div class="alert alert-success" role="alert">
+        @successPost
+    </div>
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorPost))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorPost
+    </div>
+
+}
 
 
 
@@ -98,50 +112,31 @@
 
 
 
-
-@if (!string.IsNullOrEmpty(errorHardDeleteComment))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorHardDeleteComment
-    </div>
-
-}
-
-@if (!string.IsNullOrEmpty(errorHardDeletePost))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorHardDeletePost
-    </div>
-
-}
-@if (!string.IsNullOrEmpty(errorRestorePost))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorRestorePost
-    </div>
-
-}
-
-
-
-
 <div class="container-fluid px-0">
     <div class="row g-0">
-        <div class="border-end bg-light p-1" style="width: 230px; min-height: 90vh;">
+        <div class="border-end bg-light p-1" style="width: 230px; min-height: 85vh;">
 
             <h5 class="mb-3">Menu</h5>
 
-            <div class="d-flex flex-column gap-2">
-                <a asp-area="Admin"
-                   asp-controller="Systems"
-                   asp-action="UsersComplaints"
-                   class="btn btn-outline-primary">
-                    😥 Users Complaints
-                </a>
-
-
-
-            </div>
+            @if (Model.IsExistSpecialSubCategory)
+            {
+                <div class="d-flex flex-column gap-2">
+                    <a asp-area="Admin"
+                       asp-controller="Systems"
+                       asp-action="UsersComplaints"
+                       class="btn btn-outline-primary">
+                        😥 Users Complaints
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-outline-secondary" disabled>
+                        😥 No Complaints
+                    </button>
+                </div>
+            }
         </div>
         <main class="col-md-9 col-lg-10 p-4">
 
@@ -161,182 +156,192 @@
                 </thead>
 
                 <tbody>
-
-                    @foreach (var item in Model)
+                    @if (!Model.DeleteItems.Any())
                     {
                         <tr>
-
-                            <td>
-
-                                @if (item.Type == "Category")
-                                {
-                                    <span class="badge bg-primary">
-                                        @item.Type
-                                    </span>
-                                }
-                                else if (item.Type == "SubCategory")
-                                {
-                                    <span class="badge bg-danger">
-                                        @item.Type
-                                    </span>
-                                }
-                                else if (item.Type == "Covered/SubCategory")
-                                {
-                                    <span class="badge bg-danger">
-                                        @item.Type
-                                    </span>
-
-                                }
-                                else if (item.Type == "Post")
-                                {
-                                    <span class="badge bg-success">
-                                        @item.Type
-                                    </span>
-                                }
-                                else if (item.Type == "Covered/Post")
-                                {
-
-                                    <span class="badge bg-success">
-                                        @item.Type
-                                    </span>
-
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">
-                                        @item.Type
-                                    </span>
-                                }
-
+                            <td colspan="5" class="text-center text-muted">
+                                No deleted items found.
                             </td>
-
-                            <td>@item.Name</td>
-
-                            <td>@item.Description</td>
-                            <td>@(item.DeleteAt.HasValue? item.DeleteAt.Value.ToLocalTime().ToString(ForumTimeFormat):"N/A") </td>
-
-                            <td>
-                                @if (item.Type == "Category")
-                                {
-
-                                    <div class="d-flex gap-2">
-                                        <form asp-controller="Categories"
-                                              asp-action="RestoreCategory"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to restore this Category?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-success btn-sm">
-                                                Restore
-                                            </button>
-                                        </form>
-
-                                        <form asp-controller="Categories"
-                                              asp-action="HardDelete"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to delete permanently this Category?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm">
-                                                Delete Permanently
-                                            </button>
-                                        </form>
-                                    </div>
-                                }
-                                else if (item.Type == "SubCategory")
-                                {
-
-                                    <div class="d-flex gap-2">
-                                        <form asp-controller="Topics"
-                                              asp-action="RestoreSubCategory"
-                                              asp-route-Id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to restore this SubCategory ?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-success btn-sm">
-                                                Restore
-                                            </button>
-                                        </form>
-
-                                        <form asp-controller="Topics"
-                                              asp-action="HardDelete"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to delete permanently this SubCategory ?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm">
-                                                Delete Permanently
-                                            </button>
-                                        </form>
-                                    </div>
-                                }
-
-                                else if (item.Type == "Post")
-                                {
-                                    <div class="d-flex gap-2">
-                                        <form asp-controller="Posts"
-                                              asp-action="RestorePost"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to restore this Post?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-success btn-sm">
-                                                Restore
-                                            </button>
-                                        </form>
-
-                                        <form asp-controller="Posts"
-                                              asp-action="HardDeletePost"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to delete permanently this Post?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm">
-                                                Delete Permanently
-                                            </button>
-                                        </form>
-                                    </div>
-                                }
-                                else if (item.Type == "Comment")
-                                {
-                                    <div class="d-flex gap-2">
-                                        <form asp-controller="Comments"
-                                              asp-action="RestoreComment"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to restore this comment?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-success btn-sm">
-                                                Restore
-                                            </button>
-                                        </form>
-
-                                        <form asp-controller="Comments"
-                                              asp-action="HardDeleteComment"
-                                              asp-route-id="@item.Id"
-                                              method="post"
-                                              onsubmit="return confirm('Are you sure you want to delete permanently this comment?');">
-
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm">
-                                                Delete Permanently
-                                            </button>
-                                        </form>
-                                    </div>
-                                }
-
-                            </td>
-
                         </tr>
                     }
+                    else
+                    {
 
+                        @foreach (var item in Model.DeleteItems)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    @if (item.Type == "Category")
+                                    {
+                                        <span class="badge bg-primary">
+                                            @item.Type
+                                        </span>
+                                    }
+                                    else if (item.Type == "SubCategory")
+                                    {
+                                        <span class="badge bg-danger">
+                                            @item.Type
+                                        </span>
+                                    }
+                                    else if (item.Type == "Covered/SubCategory")
+                                    {
+                                        <span class="badge bg-danger">
+                                            @item.Type
+                                        </span>
+
+                                    }
+                                    else if (item.Type == "Post")
+                                    {
+                                        <span class="badge bg-success">
+                                            @item.Type
+                                        </span>
+                                    }
+                                    else if (item.Type == "Covered/Post")
+                                    {
+
+                                        <span class="badge bg-success">
+                                            @item.Type
+                                        </span>
+
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            @item.Type
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>@item.Name</td>
+
+                                <td>@item.Description</td>
+                                <td>@(item.DeleteAt.HasValue? item.DeleteAt.Value.ToLocalTime().ToString(ForumTimeFormat):"N/A") </td>
+
+                                <td>
+                                    @if (item.Type == "Category")
+                                    {
+
+                                        <div class="d-flex gap-2">
+                                            <form asp-controller="Categories"
+                                                  asp-action="RestoreCategory"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to restore this Category?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+                                                    Restore
+                                                </button>
+                                            </form>
+
+                                            <form asp-controller="Categories"
+                                                  asp-action="HardDelete"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete permanently this Category?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm">
+                                                    Delete Permanently
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else if (item.Type == "SubCategory")
+                                    {
+
+                                        <div class="d-flex gap-2">
+                                            <form asp-controller="Topics"
+                                                  asp-action="RestoreSubCategory"
+                                                  asp-route-Id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to restore this SubCategory ?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+                                                    Restore
+                                                </button>
+                                            </form>
+
+                                            <form asp-controller="Topics"
+                                                  asp-action="HardDelete"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete permanently this SubCategory ?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm">
+                                                    Delete Permanently
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+
+                                    else if (item.Type == "Post")
+                                    {
+                                        <div class="d-flex gap-2">
+                                            <form asp-controller="Posts"
+                                                  asp-action="RestorePost"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to restore this Post?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+                                                    Restore
+                                                </button>
+                                            </form>
+
+                                            <form asp-controller="Posts"
+                                                  asp-action="HardDeletePost"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete permanently this Post?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm">
+                                                    Delete Permanently
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else if (item.Type == "Comment")
+                                    {
+                                        <div class="d-flex gap-2">
+                                            <form asp-controller="Comments"
+                                                  asp-action="RestoreComment"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to restore this comment?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+                                                    Restore
+                                                </button>
+                                            </form>
+
+                                            <form asp-controller="Comments"
+                                                  asp-action="HardDeleteComment"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete permanently this comment?');">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm">
+                                                    Delete Permanently
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
                 </tbody>
 
             </table>

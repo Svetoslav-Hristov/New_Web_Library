@@ -95,15 +95,19 @@ namespace New_Web_Library.Controllers
         public async Task<IActionResult> EditComment(int Id)
         {
 
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var result = await _commentsService.EditComment(Id, userId);
 
             if (!result.Success)
             {
-                _logger.LogWarning(result.ErrorMessage);
-
-                TempData["ErrorEdit"] = result.ErrorMessage;
+                
+                TempData["ErrorComment"] = result.ErrorMessage;
 
                 return RedirectToAction("Index","Categories");
 
@@ -118,6 +122,11 @@ namespace New_Web_Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditComment(CreateContentViewModel model, int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+            
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -128,16 +137,17 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                _logger.LogWarning(result.ErrorMessage);
 
-                TempData["ErrorEdit"] = result.ErrorMessage;
+                TempData["ErrorComment"] = result.ErrorMessage;
 
-                return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId });
+
             }
+            else
+            {
+                TempData["SuccessEditComment"] = "You have successfully edited your comment.";
 
-            TempData["SuccessEditComment"] = "You have successfully edited your comment.";
-
-
+            }
+            
             return RedirectToAction("PostPreview", "Posts", new { id = result.Data.PostId });
 
 
@@ -154,16 +164,17 @@ namespace New_Web_Library.Controllers
 
             if (!result.Success)
             {
-                _logger.LogWarning(result.ErrorMessage);
+               
 
-                TempData["ErrorDeleteComment"] = result.ErrorMessage;
-
-                return RedirectToAction("PostPreview", "Posts", new { Id = postId });
-
+                TempData["ErrorComment"] = result.ErrorMessage;
 
             }
+            else
+            {
+                TempData["SuccessComment"] = "You have successfully deleted your comment.";
+            }
 
-            return RedirectToAction("PostPreview", "Posts", new { Id = postId });
+                return RedirectToAction("PostPreview", "Posts", new { Id = postId });
 
         }
 

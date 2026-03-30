@@ -25,7 +25,7 @@ namespace New_Web_Library.Services.Core.Interfaces
 
         Task RestoreReservationModelAsync(CreateReserveModel model);
 
-        Task<IEnumerable<DeletedItemViewModel>> GetAllDeleteItems();
+        Task<DeletedItemsViewModel> GetAllDeleteItems();
 
         Task<ServiceResult<SubCategoryViewModel>> GetSpecialArea();
 

@@ -225,7 +225,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> HardDeleteSubCategory(int Id)
         {
-            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(Id);
+            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(Id);
 
             if (subCategory == null)
             {
@@ -262,7 +262,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> RestoreSubCategory(int Id)
         {
-            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategory(Id);
+            var subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(Id);
 
             if (subCategory == null)
             {
