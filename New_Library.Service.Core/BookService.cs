@@ -1,19 +1,13 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using New_Library.Data.Repository.Contracts;
-using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
-using New_Web_Library.Data.Models.Contracts;
 using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
-using System.Numerics;
-using static New_Web_Library.GCommon.EntityValidations;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Services.Core
 {
