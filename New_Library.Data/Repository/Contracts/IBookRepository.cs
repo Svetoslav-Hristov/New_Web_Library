@@ -16,9 +16,9 @@ namespace New_Library.Data.Repository.Contracts
 
          Task<Book?> GetByIdAsync(Guid id);
 
-        Task<List<string>> GetAllAuthors();
+        Task<List<string>> GetAllAuthorsAsync();
 
-        Task<bool> IsExistBook(Guid bookId);
+        Task<bool> IsExistBookAsync(Guid bookId);
 
         
 

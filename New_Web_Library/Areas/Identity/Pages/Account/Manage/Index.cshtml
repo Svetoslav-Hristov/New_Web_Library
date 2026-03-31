@@ -17,7 +17,7 @@
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" placeholder="Please choose your lastName."  />
+                <input asp-for="Input.LastName" class="form-control" placeholder="Please choose your lastName." />
                 <label asp-for="Input.LastName" class="form-label"></label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
@@ -41,8 +41,27 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary ">Save</button>
+            <div class="d-flex gap-2 mt-3">
+
+                <a asp-area=""
+                   asp-controller="Books"
+                   asp-action="Index"
+                   class="w-50 btn btn-lg btn-success me-2 ">
+                   <= Back To Library
+                </a>
+                <a asp-area=""
+                   asp-controller="Categories"
+                   asp-action="Index"
+                   class="w-50 btn btn-lg btn-success">
+                    Back To Forum =>
+                </a>
+
+
+            </div>
+
         </form>
+
     </div>
 </div>
 

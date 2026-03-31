@@ -12,13 +12,13 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<int> GetAllCommentsCount(Guid userId)
+        public async Task<int> GetAllCommentsCountAsync(Guid userId)
         {
             return await _dbContext.Comments.Where(c => c.UserId == userId).CountAsync();
            
         }
 
-        public async Task<Dictionary<Guid, int>> GetAllCountComments(List<Guid> usersId)
+        public async Task<Dictionary<Guid, int>> GetAllCountCommentsAsync(List<Guid> usersId)
         {
 
             var countComments = await _dbContext.Comments.AsNoTracking().Where(c => usersId.Contains(c.UserId) && !c.IsDeleted)

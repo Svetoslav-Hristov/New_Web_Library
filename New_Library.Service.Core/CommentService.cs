@@ -95,9 +95,6 @@ namespace New_Web_Library.Service.Core
             }
 
 
-
-
-
             Comment newComment = new Comment()
             {
 

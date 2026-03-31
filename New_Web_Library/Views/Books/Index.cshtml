@@ -4,7 +4,17 @@
 
     var successRegistration = TempData["SuccessRegistration"] as string;
 
+    var errorReservation = TempData["ErrorReservation"] as string;
+
     var errorBookDetails = TempData["ErrorBook"] as string;
+
+}
+
+@if (!string.IsNullOrEmpty(errorReservation))
+{
+<div class="alert alert-danger" role="alert">
+    @errorReservation
+</div>
 
 }
 

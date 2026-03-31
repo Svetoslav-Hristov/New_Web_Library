@@ -19,7 +19,6 @@ namespace New_Library.Data.Models.Forum
 
         public DateTime? DeleteAt { get; set; }
 
-
         public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey(nameof(Category))]

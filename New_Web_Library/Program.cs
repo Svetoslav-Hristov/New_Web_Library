@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository;
 using New_Library.Data.Repository.Contracts;
 using New_Library.Services.Core;
@@ -15,6 +16,7 @@ using System.Security.Principal;
 
 namespace New_Web_Library
 {
+    using static New_Web_Library.GCommon.EntityValidations;
     using static New_Web_Library.GCommon.EntityValidations.Admin;
     using static New_Web_Library.GCommon.EntityValidations.IdentitySession;
     public class Program
@@ -71,6 +73,7 @@ namespace New_Web_Library
             {
                 var services = scope.ServiceProvider;
                 await SeedAdmin(services);
+                await SeedExtraData(services);
             }
 
 
@@ -153,7 +156,7 @@ namespace New_Web_Library
             {
                 admin = new User
                 {
-                    Id=adminId,
+                    
                     FirstName = adminFirstName,
                     LastName = adminLastName,
                     UserName = adminEmail,
@@ -176,6 +179,248 @@ namespace New_Web_Library
 
             }
 
+
+
+        }
+
+        private static async Task SeedExtraData(IServiceProvider provider)
+        {
+            using var scope = provider.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+            var admin = await userManager.FindByEmailAsync(adminEmail);
+
+            if (admin == null)
+                throw new Exception("Admin not found!");
+
+            if (!context.Topics.Any())
+            {
+                Topic[] topics =
+            {
+            new Topic {
+                Title = "Best modern novels 2026",
+                CategoryId = 1 ,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Top 10 classical books",
+                CategoryId = 2,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Favorite poets",
+                CategoryId = 3 ,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Epic fantasy series",
+                CategoryId = 4,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Modern short stories",
+                CategoryId = 1,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Contemporary novels discussion",
+                CategoryId = 1,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Shakespeare's works",
+                CategoryId = 2,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Greek and Roman classics",
+                CategoryId = 2,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Future tech and space exploration",
+                CategoryId = 5,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "World War II novels",
+                CategoryId = 6,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            },
+            new Topic {
+                Title = "Detective series discussion",
+                CategoryId = 7,
+                CreatedOn = DateTime.UtcNow,
+                UserId = admin.Id
+            }
+            };
+
+                context.Topics.AddRange(topics);
+                await context.SaveChangesAsync();
+
+            }
+
+            if (!context.Posts.Any())
+            {
+
+                Post[] posts =
+         {
+            new Post {
+                Title = "Modern novel discussion",
+                Content = "Let's discuss the best modern novels of 2026.",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 1,
+                UserId = admin.Id
+            },
+            new Post {
+                Title = "Classical books you love",
+                Content = "Share your favorite classical books.",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 2,
+                UserId = admin.Id
+            },
+            new Post {
+                Title = "Poetry recommendations",
+                Content = "Which poets inspire you?",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 3,
+                UserId = admin.Id
+            },
+            new Post {
+                Title = "Fantasy recommendations",
+                Content = "Discuss your favorite fantasy series.",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 4,
+                UserId = admin.Id
+            },new Post {
+                Title = "Modern short story debate",
+                Content = "Which modern short stories are worth reading?",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 1,
+                UserId = admin.Id
+            },
+            new Post {
+                Title = "Contemporary novels insights",
+                Content = "Share insights on contemporary novels you've read recently.",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 1,
+                UserId = admin.Id
+            },
+
+            new Post {
+                Title = "Exploring classic literature",
+                Content = "Let's explore the themes in classic literature.",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 2,
+                UserId = admin.Id
+            },
+            new Post {
+                Title = "Favorite classic authors",
+                Content = "Who are your favorite classic authors and why?",
+                CreatedOn = DateTime.UtcNow,
+                TopicId = 2,
+                UserId = admin.Id
+            }
+              };
+
+                context.Posts.AddRange(posts);
+                await context.SaveChangesAsync();
+            }
+
+            if (!context.Comments.Any())
+            {
+
+                Comment[] comments =
+           {
+
+                new Comment
+                {
+                    Content = "I think 2026 has some really strong releases already.",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment {
+                    Content = "Any recommendations for modern drama novels?",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment {
+                    Content = "I've recently read a great psychological novel, highly recommend!",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                 new Comment
+                {
+                    Content = "Modern literature is getting more diverse, which is awesome.",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                    Content = "Do you prefer physical books or eBooks?",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                    Content = "I feel like modern novels focus more on characters than plot.",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                    Content = "Can someone suggest a good mystery novel from 2026?",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                    
+                    Content = "Audiobooks are also becoming very popular lately.",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                    
+                    Content = "I love how modern authors experiment with storytelling.",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                },
+                new Comment
+                {
+                   
+                    Content = "Looking forward to your suggestions!",
+                    CreatedOn = DateTime.UtcNow,
+                    PostId = 1,
+                    UserId = admin.Id
+                }
+                    };
+
+                context.Comments.AddRange(comments);
+                await context.SaveChangesAsync();
+            }
 
 
         }

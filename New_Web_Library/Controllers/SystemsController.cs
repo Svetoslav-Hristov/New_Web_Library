@@ -44,7 +44,7 @@ namespace New_Web_Library.Controllers
             if (!reservation.Success)
             {
 
-                TempData["ErrorReserve"] = reservation.ErrorMessage;
+                TempData["ErrorReservation"] = reservation.ErrorMessage;
 
                
 

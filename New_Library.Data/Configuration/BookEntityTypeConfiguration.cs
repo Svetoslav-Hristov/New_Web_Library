@@ -167,6 +167,7 @@ namespace New_Web_Library.Data.Configuration
              Title = "Homo Deus",
              Author = "Yuval Noah Harari",
              Year=2015,
+             CoverImageUrl="HomoDeus.jpg",
              Genre = Genre.History
          },
         new Book

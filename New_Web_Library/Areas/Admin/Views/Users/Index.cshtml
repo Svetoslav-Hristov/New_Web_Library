@@ -6,16 +6,24 @@
 
     var emptyCollection = TempData["EmptyCollection"] as string;
 
-    var successChanges = TempData["SuccessMessage"] as string;
+    var successChanges = TempData["SuccessUser"] as string;
 
-    var statusMessage = TempData["SuccesStatus"] as string;
-
+    var errorUser = TempData["ErrorUser"] as string;
+    
     var errorStatus = TempData["NotNeed"] as string;
 
-    var unexpectedStatus = TempData["ErrorStatus"] as string;
-
     var successRegistration = TempData["SuccessRegistration"] as string;
+
 }
+
+@if (!string.IsNullOrEmpty(errorUser))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorUser
+    </div>
+
+}
+
 
 @if (!string.IsNullOrEmpty(successRegistration))
 {
@@ -25,21 +33,6 @@
 
 }
 
-@if (!string.IsNullOrEmpty(unexpectedStatus))
-{
-    <div class="alert alert-danger" role="alert">
-        @unexpectedStatus
-    </div>
-
-}
-
-
-@if (!string.IsNullOrEmpty(statusMessage))
-{
-    <div class="alert alert-success" role="alert">
-        @statusMessage
-    </div>
-}
 @if (!string.IsNullOrEmpty(errorStatus))
 {
     <div class="alert alert-danger" role="alert">

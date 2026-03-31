@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
@@ -23,10 +24,12 @@ namespace New_Library.Services.Core
         private readonly ITopicRepository _topicsRepository;
         private readonly IPostRepository _postsRepository;
         private readonly ICommentRepository _commentsRepository;
+        private readonly ILogger<ISystemService> _logger;
 
         public SystemService(ISystemRepository systemsRepository, IUserRepository usersRepository,
             IBookRepository booksRepository, ICategoryRepository categoriesRepository,
-            ITopicRepository topicsRepository, IPostRepository postsRepository, ICommentRepository commentsRepository)
+            ITopicRepository topicsRepository, IPostRepository postsRepository, 
+            ICommentRepository commentsRepository,ILogger<ISystemService> logger)
         {
             this._systemsRepository = systemsRepository;
             this._usersRepository = usersRepository;
@@ -35,6 +38,7 @@ namespace New_Library.Services.Core
             this._topicsRepository = topicsRepository;
             this._postsRepository = postsRepository;
             this._commentsRepository = commentsRepository;
+            this._logger = logger;
         }
 
 
@@ -115,8 +119,6 @@ namespace New_Library.Services.Core
         public async Task<ServiceResult<UserBook>> ConfirmNewLoanAsync(CreateLoanView model)
         {
 
-
-
             User? foundUser = await _usersRepository.FindByIdAsync(model.UserId);
 
             Book? foundBook = await _booksRepository.GetByIdAsync(model.BookId);
@@ -132,7 +134,7 @@ namespace New_Library.Services.Core
             }
 
 
-            UserBook? isTakenBook = await _systemsRepository.GetLoan(model.BookId);
+            UserBook? isTakenBook = await _systemsRepository.GetLoanAsync(model.BookId);
 
             if (isTakenBook != null)
             {
@@ -173,8 +175,10 @@ namespace New_Library.Services.Core
                 await _systemsRepository.AddAsync(newLoan);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating loan by bookId = {0} and userId = {1}", foundUser.Id, foundBook.Id);
+
                 return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Unexpected error is occurred please try again! " };
 
             }
@@ -192,12 +196,11 @@ namespace New_Library.Services.Core
             }
 
 
-            bool foundBook = await _booksRepository.IsExistBook(bookId);
+            bool foundBook = await _booksRepository.IsExistBookAsync(bookId);
 
-
-            if (foundBook == null)
+            if (userId == Guid.Empty)
             {
-                return new ServiceResult<Guid> { Success = false, ErrorMessage = "Book not found" };
+                return new ServiceResult<Guid> { Success = false, ErrorMessage = "Invalid user Id!" };
             }
 
             bool foundUser = await _usersRepository.IsExistUser(userId);
@@ -211,7 +214,7 @@ namespace New_Library.Services.Core
 
             }
 
-            bool takenOrReserve = await _systemsRepository.BookTakenOrReserve(bookId);
+            bool takenOrReserve = await _systemsRepository.BookTakenOrReserveAsync(bookId);
 
 
             if (takenOrReserve)
@@ -245,9 +248,9 @@ namespace New_Library.Services.Core
                 await _systemsRepository.AddAsync(newReservation);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Error  creating reservation by user Id = {0} and  book Id = {1}",userId, bookId);
 
                 return new ServiceResult<Guid>
                 {
@@ -269,13 +272,7 @@ namespace New_Library.Services.Core
         public async Task<ServiceResult<CreateLoanView>> EditCurrentLoanModelAsync(int Id)
         {
 
-            if (Id <= 0)
-            {
-                return new ServiceResult<CreateLoanView> { Success = false, ErrorMessage = "Not found !" };
-            }
-
-
-            UserBook? foundRecord = await _systemsRepository.ReturnRecord(Id);
+            UserBook? foundRecord = await _systemsRepository.ReturnRecordAsync(Id);
 
             if (foundRecord == null)
             {
@@ -305,15 +302,7 @@ namespace New_Library.Services.Core
         public async Task<ServiceResult<CreateLoanView>> ConfirmEditLoanModelAsync(int Id, CreateLoanView model)
         {
 
-            if (Id <= 0)
-            {
-                return new ServiceResult<CreateLoanView> { Success = false, ErrorMessage = "Not found !" };
-
-            }
-
-
-
-            UserBook? editRecord = await _systemsRepository.ReturnRecord(Id);
+            UserBook? editRecord = await _systemsRepository.ReturnRecordAsync(Id);
 
             if (editRecord == null)
             {
@@ -323,7 +312,7 @@ namespace New_Library.Services.Core
 
 
 
-            bool takenByAnotherUser = await _systemsRepository.TakeFromAnotherUser(model.BookId, model.UserId, Id);
+            bool takenByAnotherUser = await _systemsRepository.TakeFromAnotherUserAsync(model.BookId, model.UserId, Id);
 
 
             if (takenByAnotherUser)
@@ -334,7 +323,7 @@ namespace New_Library.Services.Core
 
 
 
-            bool reservedBySameUser = await _systemsRepository.ReservedBySameUser(model.BookId, model.UserId, Id);
+            bool reservedBySameUser = await _systemsRepository.ReservedBySameUserAsync(model.BookId, model.UserId, Id);
 
 
             if (reservedBySameUser)
@@ -361,8 +350,11 @@ namespace New_Library.Services.Core
                 await _systemsRepository.UpdateAsync(editRecord);
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error  editing loan by user Id = {0} and  book Id = {1}",model.UserId, model.BookId);
+
                 return new ServiceResult<CreateLoanView> { Success = false, ErrorMessage = "An unexpected problem has occurred that prevents editing!" };
 
 
@@ -378,12 +370,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<UserBook>> DeleteLoanAsync(int Id)
         {
-            if (Id <= 0)
-            {
-                return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Invalid record !" };
-
-            }
-
+            
             var removeLoan = await _systemsRepository.GetByIdAsync<UserBook>(Id);
 
             if (removeLoan == null)
@@ -403,7 +390,7 @@ namespace New_Library.Services.Core
 
                 var user = await _usersRepository.FindByIdAsync(removeLoan.UserId);
 
-                var anotherBook = await _systemsRepository.UserExtraLoan(removeLoan.UserId, removeLoan.Id);
+                var anotherBook = await _systemsRepository.UserExtraLoanAsync(removeLoan.UserId, removeLoan.Id);
 
 
                 if (user != null && user.IsBlocked)
@@ -417,8 +404,9 @@ namespace New_Library.Services.Core
                 await _systemsRepository.UpdateAsync(removeLoan);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error  deleting loan by user Id = {0} and  book Id = {1}", removeLoan.UserId, removeLoan.UserId);
 
                 return new ServiceResult<UserBook> { Success = false, ErrorMessage = "Unexpected error is occurred please try again!" };
 
@@ -461,7 +449,7 @@ namespace New_Library.Services.Core
             if (missingReservation.Any())
             {
 
-                var reservations = await _systemsRepository.CheckMissingReservation(missingReservation);
+                var reservations = await _systemsRepository.CheckMissingReservationAsync(missingReservation);
 
                 foreach (var reservation in reservations)
                 {

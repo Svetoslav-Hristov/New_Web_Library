@@ -11,27 +11,27 @@ namespace New_Library.Data.Repository.Contracts
     public interface ISystemRepository:IBaseRepository
     {
       
-        Task<BookStatus?> ReturnStatus (Guid bookId);
+        Task<BookStatus?> ReturnStatusAsync(Guid bookId);
 
-        Task<bool> IsTakenBook(Guid bookId);
+        Task<bool> IsTakenBookAsync(Guid bookId);
 
         IQueryable<UserBook> GetActiveLoans();
 
-        Task<UserBook> GetLoan(Guid bookId);
+        Task<UserBook> GetLoanAsync(Guid bookId);
 
-        Task<bool> BookTakenOrReserve(Guid bookId);
+        Task<bool> BookTakenOrReserveAsync(Guid bookId);
 
-        Task<UserBook?> ReturnRecord(int Id);
+        Task<UserBook?> ReturnRecordAsync(int Id);
 
-        Task<bool> TakeFromAnotherUser(Guid bookId, Guid userId,int Id);
+        Task<bool> TakeFromAnotherUserAsync(Guid bookId, Guid userId,int Id);
 
-        Task<bool> ReservedBySameUser(Guid bookId, Guid userId, int Id);
+        Task<bool> ReservedBySameUserAsync(Guid bookId, Guid userId, int Id);
 
-        Task<bool> UserExtraLoan( Guid userId, int Id);
+        Task<bool> UserExtraLoanAsync( Guid userId, int Id);
 
-        Task<bool> UserExtraLoan(Guid userId);
+        Task<bool> UserExtraLoanAsync(Guid userId);
 
-        Task<IEnumerable<UserBook>> CheckMissingReservation(List<int> recordsId );
+        Task<IEnumerable<UserBook>> CheckMissingReservationAsync(List<int> recordsId );
 
     }
 }

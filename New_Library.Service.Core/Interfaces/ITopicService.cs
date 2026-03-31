@@ -19,13 +19,13 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         Task<ServiceResult<CreateSubCategoryViewModel>> EditSubCategory(int Id);
 
-        Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model,int Id);
+        Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model,int Id ,Guid userId);
 
-        Task<ServiceResult<bool>> SoftDeleteSubCategory(int Id);
+        Task<ServiceResult<bool>> SoftDeleteSubCategory(int Id , Guid userId);
 
-        Task<ServiceResult<bool>> HardDeleteSubCategory(int Id);
+        Task<ServiceResult<bool>> HardDeleteSubCategory(int Id,Guid userId);
 
-        Task<ServiceResult<bool>> RestoreSubCategory(int Id);
+        Task<ServiceResult<bool>> RestoreSubCategory(int Id, Guid userId);
 
         Task<ServiceResult<Topic>> GetOrCreateSpecialSubCategory(Guid userId);
 

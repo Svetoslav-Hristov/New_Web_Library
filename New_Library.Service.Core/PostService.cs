@@ -104,10 +104,10 @@ namespace New_Web_Library.Service.Core
             var usersId = post.Comments.Select(p => p.UserId).Append(post.UserId).Distinct().ToList();
 
 
-            var countComments = await _commentsRepository.GetAllCountComments(usersId);
+            var countComments = await _commentsRepository.GetAllCountCommentsAsync(usersId);
 
 
-            var countPosts = await _postsRepository.GetAllCountPosts(usersId);
+            var countPosts = await _postsRepository.GetAllCountPostsAsync(usersId);
 
 
             foreach (var user in pagingModel.Comments)
@@ -562,9 +562,9 @@ namespace New_Web_Library.Service.Core
             };
 
 
-            model.UserPostCount = await _postsRepository.GetAllPostCount(post.UserId);
+            model.UserPostCount = await _postsRepository.GetAllPostCountAsync(post.UserId);
 
-            model.UserCommentCount = await _commentsRepository.GetAllCommentsCount(post.UserId);
+            model.UserCommentCount = await _commentsRepository.GetAllCommentsCountAsync(post.UserId);
 
             return new ServiceResult<ContentDetailsModel> { Success = true, Data = model };
 

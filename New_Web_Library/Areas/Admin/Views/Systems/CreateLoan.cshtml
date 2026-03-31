@@ -1,5 +1,20 @@
 ﻿@model CreateLoanView
 
+@{
+
+    var errorLoan = TempData["ErrorLoan"] as string;
+
+}
+
+
+@if (!string.IsNullOrEmpty(errorLoan))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorLoan
+    </div>
+
+}
+
 
 <div class="container">
     <h2 class="mb-4">Loan Form</h2>

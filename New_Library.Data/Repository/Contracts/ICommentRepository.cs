@@ -1,9 +1,4 @@
 ﻿using New_Library.Data.Models.Forum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace New_Library.Data.Repository.Contracts
 {
@@ -12,13 +7,13 @@ namespace New_Library.Data.Repository.Contracts
     {
         Task<Comment?> GetCommentWithPostAsync(int id);
 
-        Task<Dictionary<Guid, int>> GetAllCountComments(List<Guid> usersId);
+        Task<Dictionary<Guid, int>> GetAllCountCommentsAsync(List<Guid> usersId);
 
         IQueryable<Comment> GetAllDeleteComments();
 
         Task<Comment?> GetSoftDeleteCommentAsync(int Id);
 
-        Task<int> GetAllCommentsCount(Guid userId);
+        Task<int> GetAllCommentsCountAsync(Guid userId);
 
         Task<Comment?> GetCommentWithUserAsync (int Id);
 

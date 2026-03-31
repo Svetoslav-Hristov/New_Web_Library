@@ -17,7 +17,7 @@ namespace New_Web_Library.GCommon
             public const string adminAddress = "Some where in planet Earth ";
             public const string adminPhone = "555 000 555";
             public const string adminPassword = "Admin_123!";
-            public static readonly Guid adminId = new Guid ("8FD866B1-9516-429A-3AAF-08DE7AB2EFC7");
+           
 
         }
 

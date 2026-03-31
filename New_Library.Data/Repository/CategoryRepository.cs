@@ -12,17 +12,17 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<bool> ExistByName(string name)
+        public async Task<bool> ExistByNameAsync(string name)
         {
             return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name);
         }
 
-        public async Task<bool> ExistByName(string name, int Id)
+        public async Task<bool> ExistByNameAsync(string name, int Id)
         {
             return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name && c.Id != Id);
         }
 
-        public async Task<List<Category>> GetAllCategoriesWithSubCategories(int? Id = null)
+        public async Task<List<Category>> GetAllCategoriesWithSubCategoriesAsync(int? Id = null)
         {
 
             var categories = _dbContext.Categories.AsNoTracking()
@@ -56,7 +56,7 @@ namespace New_Library.Data.Repository
             return await _dbContext.Categories.IgnoreQueryFilters().Include(c=>c.Topics).Where(c => c.Id == Id).FirstOrDefaultAsync();
         }
 
-        public async Task<Category?> LastCategory()
+        public async Task<Category?> LastCategoryAsync()
         {
             var lastCategory = await _dbContext.Categories.OrderByDescending(c => c.Id).FirstOrDefaultAsync();
 

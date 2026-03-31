@@ -17,7 +17,7 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<List<string>> GetAllAuthors()
+        public async Task<List<string>> GetAllAuthorsAsync()
         {
             var authors = await _dbContext.Books.AsNoTracking().Select(b => b.Author)
                 .Distinct().ToListAsync();
@@ -40,7 +40,7 @@ namespace New_Library.Data.Repository
             return await _dbContext.Books.FindAsync(id);
         }
 
-        public async Task<bool> IsExistBook(Guid bookId)
+        public async Task<bool> IsExistBookAsync(Guid bookId)
         {
            return await _dbContext.Books.AsNoTracking().AnyAsync(b => b.Id == bookId);
         }

@@ -4,9 +4,27 @@
 
     var blockedUser = TempData["IncorrectUser"] as string;
 
-    var failEdit = TempData["Unchanged"] as string;
+   
+    // loan messages//
+    var errorLoan = TempData["ErrorLoan"] as string;
+    
+    var successLoan = TempData["SuccessLoan"] as string;
 
-    var editLoan = TempData["ConfirmOrEdit"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successLoan))
+{
+<div class="alert alert-success" role="alert">
+    @successLoan
+</div>
+
+}
+
+@if (!string.IsNullOrEmpty(errorLoan))
+{
+<div class="alert alert-danger" role="alert">
+    @errorLoan
+</div>
 
 }
 
@@ -25,22 +43,6 @@
 
 }
 
-@if (!string.IsNullOrEmpty(failEdit))
-{
-    <div class="alert alert-danger" role="alert">
-        @failEdit
-    </div>
-
-}
-
-@if (!string.IsNullOrEmpty(editLoan))
-{
-    <div class="alert alert-success" role="alert">
-        @editLoan
-    </div>
-
-}
-
 <div class="container-fluid px-0">
     <div class="row g-0">
         <aside class="border-end bg-light p-3" style="width: 230px; height: 85vh; flex-shrink: 0;">
@@ -53,7 +55,12 @@
                    class="btn btn-outline-primary">
                     🙎‍ Users Register
                 </a>
-
+                <a asp-area="Admin"
+                   asp-controller="Systems"
+                   asp-action="Register"
+                   class="btn btn-outline-success">
+                    🧾 All Loans
+                </a>
                 <a asp-area="Admin"
                    asp-controller="Systems"
                    asp-action="CreateLoan"

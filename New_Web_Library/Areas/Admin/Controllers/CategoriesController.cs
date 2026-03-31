@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Logging;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
+using System.Security.Claims;
 
 namespace New_Web_Library.Areas.Admin.Controllers
 {
@@ -105,7 +106,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
             }
 
 
-            var result = await _categoryService.ConfirmEditCategory(model, Id);
+            var result = await _categoryService.ConfirmEditCategory(model,Id);
 
             if (!result.Success)
             {

@@ -18,13 +18,13 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<bool> BookTakenOrReserve(Guid bookId)
+        public async Task<bool> BookTakenOrReserveAsync(Guid bookId)
         {
             return await _dbContext.UsersBooks.AsNoTracking().AnyAsync(ub => ub.BookId == bookId &&
              (ub.Status == BookStatus.Reserved || ub.Status == BookStatus.PickedUp));
         }
 
-        public async Task<IEnumerable<UserBook>> CheckMissingReservation(List<int> recordsId)
+        public async Task<IEnumerable<UserBook>> CheckMissingReservationAsync(List<int> recordsId)
         {
             var reservations = await _dbContext.UsersBooks.Include(ub=>ub.Book).Where(u => recordsId.Contains(u.Id)).ToListAsync();
 
@@ -40,7 +40,7 @@ namespace New_Library.Data.Repository
         }
 
        
-        public async Task<UserBook?> GetLoan(Guid bookId)
+        public async Task<UserBook?> GetLoanAsync(Guid bookId)
         {
             UserBook? isTakenBook = await _dbContext.UsersBooks.AsNoTracking()
             .FirstOrDefaultAsync(ub => ub.BookId == bookId &&
@@ -50,14 +50,14 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<bool> IsTakenBook(Guid bookId)
+        public async Task<bool> IsTakenBookAsync(Guid bookId)
         {
             var isTaken = await _dbContext.UsersBooks.AnyAsync(ub => ub.BookId == bookId && ub.Status == BookStatus.PickedUp);
 
             return isTaken;
         }
 
-        public async Task<bool> ReservedBySameUser(Guid bookId, Guid userId, int Id)
+        public async Task<bool> ReservedBySameUserAsync(Guid bookId, Guid userId, int Id)
         {
             bool reservedBySameUser = await _dbContext.UsersBooks.AsNoTracking()
             .AnyAsync(ub => ub.UserId == userId && ub.BookId == bookId && ub.Status == BookStatus.Reserved && ub.Id != Id);
@@ -66,14 +66,14 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<UserBook?> ReturnRecord(int Id)
+        public async Task<UserBook?> ReturnRecordAsync(int Id)
         {
             UserBook? foundRecord = await _dbContext.UsersBooks.Include(ub => ub.Book).Include(ub => ub.User).FirstOrDefaultAsync(ub => ub.Id == Id);
 
             return foundRecord;
         }
 
-        public async Task<BookStatus?> ReturnStatus(Guid bookId)
+        public async Task<BookStatus?> ReturnStatusAsync(Guid bookId)
         {
             BookStatus? bookStatus = await _dbContext.UsersBooks.AsNoTracking().Where(ub => ub.BookId == bookId)
                 .OrderByDescending(ub => ub.Id).Select(ub => (BookStatus?)ub.Status).FirstOrDefaultAsync();
@@ -81,7 +81,7 @@ namespace New_Library.Data.Repository
             return bookStatus;
         }
 
-        public async Task<bool> TakeFromAnotherUser(Guid bookId, Guid userId,int Id)
+        public async Task<bool> TakeFromAnotherUserAsync(Guid bookId, Guid userId,int Id)
         {
             bool takenByAnotherUser = await _dbContext.UsersBooks.AsNoTracking()
             .AnyAsync(ub => ub.BookId == bookId && ub.UserId != userId &&
@@ -91,7 +91,7 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<bool> UserExtraLoan( Guid userId, int Id)
+        public async Task<bool> UserExtraLoanAsync( Guid userId, int Id)
         {
             var anotherBook = await _dbContext.UsersBooks.AnyAsync(ub => ub.UserId == userId &&
                 ub.Id != Id && ub.Status == BookStatus.PickedUp);
@@ -99,7 +99,7 @@ namespace New_Library.Data.Repository
             return anotherBook;
         }
 
-        public async Task<bool> UserExtraLoan(Guid userId)
+        public async Task<bool> UserExtraLoanAsync(Guid userId)
         {
             bool notReturnedBook = await _dbContext.UsersBooks.AnyAsync(ub => ub.UserId == userId && ub.Status == BookStatus.PickedUp);
 

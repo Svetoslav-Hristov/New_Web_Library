@@ -1,8 +1,13 @@
 ﻿@model CreateSubCategoryViewModel
 @{
 
+
+
     Layout = "_ForumLayout";
 
+
+
+    var errorSubCategory = TempData["ErrorSubCategory"] as string;
 
     bool isEdit = Model.SubCategoryId > 0;
 
@@ -15,6 +20,16 @@
     string formatExitAction = isEdit ? "SubCategory" : "Index";
 
 }
+
+@if (!string.IsNullOrEmpty(errorSubCategory))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorSubCategory
+    </div>
+
+}
+
+
 
 <form asp-action="@formatAction" method="post">
 

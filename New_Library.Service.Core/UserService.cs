@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
@@ -17,13 +18,16 @@ namespace New_Library.Services.Core
         private readonly SignInManager<User> _signInManager;
         private readonly IUserRepository _usersRepository;
         private readonly ISystemRepository _systemsRepository;
+        private readonly ILogger<IUserService> _logger;
         public UserService(UserManager<User> userManager, SignInManager<User> signInManager,
-            IUserRepository usersRepository, ISystemRepository systemsRepository)
+            IUserRepository usersRepository, ISystemRepository systemsRepository, ILogger<IUserService> logger)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._usersRepository = usersRepository;
             this._systemsRepository = systemsRepository;
+            this._logger = logger;
+
         }
 
 
@@ -100,12 +104,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<User>> ChangeUserStatusAsync(Guid Id)
         {
-            if (Id == Guid.Empty)
-            {
-                return new ServiceResult<User> { Success = false, ErrorMessage = "Not found!" };
-            }
-
-
+            
             User? blockedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (blockedUser == null)
@@ -130,8 +129,10 @@ namespace New_Library.Services.Core
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error  changing status  user Id {0} ", Id);
 
                 return new ServiceResult<User>
                 {
@@ -146,14 +147,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<UserViewModel>> GetAllUserDetailsAsync(Guid Id)
         {
-            if (Id == Guid.Empty)
-            {
-
-                return new ServiceResult<UserViewModel> { Success = false, ErrorMessage = "Not found !" };
-            }
-
-
-
+            
             var foundUser = await _usersRepository.UserFullDetailsAndHistory(Id);
 
 
@@ -195,14 +189,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<User>> DeleteUserProfileAsync(Guid Id)
         {
-            if (Id == Guid.Empty)
-            {
-
-                return new ServiceResult<User> { Success = false, ErrorMessage = "Not found !" };
-
-            }
-
-
+            
             User? removedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (removedUser == null)
@@ -212,7 +199,7 @@ namespace New_Library.Services.Core
 
 
 
-            bool notReturnedBook = await _systemsRepository.UserExtraLoan(Id);
+            bool notReturnedBook = await _systemsRepository.UserExtraLoanAsync(Id);
 
             if (notReturnedBook || removedUser.IsBlocked)
             {
@@ -228,8 +215,9 @@ namespace New_Library.Services.Core
                 await _usersRepository.UpdateAsync(removedUser);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error deleting user with Id {}", Id);
 
                 return new ServiceResult<User> { Success = false, ErrorMessage = "Unexpected error is occurred! Please try again later." };
 

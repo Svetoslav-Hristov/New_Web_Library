@@ -36,7 +36,7 @@ namespace New_Library.Data.Repository
             return coveredPost;
         }
 
-        public async Task<Dictionary<Guid, int>> GetAllCountPosts(List<Guid> usersId)
+        public async Task<Dictionary<Guid, int>> GetAllCountPostsAsync(List<Guid> usersId)
         {
 
             var countPosts = await _dbContext.Posts.AsNoTracking().Where(p => usersId.Contains(p.UserId) && !p.IsDeleted)
@@ -52,7 +52,7 @@ namespace New_Library.Data.Repository
 
         }
 
-        public async Task<int> GetAllPostCount(Guid userId)
+        public async Task<int> GetAllPostCountAsync(Guid userId)
         {
             return  await _dbContext.Posts.AsNoTracking().Where(p => p.UserId == userId).CountAsync();
         }

@@ -15,7 +15,7 @@ namespace New_Web_Library.Service.Core.Interfaces
 
         ServiceResult<CategoryFormModel> CreateNewCategory();
 
-        Task<ServiceResult<Category>> ConfirmNewCategory(CategoryFormModel model);
+        Task<ServiceResult<Category>> ConfirmNewCategory(CategoryFormModel model );
 
         Task<ServiceResult<CategoryFormModel>> EditCategory(int Id);
 

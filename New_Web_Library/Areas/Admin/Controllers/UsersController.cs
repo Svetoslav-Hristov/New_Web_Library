@@ -8,7 +8,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 {
 
     [Area("Admin")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly IUserService _usersService;
@@ -22,7 +22,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
             this._signInManager = signInManager;
             this._logger = logger;
 
-            
+
         }
 
 
@@ -33,7 +33,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             int pageSize = 10;
 
-            var usersCollection = await _usersService.GetAllUsersWithOrWithoutSearchCriteriaAsync(search , page , pageSize);
+            var usersCollection = await _usersService.GetAllUsersWithOrWithoutSearchCriteriaAsync(search, page, pageSize);
 
 
             if (!usersCollection.Success)
@@ -54,6 +54,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
 
             var result = await _usersService.ChangeUserStatusAsync(Id);
 
@@ -61,15 +65,17 @@ namespace New_Web_Library.Areas.Admin.Controllers
             if (!result.Success)
             {
 
-                TempData["ErrorStatus"] = result.ErrorMessage;
+                TempData["ErrorUser"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(Index));
+
 
             }
+            else
+            {
 
+                TempData["SuccessUser"] = "User status has been changed successfully.";
 
-
-            TempData["SuccessStatus"] = "User status has been changed successfully.";
+            }
 
 
             return RedirectToAction(nameof(Index));
@@ -81,12 +87,16 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
 
             var model = await _usersService.GetAllUserDetailsAsync(Id);
 
             if (!model.Success)
             {
-                TempData["MissingUser"] = model.ErrorMessage;
+                TempData["ErrorUser"] = model.ErrorMessage;
 
                 return RedirectToAction(nameof(Index));
             }
@@ -101,18 +111,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+
             var result = await _usersService.DeleteUserProfileAsync(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorMessage"] = result.ErrorMessage;
-
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorUser"] = result.ErrorMessage;
 
             }
+            else
+            {
+                TempData["SuccessUser"] = "You have successfully deleted the user.";
+            }
 
-
-            TempData["SuccessDelete"] = "You have successfully deleted the user.";
 
             return RedirectToAction(nameof(Index));
 

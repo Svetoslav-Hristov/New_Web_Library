@@ -50,9 +50,9 @@ namespace New_Web_Library.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
 
-                TempData["ErrorMessage"] = "Invalid data provided.";
+                TempData["ErrorLoan"] = "Invalid data provided.";
 
-                return RedirectToAction(nameof(Register));
+                return View(model);
 
             }
 
@@ -61,13 +61,13 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                TempData["ErrorMessage"] = result.ErrorMessage;
+                TempData["ErrorLoan"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(Register));
             }
 
 
-            TempData["SuccessMessage"] = "Loan created successfully.";
+            TempData["SuccessLoan"] = "Loan created successfully.";
 
             return RedirectToAction(nameof(Register));
         }
@@ -76,12 +76,16 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditLoan(int Id)
         {
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
 
             var model = await _systemsService.EditCurrentLoanModelAsync(Id);
 
             if (!model.Success)
             {
-                TempData["Unchanged"] = model.ErrorMessage;
+                TempData["ErrorLoan"] = model.ErrorMessage;
 
                 return RedirectToAction(nameof(Register));
             }
@@ -97,7 +101,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditLoan([FromRoute] int Id, CreateLoanView model)
         {
-
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
 
             if (!ModelState.IsValid)
             {
@@ -111,16 +118,17 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!editRecord.Success)
             {
-                TempData["Unchanged"] = editRecord.ErrorMessage;
+                TempData["ErrorLoan"] = editRecord.ErrorMessage;
 
 
-                return RedirectToAction(nameof(Register));
+
             }
+            else
+            {
+                TempData["SuccessLoan"] = "You have successfully modified or created the loan.";
 
-
-            TempData["ConfirmOrEdit"] = "You have successfully modified or created the loan.";
-
-
+            }
+            
             return RedirectToAction(nameof(Register))
 ;
         }
@@ -131,18 +139,23 @@ namespace New_Web_Library.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteLoan(int Id)
         {
 
+            if (Id <= 0)
+            {
+                return NotFound();
+            }
+
             var deleteResult = await _systemsService.DeleteLoanAsync(Id);
 
             if (!deleteResult.Success)
             {
 
-                TempData["DeleteError"] = deleteResult.ErrorMessage;
+                TempData["ErrorLoan"] = deleteResult.ErrorMessage;
 
             }
             else
             {
 
-                TempData["SuccessDelete"] = "The Loan record was deleted successfully.";
+                TempData["SuccessLoan"] = "The Loan record was deleted successfully.";
 
             }
 
@@ -192,8 +205,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                _logger.LogWarning(result.ErrorMessage);
-
+                
                 TempData["ErrorUserComplaints"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(ForumSupportPreview));

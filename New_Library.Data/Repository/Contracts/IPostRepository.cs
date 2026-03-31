@@ -11,7 +11,7 @@ namespace New_Library.Data.Repository.Contracts
     {
         Task<Post?> GetByIdAsync(int id);
 
-        Task<Dictionary<Guid, int>> GetAllCountPosts(List<Guid> usersId);
+        Task<Dictionary<Guid, int>> GetAllCountPostsAsync(List<Guid> usersId);
 
         IQueryable<Post> AllDeletePost();
 
@@ -19,7 +19,7 @@ namespace New_Library.Data.Repository.Contracts
 
         IQueryable<Post> CoveredPosts(List<int> coveredParentSub);
 
-         Task<int> GetAllPostCount(Guid userId);
+         Task<int> GetAllPostCountAsync(Guid userId);
 
     }
 }

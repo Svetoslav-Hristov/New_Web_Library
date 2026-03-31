@@ -28,6 +28,11 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateSubCategory(int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _topicService.CreateNewSubCategory(Id);
 
             if (!result.Success)
@@ -57,12 +62,15 @@ namespace New_Web_Library.Areas.Admin.Controllers
             if (!result.Success)
             {
                 TempData["ErrorSubCategory"] = result.ErrorMessage;
-                return View(model);
+
+                return RedirectToAction("Index", "Categories", new { area=""} );
             }
+
+           
 
             TempData["SuccessSubCategory"] = "Successfully created a new subcategory";
 
-            return RedirectToAction("Index", "Categories");
+            return RedirectToAction("SubCategory","Topics",new {id=result.Data.Id ,area = ""});
 
 
 
@@ -75,13 +83,18 @@ namespace New_Web_Library.Areas.Admin.Controllers
         
         public async Task<IActionResult> EditSubCategory(int Id)
         {
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
             var result = await _topicService.EditSubCategory(Id);
 
             if (!result.Success)
             {
-                TempData["ErrorEditSubCategory"] = result.ErrorMessage;
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("Index", "Categories");
+                return RedirectToAction("Index", "Categories" ,new {area=""} );
             }
 
             return View("CreateSubCategory", result.Data);
@@ -99,17 +112,22 @@ namespace New_Web_Library.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _topicService.ConfirmEditSubCategory(model, Id);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var result = await _topicService.ConfirmEditSubCategory(model, Id,userId);
 
             if (!result.Success)
             {
-                TempData["ErrorEditSubCategory"] = result.ErrorMessage;
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("Index", "Categories");
+                return RedirectToAction("Index", "Categories",new {area=""});
             }
 
+            
 
-            return RedirectToAction("SubCategory", " Topics", new { id = Id });
+            TempData["SuccessSubCategory"] = "Successfully edited the subcategory";
+
+            return RedirectToAction("SubCategory", "Topics", new { id = Id ,area="" });
         }
 
         [HttpPost]
@@ -117,15 +135,26 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSubCategory(int Id)
         {
-            var result = await _topicService.SoftDeleteSubCategory(Id);
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var result = await _topicService.SoftDeleteSubCategory(Id,userId);
 
             if (!result.Success)
             {
-                TempData["ErrorDeleteSubCategory"] = result.ErrorMessage;
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("Index", "Categories");
+                
             }
-
+            else
+            {
+                TempData["SuccessSubCategory"] = "Successfully deleted the subcategory";
+            }
+            
             return RedirectToAction("Index", "Categories",new {area=""});
 
         }
@@ -137,16 +166,27 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HardDelete(int Id)
         {
-            var result = await _topicService.HardDeleteSubCategory(Id);
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var result = await _topicService.HardDeleteSubCategory(Id,userId);
 
             if (!result.Success)
             {
-                TempData["ErrorHardDeleteSubCategory"] = result.ErrorMessage;
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("ForumSupportPreview", "Systems");
+               
+            }
+            else
+            {
+                TempData["SuccessSubCategory"] = "Successfully deleted the subcategory";
             }
 
-            return RedirectToAction("ForumSupportPreview", "Systems");
+                return RedirectToAction("ForumSupportPreview", "Systems");
 
         }
 
@@ -156,14 +196,25 @@ namespace New_Web_Library.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreSubCategory(int Id)
         {
-            var result = await _topicService.RestoreSubCategory(Id);
+            if(Id <= 0)
+            {
+                return NotFound();
+            }
+
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+
+            var result = await _topicService.RestoreSubCategory(Id,userId);
 
             if (!result.Success)
             {
-                TempData["ErrorRestoreSubCategory"] = result.ErrorMessage;
+                TempData["ErrorSubCategory"] = result.ErrorMessage;
 
-                return RedirectToAction("ForumSupportPreview", "Systems");
+               
             }
+
+            TempData["SuccessSubCategory"] = "Successfully restored the subcategory";
+
 
             return RedirectToAction("ForumSupportPreview", "Systems");
         }

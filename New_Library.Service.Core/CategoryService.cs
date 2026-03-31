@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
+using New_Web_Library.Data.Models;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
@@ -12,13 +13,15 @@ namespace New_Web_Library.Service.Core
     {
         private readonly ICategoryRepository _categoriesRepository;
         private readonly ITopicRepository _topicsRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<ICategoryService> _logger;
 
-        public CategoryService(ICategoryRepository categoriesRepository, ITopicRepository topicsRepository
-            , ILogger<ICategoryService> logger)
+        public CategoryService(ICategoryRepository categoriesRepository, ITopicRepository topicsRepository,
+           IUserRepository userRepository, ILogger<ICategoryService> logger)
         {
             this._categoriesRepository = categoriesRepository;
             this._topicsRepository = topicsRepository;
+            this._userRepository = userRepository;
             this._logger = logger;
 
         }
@@ -27,7 +30,7 @@ namespace New_Web_Library.Service.Core
         public async Task<IEnumerable<IndexForumModel>> IndexPreview()
         {
 
-            List<Category> allCategories = await _categoriesRepository.GetAllCategoriesWithSubCategories();
+            List<Category> allCategories = await _categoriesRepository.GetAllCategoriesWithSubCategoriesAsync();
 
             int specialCategoryId = 0;
 
@@ -71,6 +74,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Category>> ConfirmNewCategory(CategoryFormModel model)
         {
+
             if (model == null)
             {
                 return new ServiceResult<Category> { Success = false, ErrorMessage = "Invalid data!" };
@@ -90,7 +94,7 @@ namespace New_Web_Library.Service.Core
 
             string name = model.Name.Trim();
 
-            bool isExist = await _categoriesRepository.ExistByName(name.ToLowerInvariant());
+            bool isExist = await _categoriesRepository.ExistByNameAsync(name.ToLowerInvariant());
 
             if (isExist)
             {
@@ -188,7 +192,7 @@ namespace New_Web_Library.Service.Core
 
             string name = model.Name.Trim();
 
-            bool isExist = await _categoriesRepository.ExistByName(name.ToLowerInvariant(), Id);
+            bool isExist = await _categoriesRepository.ExistByNameAsync(name.ToLowerInvariant(), Id);
 
 
             if (isExist)
@@ -199,7 +203,6 @@ namespace New_Web_Library.Service.Core
                     ErrorMessage = "A category with that name already exists."
                 };
             }
-
 
 
             try
@@ -242,10 +245,10 @@ namespace New_Web_Library.Service.Core
 
             if (category.IsDeleted)
             {
-                return new ServiceResult<bool> 
-                { 
+                return new ServiceResult<bool>
+                {
                     Success = false,
-                    ErrorMessage = "Category is already deleted." 
+                    ErrorMessage = "Category is already deleted."
                 };
             }
 
@@ -282,20 +285,20 @@ namespace New_Web_Library.Service.Core
 
             if (category == null)
             {
-                return new ServiceResult<bool> 
-                { 
+                return new ServiceResult<bool>
+                {
                     Success = false,
-                    ErrorMessage = "Category not found!" 
+                    ErrorMessage = "Category not found!"
                 };
             }
 
-            
+
             if (category.Topics.Any())
             {
-                return new ServiceResult<bool> 
-                { 
-                    Success = false, 
-                    ErrorMessage = "Category is not empty!" 
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Category is not empty!"
                 };
             }
 
@@ -325,8 +328,8 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<bool>> RestoreSoftDeleteCategory(int Id)
         {
-           
-            
+
+
             var category = await _categoriesRepository.GetDeleteOrNotCategoryAsync(Id);
 
             if (category == null)

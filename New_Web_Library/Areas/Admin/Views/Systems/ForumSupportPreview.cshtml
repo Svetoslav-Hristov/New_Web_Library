@@ -21,10 +21,11 @@
 
     //subCategory //
 
-    var errorHardDeleteSubCategory = TempData["ErrorHardDeleteSubCategory"] as string;
+    var errorSubCategory = TempData["ErrorSubCategory"] as string;
 
-    var errorRestoreSubCategory = TempData["ErrorRestoreSubCategory"] as string;
+    var successSubCategory = TempData["SuccessSubCategory"] as string;
 
+    //complaints//
 
     var errorUSersComplains = TempData["ErrorUserComplaints"] as string;
 
@@ -92,20 +93,20 @@
 
 }
 
-@if (!string.IsNullOrEmpty(errorRestoreSubCategory))
+@if (!string.IsNullOrEmpty(successSubCategory))
 {
-    <div class="alert alert-danger" role="alert">
-        @errorRestoreSubCategory
+    <div class="alert alert-success" role="alert">
+        @successSubCategory
     </div>
 
 }
 
 
 
-@if (!string.IsNullOrEmpty(errorHardDeleteSubCategory))
+@if (!string.IsNullOrEmpty(errorSubCategory))
 {
     <div class="alert alert-danger" role="alert">
-        @errorHardDeleteSubCategory
+        @errorSubCategory
     </div>
 
 }

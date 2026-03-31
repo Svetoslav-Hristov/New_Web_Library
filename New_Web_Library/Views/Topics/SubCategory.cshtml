@@ -4,7 +4,17 @@
 
     var errorEditPost = TempData["ErrorPost"] as string;
 
+    var successSubCategory = TempData["SuccessSubCategory"] as string;
+
 }
+
+@if (!string.IsNullOrEmpty(successSubCategory))
+{
+    <div class="alert alert-success" role="alert">
+        @successSubCategory
+    </div>
+}
+
 
 @if (!string.IsNullOrEmpty(errorEditPost))
 {
@@ -20,13 +30,15 @@
        class="btn btn-outline-primary">
         Main Forum
     </a>
-
-    <a asp-controller="Posts"
-       asp-action="CreatePost"
-       asp-route-Id="@Model.CategoryId"
-       class="btn btn-outline-success">
-        Add New Post
-    </a>
+    @if (User.IsInRole("Admin")||User.IsInRole("User"))
+    {
+        <a asp-controller="Posts"
+        asp-action="CreatePost"
+        asp-route-Id="@Model.CategoryId"
+        class="btn btn-outline-success">
+            Add New Post
+        </a>
+    }
     @if (User.IsInRole("Admin"))
     {
         <a asp-area="Admin"

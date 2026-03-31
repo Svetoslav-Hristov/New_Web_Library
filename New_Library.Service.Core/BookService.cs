@@ -112,7 +112,7 @@ namespace New_Web_Library.Services.Core
 
             }
 
-            BookStatus? bookStatus = await _systemsRepository.ReturnStatus(Id);
+            BookStatus? bookStatus = await _systemsRepository.ReturnStatusAsync(Id);
 
             
 
@@ -361,7 +361,7 @@ namespace New_Web_Library.Services.Core
             
             }
 
-            var isTaken = await _systemsRepository.IsTakenBook(Id);
+            var isTaken = await _systemsRepository.IsTakenBookAsync(Id);
 
             if (isTaken)
             {
@@ -404,7 +404,7 @@ namespace New_Web_Library.Services.Core
 
         public async Task BookModelDataFillingAsync(BookFormModel model)
         {
-            List<string> authors = await _booksRepository.GetAllAuthors();
+            List<string> authors = await _booksRepository.GetAllAuthorsAsync();
 
             model.Authors = authors.Select(a => new SelectListItem 
             {

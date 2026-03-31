@@ -6,6 +6,7 @@ using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
 using static New_Web_Library.GCommon.EntityValidations.Topics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Service.Core
 {
@@ -16,7 +17,7 @@ namespace New_Web_Library.Service.Core
         private readonly IUserRepository _usersRepository;
         private readonly ILogger<ITopicService> _logger;
         public TopicService(ITopicRepository topicsRepository, ICategoryRepository categoriesRepository
-            , IUserRepository usersRepository,ILogger<ITopicService> logger)
+            , IUserRepository usersRepository, ILogger<ITopicService> logger)
         {
             this._topicsRepository = topicsRepository;
             this._categoriesRepository = categoriesRepository;
@@ -50,16 +51,36 @@ namespace New_Web_Library.Service.Core
         }
         public async Task<ServiceResult<Topic>> ConfirmCreationNewSubcategory(CreateSubCategoryViewModel model, Guid userId)
         {
+
+            if (string.IsNullOrWhiteSpace(model.TopicName))
+            {
+
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Sub category name is required."
+                };
+            }
+
+
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Topic> { Success = false, ErrorMessage = "Invalid user Id!" };
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user Id!"
+                };
             }
 
             User? user = await _usersRepository.FindByIdAsync(userId);
 
             if (user == null)
             {
-                return new ServiceResult<Topic> { Success = false, ErrorMessage = "User not found!" };
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!"
+                };
             }
 
 
@@ -78,8 +99,9 @@ namespace New_Web_Library.Service.Core
                 await _topicsRepository.AddAsync(newTopic);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating new sub-category by user Id {0}", userId);
 
                 return new ServiceResult<Topic>
                 {
@@ -89,7 +111,7 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            return new ServiceResult<Topic> { Success = true };
+            return new ServiceResult<Topic> { Success = true, Data = newTopic };
 
 
 
@@ -119,8 +141,38 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model, int Id)
+        public async Task<ServiceResult<Topic>> ConfirmEditSubCategory(CreateSubCategoryViewModel model, int Id, Guid userId)
         {
+
+            if (string.IsNullOrWhiteSpace(model.TopicName))
+            {
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Sub category name is required."
+                };
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user ID"
+                };
+            }
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!"
+                };
+            }
+
 
             Topic? subCategory = await _topicsRepository.GetByIdAsync<Topic>(Id);
 
@@ -129,21 +181,32 @@ namespace New_Web_Library.Service.Core
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "Invalid Sub Category!" };
             }
 
-
-            if (string.IsNullOrEmpty(model.TopicName))
+            if (subCategory.UserId != userId)
             {
-                return new ServiceResult<Topic> { Success = false, ErrorMessage = "Invalid data!" };
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "You don't have permission to edit this sub-category!"
+                };
+
             }
+
+
 
             try
             {
-                subCategory.Title = model.TopicName;
-                subCategory.UpdatedAt = DateTime.UtcNow;
-                await _topicsRepository.UpdateAsync(subCategory);
+                if (subCategory.Title != model.TopicName)
+                {
+                    subCategory.Title = model.TopicName;
+                    subCategory.UpdatedAt = DateTime.UtcNow;
+                    await _topicsRepository.UpdateAsync(subCategory);
+                }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error editing  sub-category {SubCategoryId} by user {UserId}", Id, userId);
+
                 return new ServiceResult<Topic>
                 {
                     Success = false,
@@ -164,10 +227,10 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<SubCategoryViewModel> 
+                return new ServiceResult<SubCategoryViewModel>
                 {
                     Success = false,
-                    ErrorMessage = "SubCategory not found!" 
+                    ErrorMessage = "SubCategory not found!"
                 };
 
             }
@@ -200,14 +263,40 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<bool>> SoftDeleteSubCategory(int Id)
+        public async Task<ServiceResult<bool>> SoftDeleteSubCategory(int Id, Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user ID!"
+                };
+            }
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "User not found!" };
+            }
+
             var subCategory = await _topicsRepository.GetByIdAsync<Topic>(Id);
 
             if (subCategory == null)
             {
                 return new ServiceResult<bool> { Success = false, ErrorMessage = "SubCategory not exist!" };
             }
+
+            if (subCategory.UserId != userId)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "You do not have permission to delete this subcategory."
+                };
+            }
+
 
             try
             {
@@ -216,8 +305,11 @@ namespace New_Web_Library.Service.Core
                 await _topicsRepository.UpdateAsync(subCategory);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error deleting sub category with Id {0}", Id);
+
                 return new ServiceResult<bool>
                 {
                     Success = false,
@@ -230,8 +322,25 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<bool>> HardDeleteSubCategory(int Id)
+        public async Task<ServiceResult<bool>> HardDeleteSubCategory(int Id, Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user ID!"
+                };
+            }
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "User not found!" };
+            }
+
+
             var subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(Id);
 
             if (subCategory == null)
@@ -246,14 +355,25 @@ namespace New_Web_Library.Service.Core
 
             }
 
+            if (subCategory.UserId != userId)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "You do not have permission to hard delete this subcategory."
+                };
+            }
+
 
             try
             {
                 await _topicsRepository.DeleteAsync(subCategory);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error hard deleting sub category with Id {0}", Id);
 
                 return new ServiceResult<bool>
                 {
@@ -267,8 +387,26 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        public async Task<ServiceResult<bool>> RestoreSubCategory(int Id)
+        public async Task<ServiceResult<bool>> RestoreSubCategory(int Id, Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user ID!"
+                };
+            }
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "User not found!" };
+            }
+
+
+
             var subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(Id);
 
             if (subCategory == null)
@@ -291,6 +429,15 @@ namespace New_Web_Library.Service.Core
 
             }
 
+            if (subCategory.UserId != userId)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "You do not have permission to restore this subcategory."
+                };
+            }
+
 
             try
             {
@@ -301,8 +448,11 @@ namespace New_Web_Library.Service.Core
                 await _topicsRepository.UpdateAsync(subCategory);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Error restore deleting sub category with Id {0}", Id);
+
                 return new ServiceResult<bool>
                 {
                     Success = false,
@@ -318,8 +468,7 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Topic>> GetOrCreateSpecialSubCategory(Guid userId)
         {
-           
-
+            
             var subCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
 
             if (subCategory != null)
@@ -329,23 +478,23 @@ namespace New_Web_Library.Service.Core
             }
 
 
-            var lastCategory = await _categoriesRepository.LastCategory();
+            var lastCategory = await _categoriesRepository.LastCategoryAsync();
 
             if (lastCategory == null)
             {
-                return new ServiceResult<Topic> 
+                return new ServiceResult<Topic>
                 {
                     Success = false,
-                    ErrorMessage = "No category found to assign  the special sub category!" 
+                    ErrorMessage = "No category found to assign  the special sub category!"
                 };
             }
 
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Topic> 
+                return new ServiceResult<Topic>
                 {
                     Success = false,
-                    ErrorMessage="Invalid user ID!"
+                    ErrorMessage = "Invalid user ID!"
                 };
             }
 
@@ -353,10 +502,10 @@ namespace New_Web_Library.Service.Core
 
             if (user == null)
             {
-                return new ServiceResult<Topic> 
+                return new ServiceResult<Topic>
                 {
-                    Success = false, 
-                    ErrorMessage = "User not found!" 
+                    Success = false,
+                    ErrorMessage = "User not found!"
                 };
             }
 
@@ -377,7 +526,7 @@ namespace New_Web_Library.Service.Core
                 await _topicsRepository.AddAsync(special);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 _logger.LogError(ex, "Error  creating special sub category by user  {0} {1}", user?.FirstName, user?.LastName);
@@ -388,7 +537,7 @@ namespace New_Web_Library.Service.Core
                     ErrorMessage = "Unexpected error is occurred while create special SubCategory!Please try again later. "
                 };
 
-               
+
 
             }
 
@@ -396,6 +545,6 @@ namespace New_Web_Library.Service.Core
 
         }
 
-        
+
     }
 }

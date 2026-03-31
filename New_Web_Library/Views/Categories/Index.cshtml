@@ -17,15 +17,11 @@
 
     var successSubCategory = TempData["SuccessSubCategory"] as string;
 
-    var errorEditSubCategory = TempData["ErrorEditSubCategory"] as string;
-
-    var errorDeleteSubCategory = TempData["ErrorDeleteSubCategory"] as string;
-
     //comments//
 
     var errorComment = TempData["ErrorComment"] as string;
 
- 
+
 
 
     var errorMessage = TempData["WrongData"] as string;
@@ -43,19 +39,7 @@
         @successMessage
     </div>
 }
-@if (!string.IsNullOrEmpty(errorDeleteSubCategory))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorDeleteSubCategory
-    </div>
-}
 
-@if (!string.IsNullOrEmpty(errorEditSubCategory))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorEditSubCategory
-    </div>
-}
 
 @if (!string.IsNullOrEmpty(errorCategory))
 {
@@ -185,6 +169,7 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-outline-success"
+                               asp-area="Admin"
                                asp-controller="Topics"
                                asp-action="CreateSubCategory"
                                asp-route-id="@category.Id">
