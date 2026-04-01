@@ -29,7 +29,7 @@ namespace New_Web_Library.Services.Core
         }
 
 
-        public async Task<BookPagingPreview> GetAllBooksOrderedByTitleThanByAuthorAscAsync
+        public  Task<BookPagingPreview> GetAllBooksOrderedByTitleThanByAuthorAscAsync
             (string? search, Genre? genre ,int page, int pageSize)
         {
 
@@ -65,8 +65,8 @@ namespace New_Web_Library.Services.Core
 
             int totalCount = allBooks.Count();
 
-            var books = await allBooks.OrderBy(b => b.Title).ThenBy(b => b.AuthorName)
-                .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var books =  allBooks.OrderBy(b => b.Title).ThenBy(b => b.AuthorName)
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             BookPagingPreview pagingPreview = new BookPagingPreview()
             {
@@ -80,7 +80,7 @@ namespace New_Web_Library.Services.Core
             };
 
 
-            return pagingPreview;
+            return Task.FromResult(pagingPreview);
         }
 
         public async Task<ServiceResult<FullPreviewModelBook>> GetCurrentModelAsync(Guid Id)
@@ -88,8 +88,7 @@ namespace New_Web_Library.Services.Core
             if (Id == Guid.Empty)
             {
 
-                _logger.LogWarning("Invalid book id !");
-
+               
                 return new ServiceResult<FullPreviewModelBook> { Success = false, ErrorMessage = "Invalid book id !" };
 
 
@@ -100,8 +99,7 @@ namespace New_Web_Library.Services.Core
 
             if (book == null)
             {
-                _logger.LogWarning("Book not found !");
-
+              
                 return new ServiceResult<FullPreviewModelBook> { Success = false, ErrorMessage = "Book not found !" };
 
             }

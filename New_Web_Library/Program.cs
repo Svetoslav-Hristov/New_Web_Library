@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository;
 using New_Library.Data.Repository.Contracts;
@@ -11,12 +10,10 @@ using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core;
 using New_Web_Library.Services.Core.Interfaces;
-using System.Security.Principal;
 
 
 namespace New_Web_Library
 {
-    using static New_Web_Library.GCommon.EntityValidations;
     using static New_Web_Library.GCommon.EntityValidations.Admin;
     using static New_Web_Library.GCommon.EntityValidations.IdentitySession;
     public class Program

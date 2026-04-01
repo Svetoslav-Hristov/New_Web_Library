@@ -448,16 +448,18 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
                 PhoneNumber = "123",
                 Address = "Test",
                 Age = 20,
-                IsBlocked = true
+                IsBlocked = false
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-
+            _systemRepositoryMock.Setup(x => x.UserExtraLoanAsync(user.Id)).ReturnsAsync(true);
+            
             Assert.IsNotNull(user);
 
             var result = await _service.DeleteUserProfileAsync(user.Id);
+
 
             Assert.IsFalse(result.Success);
             Assert.IsFalse(user.IsDeleted);
