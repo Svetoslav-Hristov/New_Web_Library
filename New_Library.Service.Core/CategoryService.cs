@@ -94,7 +94,7 @@ namespace New_Web_Library.Service.Core
 
             string name = model.Name.Trim();
 
-            bool isExist = await _categoriesRepository.ExistByNameAsync(name.ToLowerInvariant());
+            bool isExist = await _categoriesRepository.ExistByNameAsync(name);
 
             if (isExist)
             {

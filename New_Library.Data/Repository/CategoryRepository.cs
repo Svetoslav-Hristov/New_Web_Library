@@ -14,7 +14,7 @@ namespace New_Library.Data.Repository
 
         public async Task<bool> ExistByNameAsync(string name)
         {
-            return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name);
+            return await _dbContext.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower());
         }
 
         public async Task<bool> ExistByNameAsync(string name, int Id)
