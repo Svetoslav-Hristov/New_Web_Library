@@ -468,7 +468,29 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Topic>> GetOrCreateSpecialSubCategory(Guid userId)
         {
-            
+
+            if (userId == Guid.Empty)
+            {
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user ID!"
+                };
+            }
+
+
+            var user = await _usersRepository.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResult<Topic>
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!"
+                };
+            }
+
+
             var subCategory = await _topicsRepository.GetSubCategoryByName(TopicSpecialName);
 
             if (subCategory != null)
@@ -489,26 +511,7 @@ namespace New_Web_Library.Service.Core
                 };
             }
 
-            if (userId == Guid.Empty)
-            {
-                return new ServiceResult<Topic>
-                {
-                    Success = false,
-                    ErrorMessage = "Invalid user ID!"
-                };
-            }
-
-            var user = await _usersRepository.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                return new ServiceResult<Topic>
-                {
-                    Success = false,
-                    ErrorMessage = "User not found!"
-                };
-            }
-
+            
             Topic special = new Topic()
             {
 
