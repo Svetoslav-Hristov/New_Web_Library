@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using New_Web_Library.GCommon.Enums;
-using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
 
@@ -29,7 +28,7 @@ namespace New_Web_Library.Controllers
             int pagesize = 4;
 
             BookPagingPreview books = await _bookService
-                .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre, page, pagesize);
+             .GetAllBooksOrderedByTitleThanByAuthorAscAsync(search, genre, page, pagesize);
 
 
 
