@@ -515,7 +515,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
         {
             int postId = 1;
             Guid userId = Guid.NewGuid();
-            
+
             CreateContentViewModel model = new CreateContentViewModel()
             {
 
@@ -529,7 +529,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             var result = await _service.ConfirmEditPost(model, userId, postId);
 
             Assert.IsFalse(result.Success);
-            
+
             Assert.AreEqual("Title is required.", result.ErrorMessage);
 
             Assert.IsNull(result.Data);
@@ -612,7 +612,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
 
             };
 
-            
+
             _usersRepoMock.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
 
             _postsRepoMock.Setup(x => x.GetByIdAsync(postId)).ReturnsAsync((Post)null);
@@ -631,7 +631,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
         [Test]
         public async Task ConfirmEditPost_ShouldReturnError_WhenUserHasNotPermission()
         {
-           
+
             int postId = 1;
             Guid userId = Guid.NewGuid();
 
@@ -646,7 +646,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
                 Id = postId,
                 Title = "Test",
                 Content = "Some description",
-                UserId = Guid.NewGuid() 
+                UserId = Guid.NewGuid()
             };
 
             User user = new User()
@@ -665,10 +665,10 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             _postsRepoMock.Setup(x => x.GetByIdAsync<Post>(postId))
                 .ReturnsAsync(post);
 
-            
+
             var result = await _service.ConfirmEditPost(model, userId, postId);
 
-           
+
             Assert.IsFalse(result.Success);
             Assert.AreEqual("You don't have permission over this post.", result.ErrorMessage);
             Assert.IsNull(result.Data);
@@ -677,7 +677,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
         [Test]
         public async Task ConfirmEditPost_ShouldReturnSuccess_WhenValid()
         {
-            
+
             int postId = 1;
             Guid userId = Guid.NewGuid();
 
@@ -704,26 +704,26 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             _postsRepoMock.Setup(x => x.UpdateAsync(post))
                 .Returns(Task.CompletedTask);
 
-           
+
             var result = await _service.ConfirmEditPost(model, userId, postId);
 
-            
+
             Assert.IsTrue(result.Success);
-            
+
             Assert.IsNotNull(result.Data);
 
             Assert.AreEqual("Updated Title", result.Data.Title);
-        
+
             Assert.AreEqual("Updated Content", result.Data.Content);
-        
-        
+
+
         }
 
 
         [Test]
         public async Task ConfirmEditPost_ShouldReturnError_WhenExceptionThrown()
         {
-           
+
             int postId = 1;
             Guid userId = Guid.NewGuid();
 
@@ -750,19 +750,501 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             _postsRepoMock.Setup(x => x.UpdateAsync(post))
                 .ThrowsAsync(new Exception());
 
-            
+
             var result = await _service.ConfirmEditPost(model, userId, postId);
 
+
+            Assert.IsFalse(result.Success);
+
+
+            Assert.AreEqual("Unexpected error is occurred while edit  post! Please try again later.",
+                result.ErrorMessage);
+
+
+
+        }
+
+
+        [Test]
+        public async Task SofDeletePost_ShouldReturnError_WhenPostNotExists()
+        {
+            int postId = 1;
+            Guid userId = Guid.NewGuid();
+
+
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync<Post>(postId)).ReturnsAsync((Post)null);
+
+            var result = await _service.SoftDeletePost(1, userId);
+
+            Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("Post not found!", result.ErrorMessage);
+
+            Assert.IsNull(result.Data);
+
+        }
+
+
+        [Test]
+        public async Task SofDeletePost_ShouldReturnError_WhenUserIdIsEmpty()
+        {
+            int subCategoryId = 1;
+            int postId = 1;
+            Guid userId = Guid.Empty;
+
+            Topic topic = new Topic()
+            {
+                Id = subCategoryId,
+                Title = "Test",
+                Posts = new List<Post>()
+                {
+                    new Post{
+                    Id = postId,
+                    Title = "Test",
+                    Content = "Some content",
+                    TopicId=subCategoryId
+
+
+                }
+              }
+
+            };
+
+
+
+
+            _topicsRepoMock.Setup(x => x.GetByIdAsync<Topic>(subCategoryId)).ReturnsAsync(topic);
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId)).ReturnsAsync(topic.Posts.First());
+
+            var result = await _service.SoftDeletePost(1, userId);
+
+            Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("Invalid user Id", result.ErrorMessage);
+
+            Assert.IsNull(result.Data);
+
+        }
+
+
+        [Test]
+        public async Task SoftDeletePost_ShouldReturnError_WhenUserHasNoPermission()
+        {
+
+            int postId = 1;
+            Guid userId = Guid.NewGuid();
+
+            var post = new Post()
+            {
+                Id = postId,
+                TopicId = 10,
+                UserId = Guid.NewGuid()
+            };
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId))
+                .ReturnsAsync(post);
+
+            _topicsRepoMock.Setup(x => x.GetByIdAsync<Topic>(post.TopicId))
+                .ReturnsAsync(new Topic());
+
+            _usersRepoMock.Setup(x => x.AdminOrNotAsync(userId))
+                .ReturnsAsync(false);
+
+
+            var result = await _service.SoftDeletePost(postId, userId);
+
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("You don't have permission over this post.", result.ErrorMessage);
+        }
+
+
+
+        [Test]
+        public async Task SoftDeletePost_ShouldReturnError_WhenExceptionThrown()
+        {
+
+            int postId = 1;
+            Guid userId = Guid.NewGuid();
+
+            Post post = new Post()
+            {
+                Id = postId,
+                TopicId = 10,
+                UserId = userId
+            };
+
+            var topic = new Topic { Id = 10 };
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId))
+                .ReturnsAsync(post);
+
+            _topicsRepoMock.Setup(x => x.GetByIdAsync<Topic>(post.TopicId))
+                .ReturnsAsync(topic);
+
+            _usersRepoMock.Setup(x => x.AdminOrNotAsync(userId))
+                .ReturnsAsync(false);
+
+            _postsRepoMock.Setup(x => x.UpdateAsync(post))
+                .ThrowsAsync(new Exception());
+
+
+            var result = await _service.SoftDeletePost(postId, userId);
+
+
+            Assert.IsFalse(result.Success);
+
+
+            Assert.AreEqual("Unexpected error is occurred while delete post! Please try again later.",
+                result.ErrorMessage);
+
+
+        }
+
+
+
+        [Test]
+        public async Task SoftDeletePost_ShouldReturnSuccess_WhenValid()
+        {
+
+            int postId = 1;
+            Guid userId = Guid.NewGuid();
+
+            var post = new Post()
+            {
+                Id = postId,
+                TopicId = 10,
+                UserId = userId
+            };
+
+            var topic = new Topic { Id = 10 };
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId))
+                .ReturnsAsync(post);
+
+            _topicsRepoMock.Setup(x => x.GetByIdAsync<Topic>(post.TopicId))
+                .ReturnsAsync(topic);
+
+            _usersRepoMock.Setup(x => x.AdminOrNotAsync(userId))
+                .ReturnsAsync(false);
+
+            _postsRepoMock.Setup(x => x.UpdateAsync(post))
+                .Returns(Task.CompletedTask);
+
+
+            var result = await _service.SoftDeletePost(postId, userId);
+
+
+            Assert.IsTrue(result.Success);
+            Assert.IsTrue(post.IsDeleted);
+            
+            Assert.IsNotNull(post.DeleteAt);
+            Assert.IsNotNull(result.Data);
+        }
+
+
+        [Test]
+        public async Task RestoreDeletePos_ShouldReturnError_WhenPostNotExist()
+        {
+            int postId = 1;
+
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId)).ReturnsAsync((Post)null);
+
+            var result = await _service.RestoreDeletePost(postId);
+
+           
             
             Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("Post not found!", result.ErrorMessage);
+
+
+        }
+
+        [Test]
+        public async Task RestoreDeletePos_ShouldReturnError_WhenParentCategoryNotExist()
+        {
+            int subCategoryId = 1;
+            int postId = 1;
+
+
+            Topic subCategory = new Topic()
+            {
+                Id = subCategoryId,
+                Title = "Test",
+                IsDeleted = true
+
+
+            };
+
+
+
+
+            Post post = new Post()
+            {
+                Id = postId,
+                Title = "Test",
+                Content = "Some content",
+                IsDeleted = true,
+                TopicId = 1
+
+            };
+
+
+
+            _topicsRepoMock.Setup(x => x.GetDeleteOrNotSubCategoryAsync(subCategoryId)).ReturnsAsync(subCategory);
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId)).ReturnsAsync(post);
+
+            var result = await _service.RestoreDeletePost(postId);
+
+            Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("You can't restore the post because the subcategory is deleted.", result.ErrorMessage);
+
+
+        }
+
+
+        [Test]
+        public async Task RestoreDeletePos_ShouldReturnSuccess_WhenParentCategoryExist()
+        {
+
+            int subCategoryId = 1;
+            int postId = 1;
+
+
+            Topic subCategory = new Topic()
+            {
+                Id = subCategoryId,
+                Title = "Test",
+                IsDeleted = false
+
+
+            };
+
+
+            Post post = new Post()
+            {
+                Id = postId,
+                Title = "Test",
+                Content = "Some content",
+                IsDeleted = true,
+                TopicId = 1
+
+            };
+
+
+            _topicsRepoMock.Setup(x => x.GetDeleteOrNotSubCategoryAsync(subCategoryId)).ReturnsAsync(subCategory);
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId)).ReturnsAsync(post);
+
+            var result = await _service.RestoreDeletePost(postId);
+
+            Assert.IsTrue(result.Success);
+
+            Assert.IsFalse(post.IsDeleted);
+
+            Assert.IsNull(post.DeleteAt);
+
+        }
+
+
+
+        [Test]
+        public async Task RestoreDeletePost_ShouldReturnError_WhenExceptionThrown()
+        {
+            
+            int postId = 1;
+
+            var post = new Post()
+            {
+                Id = postId,
+                TopicId = 10,
+                IsDeleted = true
+            };
+
+            var topic = new Topic()
+            {
+                Id = 10,
+                IsDeleted = false 
+            };
+
             
             
-            Assert.AreEqual("Unexpected error is occurred while edit  post! Please try again later.",
+            
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId))
+                .ReturnsAsync(post);
+
+            _topicsRepoMock.Setup(x => x.GetDeleteOrNotSubCategoryAsync(post.TopicId))
+                .ReturnsAsync(topic);
+
+            _postsRepoMock.Setup(x => x.UpdateAsync(post))
+                .ThrowsAsync(new Exception());
+
+            var result = await _service.RestoreDeletePost(postId);
+
+          
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("Unexpected error is occurred while restore delete Post! Please try again later.",
                 result.ErrorMessage);
         
         
         
         }
+
+
+        [Test]
+        public async Task HardDeletePost_ShouldReturnError_WhenPostNotExists()
+        {
+            int postId = 1;
+
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId)).ReturnsAsync((Post)null);
+
+            var result = await _service.HardDeletePost(postId);
+
+
+            Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("Post not found!", result.ErrorMessage);
+
+        }
+
+
+        [Test]
+        public async Task HardDeletePost_ShouldReturnSuccess_WhenPostExist()
+        {
+            int postId = 1;
+
+            Post post = new Post()
+            {
+                Id = postId,
+                Title = "Test",
+                Content = "Some content",
+                IsDeleted = true
+
+
+            };
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId)).ReturnsAsync(post);
+
+            var result = await _service.HardDeletePost(postId);
+
+            Assert.IsTrue(result.Success);
+
+            _postsRepoMock.Verify(x => x.DeleteAsync(post), Times.Once);
+
+
+        }
+
+
+        [Test]
+        public async Task HardDeletePost_ShouldReturnError_WhenExceptionThrown()
+        {
+          
+            int postId = 1;
+
+            var post = new Post()
+            {
+                Id = postId
+            };
+
+            _postsRepoMock.Setup(x => x.GetDeleteOrNotPostAsync(postId))
+                .ReturnsAsync(post);
+
+            _postsRepoMock.Setup(x => x.DeleteAsync(post))
+                .ThrowsAsync(new Exception());
+
+           
+            var result = await _service.HardDeletePost(postId);
+
+           
+            Assert.IsFalse(result.Success);
+            
+            
+            Assert.AreEqual("Unexpected error is occurred while hard delete Post! Please try again later.",
+                result.ErrorMessage);
+        
+        
+        }
+
+
+        [Test]
+        public async Task GetUserComplaint_ShouldReturnError_WhenPostNotExist()
+        {
+            int postId = 1;
+
+
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId)).ReturnsAsync((Post)null);
+
+            var result = await _service.GetUserComplaint(postId);
+
+            Assert.IsFalse(result.Success);
+
+            Assert.AreEqual("Post not found!", result.ErrorMessage);
+
+        }
+
+        [Test]
+        public async Task GetUserComplaint_ShouldReturnSuccess_WhenPostExists()
+        {
+          
+            int postId = 1;
+            Guid userId = Guid.NewGuid();
+
+            Post post = new Post()
+            {
+                Id = postId,
+                Title = "Test Title",
+                Content = "Test Content",
+                CreatedOn = DateTime.UtcNow,
+                UserId = userId,
+                TopicId = 5,
+                User = new User
+                {
+                    FirstName = "Jon",
+                    LastName = "Snow"
+                }
+            };
+
+            _postsRepoMock.Setup(x => x.GetByIdAsync(postId))
+                .ReturnsAsync(post);
+
+            _postsRepoMock.Setup(x => x.GetAllPostCountAsync(userId))
+                .ReturnsAsync(3);
+
+            _commentsRepoMock.Setup(x => x.GetAllCommentsCountAsync(userId))
+                .ReturnsAsync(5);
+
+           
+            var result = await _service.GetUserComplaint(postId);
+
+          
+            Assert.IsTrue(result.Success);
+            Assert.IsNotNull(result.Data);
+
+            Assert.AreEqual(postId, result.Data.Id);
+            Assert.AreEqual("Test Title", result.Data.Title);
+            Assert.AreEqual("Test Content", result.Data.Content);
+            Assert.AreEqual("Jon Snow", result.Data.AuthorName);
+
+            Assert.AreEqual(3, result.Data.UserPostCount);
+            Assert.AreEqual(5, result.Data.UserCommentCount);
+        
+        
+        
+        
+        
+        }
+
+
+
+
 
     }
 }
