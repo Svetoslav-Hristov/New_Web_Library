@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class WelcomeServiceTests

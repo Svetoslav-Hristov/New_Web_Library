@@ -79,7 +79,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Books", new { area = "" });
             }
 
-            TempData["SuccessMessage"] = "Book created successfully.";
+            TempData["SuccessBook"] = "Book created successfully.";
 
             return RedirectToAction("Details", "Books", new { area = "", Id = result.Data!.Id });
         }
@@ -98,7 +98,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!model.Success)
             {
-                TempData["ErrorEdit"] = model.ErrorMessage;
+                TempData["ErrorBook"] = model.ErrorMessage;
 
                 return RedirectToAction("Details", "Books", new { area = "", Id });
             }
@@ -142,14 +142,14 @@ namespace New_Web_Library.Areas.Admin.Controllers
             if (!result.Success)
             {
 
-                TempData["ErrorEdit"] = result.ErrorMessage;
+                TempData["ErrorBook"] = result.ErrorMessage;
 
                 return RedirectToAction("Details", "Books", new { area = "", Id });
             }
 
 
 
-            TempData["SuccessEdit"] = "You have successfully edited your book.";
+            TempData["SuccessBook"] = "You have successfully edited your book.";
 
             return RedirectToAction("Details", "Books", new { area = "", id = result.Data.Id });
         }
@@ -169,13 +169,13 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             if (!result.Success)
             {
-                TempData["Error"] = result.ErrorMessage;
+                TempData["ErrorBook"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(Details), new { Id });
             }
             else
             {
-                TempData["SuccessDelete"] = "You have successfully deleted the book";
+                TempData["SuccessBook"] = "You have successfully deleted the book";
             }
 
 

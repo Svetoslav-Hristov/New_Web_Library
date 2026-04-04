@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using New_Library.Data.Models.Forum;
-using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
 using System.Security.Claims;
@@ -145,7 +142,7 @@ namespace New_Web_Library.Controllers
             }
             else
             {
-                TempData["SuccessEditComment"] = "You have successfully edited your comment.";
+                TempData["SuccessComment"] = "You have successfully edited your comment.";
 
             }
             

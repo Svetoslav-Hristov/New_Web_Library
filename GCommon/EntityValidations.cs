@@ -6,22 +6,6 @@ namespace New_Web_Library.GCommon
 {
     public static class EntityValidations
     {
-        public static class Admin
-        {
-
-            public const string adminRole = "Admin";
-            public const string adminFirstName = "Jon";
-            public const string adminLastName = "Smith";
-            public const string adminEmail = "admin@library.com";
-            public const int adminAge = 33;
-            public const string adminAddress = "Some where in planet Earth ";
-            public const string adminPhone = "555 000 555";
-            public const string adminPassword = "Admin_123!";
-           
-
-        }
-
-
         public static class Users
         {
             public const int FirstNameUserMaxLength = 50;

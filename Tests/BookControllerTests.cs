@@ -9,7 +9,7 @@ using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class BookControllerTests

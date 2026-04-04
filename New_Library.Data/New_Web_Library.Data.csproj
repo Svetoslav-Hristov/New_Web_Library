@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GCommon\New_Web_Library.GCommon.csproj" />
-    <ProjectReference Include="..\New_Library.Data.Models\New_Library.Data.Models.csproj" />
+    <ProjectReference Include="..\New_Library.Data.Models\New_Web_Library.Data.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

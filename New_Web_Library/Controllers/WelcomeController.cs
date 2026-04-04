@@ -1,11 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using New_Web_Library.Data;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels;
 using New_Web_Library.ViewModels.Book;
-using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace New_Web_Library.Controllers
 {

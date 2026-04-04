@@ -14,7 +14,7 @@ using New_Web_Library.Services.Core.Interfaces;
 
 namespace New_Web_Library
 {
-    using static New_Web_Library.GCommon.EntityValidations.Admin;
+   
     using static New_Web_Library.GCommon.EntityValidations.IdentitySession;
     public class Program
     {
@@ -69,15 +69,22 @@ namespace New_Web_Library
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                await SeedAdmin(services);
-                await SeedExtraData(services);
+               
+                var configuration = services.GetRequiredService<IConfiguration>();
+                var adminEmail = configuration["AdminSettings:Email"];
+                
+                
+                await SeedAdmin(services,configuration);
+
+                await SeedExtraData(services,adminEmail);
+            
             }
 
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Welcome/Error500"); // за 500
+                app.UseExceptionHandler("/Welcome/Error500");
                 app.UseHsts();
             }
 
@@ -123,11 +130,22 @@ namespace New_Web_Library
 
 
         }
-        private static async Task SeedAdmin(IServiceProvider serviceProvider)
+        private static async Task SeedAdmin(IServiceProvider serviceProvider ,IConfiguration configuration )
         {
 
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+            var adminEmail = configuration["AdminSettings:Email"];
+            var adminPassword = configuration["AdminSettings:Password"];
+
+            var adminFirstName = configuration["AdminSettings:FirstName"];
+            var adminLastName = configuration["AdminSettings:LastName"];
+            var adminAge = int.Parse(configuration["AdminSettings:Age"]);
+            var adminAddress = configuration["AdminSettings:Address"];
+            var adminPhone = configuration["AdminSettings:Phone"];
+            var adminRole = "Admin";
+
 
             if (!await roleManager.RoleExistsAsync(adminRole))
             {
@@ -151,6 +169,8 @@ namespace New_Web_Library
 
             if (admin == null)
             {
+               
+
                 admin = new User
                 {
 
@@ -164,6 +184,8 @@ namespace New_Web_Library
                     PhoneNumberConfirmed = true,
                     EmailConfirmed = true
                 };
+
+                
 
                 var result = await userManager.CreateAsync(admin, adminPassword);
 
@@ -180,12 +202,14 @@ namespace New_Web_Library
 
         }
 
-        private static async Task SeedExtraData(IServiceProvider provider)
+        private static async Task SeedExtraData(IServiceProvider provider ,string adminEmail)
         {
             using var scope = provider.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+         
 
             var admin = await userManager.FindByEmailAsync(adminEmail);
 

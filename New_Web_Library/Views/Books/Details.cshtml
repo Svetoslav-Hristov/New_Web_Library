@@ -2,28 +2,33 @@
 @{
     ViewData["Title"] = "Book Details";
 
-    var message = TempData["SuccessMessage"] as string;
+    var successBook = TempData["SuccessBook"] as string;
 
+    var errorBook = TempData["ErrorBook"] as string;
+    
+    
+    //reservation//
+    
     var successReservation = TempData["SuccessReservation"] as string;
 
-    var successEdit = TempData["SuccessEdit"] as string;
+    
 
 
 }
 
 
-@if (!string.IsNullOrEmpty(successEdit))
+@if (!string.IsNullOrEmpty(errorBook))
 {
-    <div class="alert alert-success" role="alert">
-        @successEdit
+    <div class="alert alert-danger" role="alert">
+        @errorBook
     </div>
 
 }
 
-@if (!string.IsNullOrEmpty(message))
+@if (!string.IsNullOrEmpty(successBook))
 {
     <div class="alert alert-success" role="alert">
-        @message
+        @successBook
     </div>
 
 }

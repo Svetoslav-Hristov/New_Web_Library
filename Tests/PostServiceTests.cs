@@ -7,7 +7,7 @@ using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.ViewModels.Forum;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class PostServiceTests

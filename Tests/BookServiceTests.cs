@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static NUnit.Framework.Constraints.Tolerance;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class BookServiceTests

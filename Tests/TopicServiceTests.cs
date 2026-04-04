@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class TopicServiceTests

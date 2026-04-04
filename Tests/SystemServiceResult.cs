@@ -7,7 +7,7 @@ using New_Web_Library.Data.Models;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.System;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class SystemServiceResult

@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Logging;
 using New_Library.Data.Models.Forum;
-using New_Web_Library.Data;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
-using New_Web_Library.ViewModels.Forum;
 using System.Security.Claims;
 
 namespace New_Web_Library.Controllers

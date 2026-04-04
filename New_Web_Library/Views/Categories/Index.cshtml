@@ -4,12 +4,12 @@
     Layout = "_ForumLayout";
 
 
-    //  category create, edit - success  //
+    //  category  //
+
     var successCategory = TempData["SuccessCategory"] as string;
 
-    //category create edit - error //
+    var errorCategory = TempData["ErrorCategory"] as string;
 
-    var errorCategory = TempData["ErrorCategoryEdit"] as string;
 
     // subcategory//
 
@@ -23,12 +23,7 @@
 
 
 
-
-    var errorMessage = TempData["WrongData"] as string;
-
-    var errorEdit = TempData["ErrorEdit"] as string;
-
-    // complains message //
+    // complaints message //
     var successMessage = TempData["SuccessMessage"] as string;
 
 }
@@ -62,13 +57,6 @@
     </div>
 }
 
-@if (!string.IsNullOrEmpty(errorEdit))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorEdit
-    </div>
-}
-
 
 
 @if (!string.IsNullOrEmpty(successCategory))
@@ -87,12 +75,6 @@
 
 
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorMessage
-    </div>
-}
 
 
 <div>

@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{50B3C02F-7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.Data", "New_Library.Data\New_Web_Library.Data.csproj", "{2086443B-6EBC-427D-8E27-E4AF0DAAE767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Library.Data.Models", "New_Library.Data.Models\New_Library.Data.Models.csproj", "{EE189BB3-6C23-4C9D-939E-52C70CAAA6B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.Data.Models", "New_Library.Data.Models\New_Web_Library.Data.Models.csproj", "{EE189BB3-6C23-4C9D-939E-52C70CAAA6B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{9F1ED99F-3C34-49FD-BF53-9DCEA8F69AAB}"
 EndProject
@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.Service.Cor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0181FA11-3D71-4709-BDCF-2067FD4E227B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreArchTemplate.Services.Core.Tests", "Tests\AspNetCoreArchTemplate.Services.Core.Tests.csproj", "{F63EAE53-2E03-1562-AC7E-CD2806F2D67D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New_Web_Library.Core.Tests", "Tests\New_Web_Library.Core.Tests.csproj", "{F63EAE53-2E03-1562-AC7E-CD2806F2D67D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

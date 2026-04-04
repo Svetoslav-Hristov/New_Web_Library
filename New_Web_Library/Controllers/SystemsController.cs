@@ -1,18 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using New_Web_Library.Data;
-using New_Web_Library.Data.Models;
-using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Interfaces;
-using New_Web_Library.ViewModels.System;
 using System.Security.Claims;
 
 namespace New_Web_Library.Controllers
 {
-    using static New_Web_Library.GCommon.EntityValidations.UsersBooks;
     public class SystemsController : Controller
     {
       

@@ -9,7 +9,7 @@ using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
 
-namespace AspNetCoreArchTemplate.Services.Core.Tests
+namespace New_Web_Library.Services.Core.Tests
 {
     [TestFixture]
     public class AdminBooksControllerTests
@@ -205,7 +205,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             Assert.AreEqual("Books", redirectResult.ControllerName);
 
 
-            Assert.AreEqual("Something went wrong", _controller.TempData["ErrorEdit"]);
+            Assert.AreEqual("Something went wrong", _controller.TempData["ErrorBook"]);
 
 
             Assert.AreEqual(id, redirectResult.RouteValues["Id"]);
@@ -319,7 +319,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             Assert.AreEqual("Details", redirectResult.ActionName);
             Assert.AreEqual("Books", redirectResult.ControllerName);
 
-            Assert.AreEqual("Error occurred", _controller.TempData["ErrorEdit"]);
+            Assert.AreEqual("Error occurred", _controller.TempData["ErrorBook"]);
         }
 
 
@@ -358,7 +358,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             Assert.AreEqual("Books", redirectResult.ControllerName);
 
             Assert.AreEqual("You have successfully edited your book.",
-                _controller.TempData["SuccessEdit"]);
+                _controller.TempData["SuccessBook"]);
 
             Assert.AreEqual(returnedId, redirectResult.RouteValues["id"]);
         }
@@ -437,7 +437,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             Assert.IsNotNull(redirectResult);
             Assert.AreEqual("Details", redirectResult.ActionName);
 
-            Assert.AreEqual("Delete failed", _controller.TempData["Error"]);
+            Assert.AreEqual("Delete failed", _controller.TempData["ErrorBook"]);
             Assert.AreEqual(id, redirectResult.RouteValues["Id"]);
         }
 
@@ -470,7 +470,7 @@ namespace AspNetCoreArchTemplate.Services.Core.Tests
             Assert.AreEqual("Books", redirectResult.ControllerName);
 
             Assert.AreEqual("You have successfully deleted the book",
-                _controller.TempData["SuccessDelete"]);
+                _controller.TempData["SuccessBook"]);
         
         
         
