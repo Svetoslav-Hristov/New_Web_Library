@@ -1,8 +1,4 @@
-﻿
-
-using System.Runtime.InteropServices;
-
-namespace New_Web_Library.GCommon
+﻿namespace New_Web_Library.GCommon
 {
     public static class EntityValidations
     {
