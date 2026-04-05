@@ -142,7 +142,9 @@ namespace New_Web_Library.Service.Core
 
             }
 
-            if (comment.UserId != userId)
+            var isAdmin = await _usersRepository.AdminOrNotAsync(userId);
+
+            if (comment.UserId != userId && !isAdmin)
             {
                 return new ServiceResult<CreateContentViewModel> 
                 {

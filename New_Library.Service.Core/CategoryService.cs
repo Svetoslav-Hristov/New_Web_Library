@@ -50,7 +50,8 @@ namespace New_Web_Library.Service.Core
                 {
 
                     Id = t.Id,
-                    Title = t.Title
+                    Title = t.Title,
+                    PostCount=t.Posts?.Count() ?? 0,
                 }).ToArray(),
                 PostCount = c.Topics.SelectMany(t => t.Posts).Count(),
                 LastPostTitle = c.Topics.SelectMany(t => t.Posts).OrderByDescending(p => p.CreatedOn)

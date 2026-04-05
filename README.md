@@ -238,9 +238,9 @@ After running the application:
 
 ---
 
-## Technologies
+## Използвани технологии
 
-- ASP.NET Core MVC
+- - ASP.NET Core MVC
 - Entity Framework Core
 - SQL Server
 - NUnit (for unit testing)

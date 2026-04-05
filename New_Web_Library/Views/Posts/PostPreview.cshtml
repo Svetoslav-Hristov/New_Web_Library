@@ -70,7 +70,7 @@
     <div class="border-end bg-light p-1" style="width: 230px; min-height: 85vh;">
         <div class="list-group">
 
-            @if (User.IsInRole("User"))
+            @if (User.IsInRole("User") || User.IsInRole("Admin"))
             {
                 <a asp-controller="Comments"
                    asp-action="CreateComment"
@@ -187,7 +187,8 @@
                                 @if (comment.IsAuthor)
                                 {
                                     <div class="mt-2 d-flex gap-2">
-                                        <a asp-controller="Comments"
+                                        <a asp-area=""
+                                            asp-controller="Comments"
                                            asp-action="EditComment"
                                            asp-route-id="@comment.Id"
                                            class="btn btn-sm btn-outline-warning">

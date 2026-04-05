@@ -10,6 +10,7 @@ namespace New_Web_Library.ViewModels.Forum
     {
         public int Id { get; set; }
 
+        public int PostCount {get;set;}
         public string Title { get; set; } = null!;
     }
 }

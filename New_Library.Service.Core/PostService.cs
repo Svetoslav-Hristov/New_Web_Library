@@ -25,7 +25,7 @@ namespace New_Web_Library.Service.Core
         private readonly ILogger<IPostService> _logger;
         public PostService(IPostRepository postsRepository, ICommentRepository commentsRepository,
             ICategoryRepository categoriesRepository, IUserRepository usersRepository,
-            ITopicRepository topicsRepository,ILogger<IPostService> logger)
+            ITopicRepository topicsRepository, ILogger<IPostService> logger)
         {
             this._postsRepository = postsRepository;
             this._commentsRepository = commentsRepository;
@@ -122,31 +122,45 @@ namespace New_Web_Library.Service.Core
             model.UserCommentCount = countComments.GetValueOrDefault(post.UserId);
 
             bool isAdmin = false;
-            
-            if (userId!=null && userId != Guid.Empty)
+
+            if (userId != null && userId != Guid.Empty)
             {
                 isAdmin = await _usersRepository.AdminOrNotAsync(userId.Value);
             }
-           
 
-           
-            if ((userId != null && DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))|| isAdmin)
+
+
+
+
+
+            if (userId.HasValue)
             {
 
-                if (userId.HasValue)
+                if (!pagingModel.Comments.Any())
+                {
+                    bool isAuthor = model.UserId == userId.Value;
+                    bool isWithinTime = DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime);
+
+                    if((isAuthor && isWithinTime)|| isAdmin )
+
+                    model.IsAuthor = true;
+
+                }
+                else
                 {
 
-                    if (!pagingModel.Comments.Any() && (model.UserId == userId.Value || isAdmin))
+
+                    var lastCommentEntity = allComments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
+
+                    var lastComment = pagingModel.Comments.FirstOrDefault(c => c.Id == lastCommentEntity?.Id);
+
+
+                    if (lastComment != null)
                     {
-                        model.IsAuthor = true;
+                        bool isAuthor = lastComment.UserId == userId.Value;
+                        bool isWithinTime = DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime);
 
-                    }
-                    else
-                    {
-                        var lastComment = pagingModel.Comments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
-
-
-                        if ((lastComment?.UserId == userId && DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))||isAdmin)
+                        if ((isAuthor && isWithinTime) || isAdmin)
                         {
                             lastComment.IsAuthor = true;
                         }
@@ -155,10 +169,13 @@ namespace New_Web_Library.Service.Core
                 }
             }
 
+
+
+
             return new ServiceResult<PostForumPagingModel> { Success = true, Data = pagingModel };
 
-        }
 
+        }
 
 
         public async Task<ServiceResult<CreateContentViewModel>> CreateNewPost(int categoryId)
@@ -169,10 +186,10 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<CreateContentViewModel> 
+                return new ServiceResult<CreateContentViewModel>
                 {
                     Success = false,
-                    ErrorMessage = "SubCategory not found!" 
+                    ErrorMessage = "SubCategory not found!"
                 };
             }
 
@@ -190,13 +207,13 @@ namespace New_Web_Library.Service.Core
 
         public async Task<ServiceResult<Post>> ConfirmNewPost(CreateContentViewModel model, Guid userId, int categoryId)
         {
-            
+
             if (string.IsNullOrWhiteSpace(model.Title))
             {
-                return new ServiceResult<Post> 
-                { 
-                    Success = false, 
-                    ErrorMessage = "Title is required." 
+                return new ServiceResult<Post>
+                {
+                    Success = false,
+                    ErrorMessage = "Title is required."
                 };
 
             }
@@ -204,10 +221,10 @@ namespace New_Web_Library.Service.Core
             if (string.IsNullOrWhiteSpace(model.Description))
             {
 
-                return new ServiceResult<Post> 
-                { 
-                    Success = false, 
-                    ErrorMessage = "The post must have content." 
+                return new ServiceResult<Post>
+                {
+                    Success = false,
+                    ErrorMessage = "The post must have content."
                 };
             }
 
@@ -215,10 +232,10 @@ namespace New_Web_Library.Service.Core
 
             if (userId == Guid.Empty)
             {
-                return new ServiceResult<Post> 
-                { 
+                return new ServiceResult<Post>
+                {
                     Success = false,
-                    ErrorMessage = "Invalid user ID." 
+                    ErrorMessage = "Invalid user ID."
                 };
             }
 
@@ -226,10 +243,10 @@ namespace New_Web_Library.Service.Core
 
             if (user == null)
             {
-                return new ServiceResult<Post> 
+                return new ServiceResult<Post>
                 {
                     Success = false,
-                    ErrorMessage = "User not found!" 
+                    ErrorMessage = "User not found!"
                 };
             }
 
@@ -237,10 +254,10 @@ namespace New_Web_Library.Service.Core
 
             if (subCategory == null)
             {
-                return new ServiceResult<Post> 
-                { 
+                return new ServiceResult<Post>
+                {
                     Success = false,
-                    ErrorMessage = "SubCategory not found!" 
+                    ErrorMessage = "SubCategory not found!"
                 };
             }
 
@@ -289,10 +306,10 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<CreateContentViewModel> 
+                return new ServiceResult<CreateContentViewModel>
                 {
-                    Success = false, 
-                    ErrorMessage = "Post not found" 
+                    Success = false,
+                    ErrorMessage = "Post not found"
                 };
             }
 
@@ -317,10 +334,10 @@ namespace New_Web_Library.Service.Core
 
             if (string.IsNullOrWhiteSpace(model.Title))
             {
-                return new ServiceResult<Post> 
+                return new ServiceResult<Post>
                 {
                     Success = false,
-                    ErrorMessage = "Title is required." 
+                    ErrorMessage = "Title is required."
                 };
             }
 
@@ -337,26 +354,26 @@ namespace New_Web_Library.Service.Core
             if (userId == Guid.Empty)
             {
 
-                return new ServiceResult<Post> 
+                return new ServiceResult<Post>
                 {
-                    Success = false, 
-                    ErrorMessage = "Invalid user ID." 
+                    Success = false,
+                    ErrorMessage = "Invalid user ID."
                 };
             }
 
 
-           
-            
+
+
 
             var post = await _postsRepository.GetByIdAsync<Post>(Id);
 
 
             if (post == null)
             {
-                return new ServiceResult<Post> 
+                return new ServiceResult<Post>
                 {
                     Success = false,
-                    ErrorMessage = "Post not found!" 
+                    ErrorMessage = "Post not found!"
                 };
             }
 
@@ -365,7 +382,7 @@ namespace New_Web_Library.Service.Core
 
             if (post.UserId != userId && !isAdmin)
             {
-                return new ServiceResult<Post> 
+                return new ServiceResult<Post>
                 {
                     Success = false,
                     ErrorMessage = "You don't have permission over this post."
@@ -384,7 +401,7 @@ namespace New_Web_Library.Service.Core
             catch (Exception ex)
             {
 
-                _logger.LogError(ex,"Error editing post by user {UserId}", userId);
+                _logger.LogError(ex, "Error editing post by user {UserId}", userId);
 
                 return new ServiceResult<Post>
                 {
@@ -408,21 +425,21 @@ namespace New_Web_Library.Service.Core
             }
 
             var subCategory = await _topicsRepository.GetByIdAsync<Topic>(post.TopicId);
-            
-            if (userId==Guid.Empty)
+
+            if (userId == Guid.Empty)
             {
-                return new ServiceResult<Topic> 
+                return new ServiceResult<Topic>
                 {
                     Success = false,
-                    ErrorMessage = "Invalid user Id" 
+                    ErrorMessage = "Invalid user Id"
                 };
             }
 
 
             bool isAdmin = await _usersRepository.AdminOrNotAsync(userId);
 
-           
-            if (post.UserId != userId && !isAdmin )
+
+            if (post.UserId != userId && !isAdmin)
             {
                 return new ServiceResult<Topic> { Success = false, ErrorMessage = "You don't have permission over this post." };
 
@@ -465,15 +482,15 @@ namespace New_Web_Library.Service.Core
 
             Topic? subCategory = await _topicsRepository.GetDeleteOrNotSubCategoryAsync(post.TopicId);
 
-            
-            if (subCategory?.IsDeleted== true)
+
+            if (subCategory?.IsDeleted == true)
             {
-                   return new ServiceResult<bool>
-                    {
-                        Success = false,
-                        ErrorMessage = "You can't restore the post because the subcategory is deleted."
-                   };
-                
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "You can't restore the post because the subcategory is deleted."
+                };
+
             }
 
 
@@ -542,10 +559,10 @@ namespace New_Web_Library.Service.Core
 
             if (post == null)
             {
-                return new ServiceResult<ContentDetailsModel> 
+                return new ServiceResult<ContentDetailsModel>
                 {
-                    Success = false, 
-                    ErrorMessage = "Post not found!" 
+                    Success = false,
+                    ErrorMessage = "Post not found!"
                 };
             }
 
