@@ -163,7 +163,7 @@ namespace New_Web_Library.Services.Core.Tests
 
 
             Assert.IsTrue(result.Success);
-            Assert.IsTrue(result.Data.Post.IsAuthor);
+            Assert.IsTrue(result.Data.Post.CanModify);
 
         }
 

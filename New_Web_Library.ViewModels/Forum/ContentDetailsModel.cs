@@ -22,7 +22,7 @@ namespace New_Web_Library.ViewModels.Forum
         public int UserPostCount { get; set; }
         public int UserCommentCount { get; set; }
 
-        public bool IsAuthor { get; set; }
+        public bool CanModify { get; set; }
 
         public int? TopicId { get; set; }
 

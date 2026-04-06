@@ -38,7 +38,7 @@ namespace New_Web_Library.Areas.Admin.Controllers
             }
             else
             {
-                TempData["SuccessPost"] = result.ErrorMessage;
+                TempData["SuccessPost"]= "Successfully restored the deleted post";
             }
 
             return RedirectToAction("ForumSupportPreview", "Systems");

@@ -119,25 +119,30 @@
 
             <h5 class="mb-3">Menu</h5>
 
-            @if (Model.IsExistSpecialSubCategory)
-            {
-                <div class="d-flex flex-column gap-2">
+            <div class="d-flex flex-column gap-2">
+                <a asp-area=""
+                   asp-controller="Categories"
+                   asp-action="Index"
+                   class="btn btn-outline-primary w-100">
+                    Main Forum
+                </a>
+                @if (Model.IsExistSpecialSubCategory)
+                {
                     <a asp-area="Admin"
                        asp-controller="Systems"
                        asp-action="UsersComplaints"
-                       class="btn btn-outline-primary">
+                       class="btn btn-outline-primary w-100">
                         😥 Users Complaints
                     </a>
-                </div>
-            }
-            else
-            {
-                <div class="d-flex flex-column gap-2">
-                    <button class="btn btn-outline-secondary" disabled>
+                }
+                else
+                {
+                    <button class="btn btn-outline-secondary w-100" disabled>
                         😥 No Complaints
                     </button>
-                </div>
-            }
+                }
+
+            </div>
         </div>
         <main class="col-md-9 col-lg-10 p-4">
 
@@ -231,7 +236,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to restore this Category?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-success btn-sm">
                                                     Restore
@@ -243,7 +248,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to delete permanently this Category?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-danger btn-sm">
                                                     Delete Permanently
@@ -260,7 +265,7 @@
                                                   asp-route-Id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to restore this SubCategory ?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-success btn-sm">
                                                     Restore
@@ -272,7 +277,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to delete permanently this SubCategory ?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-danger btn-sm">
                                                     Delete Permanently
@@ -289,7 +294,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to restore this Post?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-success btn-sm">
                                                     Restore
@@ -301,7 +306,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to delete permanently this Post?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-danger btn-sm">
                                                     Delete Permanently
@@ -317,7 +322,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to restore this comment?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-success btn-sm">
                                                     Restore
@@ -329,7 +334,7 @@
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   onsubmit="return confirm('Are you sure you want to delete permanently this comment?');">
-
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
                                                         class="btn btn-outline-danger btn-sm">
                                                     Delete Permanently

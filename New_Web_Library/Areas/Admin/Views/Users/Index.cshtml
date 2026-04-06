@@ -173,6 +173,7 @@
                                                           asp-route-id="@u.Id"
                                                           method="post" class="d-inline"
                                                           onsubmit="return confirm('Are you sure you want to change staus of this user?');">
+                                                        @Html.AntiForgeryToken()
                                                         <button type="submit"
                                                                 class="btn btn-outline-danger btn-sm px-4 d-inline-flex align-items-center justify-content-center">
                                                             ChangeStatus

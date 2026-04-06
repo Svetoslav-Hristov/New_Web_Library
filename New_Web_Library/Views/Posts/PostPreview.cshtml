@@ -64,8 +64,9 @@
 }
 
 
-<div class="d-flex" style="max-height: 80vh;">
+@*<div class="d-flex" style="max-height: 80vh;">*@
 
+<div class="d-flex" style="min-height: 80vh; overflow-x: hidden;">
 
     <div class="border-end bg-light p-1" style="width: 230px; min-height: 85vh;">
         <div class="list-group">
@@ -102,7 +103,8 @@
         </div>
     </div>
 
-    <div class="container mt-4">
+    <div class="container mt-4 mb-3">
+
 
         <div class="card mb-3">
             <div class="row g-0">
@@ -132,7 +134,7 @@
 
             </div>
         </div>
-        @if (Model.Post.IsAuthor)
+        @if (Model.Post.CanModify)
         {
             <div class="d-flex gap-2">
                 <a asp-action="EditPost" asp-route-id="@Model.Post.Id" class="btn btn-outline-warning mb-3">
@@ -143,7 +145,7 @@
                       asp-route-id="@Model.Post.Id"
                       method="post"
                       onsubmit="return confirm('Are you sure you want to delete this post?');">
-
+                    @Html.AntiForgeryToken()
                     <button type="submit"
                             class="btn btn-outline-danger">
                         Delete
@@ -184,11 +186,11 @@
                                     @comment.Content
                                 </div>
 
-                                @if (comment.IsAuthor)
+                                @if (comment.CanModify)
                                 {
                                     <div class="mt-2 d-flex gap-2">
                                         <a asp-area=""
-                                            asp-controller="Comments"
+                                           asp-controller="Comments"
                                            asp-action="EditComment"
                                            asp-route-id="@comment.Id"
                                            class="btn btn-sm btn-outline-warning">

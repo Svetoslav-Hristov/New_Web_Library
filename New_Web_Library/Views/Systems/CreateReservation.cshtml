@@ -4,6 +4,7 @@
 <div class="container">
     <h2>Reserve Book</h2>
     <form asp-action="SearchByCriteria" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="BookId" />
         <input type="hidden" asp-for="BookTitle" />
         <div class="mb-3">
@@ -22,6 +23,7 @@
     @if (Model.UserId != null)
     {
         <form asp-action="CreateReservation" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="BookId" />
             <input type="hidden" asp-for="UserId" />
 

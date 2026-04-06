@@ -5,7 +5,7 @@
     <h2 class="mb-4">Edit or Confirm Loan Record</h2>
 
     <form asp-action="EditLoan" method="post">
-
+        @Html.AntiForgeryToken()
         <!-- User -->
         <div class="mb-3">
             <label class="form-label">User</label>

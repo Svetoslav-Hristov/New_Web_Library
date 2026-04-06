@@ -9,9 +9,9 @@
 
     string formatAction = isEdit ? "EditPost" : "CreatePost";
 
-    string formatExitController = isEdit ? "Posts":"Topics" ;
+    string formatExitController = isEdit ? "Posts" : "Topics";
 
-    string formatExitAction = isEdit ? "PostPreview":"Subcategory";
+    string formatExitAction = isEdit ? "PostPreview" : "Subcategory";
 
     var exitId = isEdit ? Model.Id : Model.SubCategoryId;
 
@@ -29,7 +29,7 @@
                 <h4 class="mb-3">@title Post</h4>
 
                 <form asp-action="@formatAction" method="post">
-                    
+                    @Html.AntiForgeryToken()
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label"></label>
                         <input asp-for="Title" class="form-control" />
@@ -46,11 +46,11 @@
                         @title
                     </button>
 
-                     <a href="#"
+                    <a href="#"
                        onclick="if (document.referrer) { history.back(); } else { window.location='Categories/Index'}"
                        class="btn btn-secondary">
                         Cancel
-                    </a> 
+                    </a>
                 </form>
 
             </div>

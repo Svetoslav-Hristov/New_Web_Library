@@ -1,4 +1,4 @@
-﻿@model CreateContentViewModel 
+﻿@model CreateContentViewModel
 
 @{
     Layout = "_ForumLayout";
@@ -15,7 +15,7 @@
                 <h4 class="mb-3">Edit Comment</h4>
 
                 <form asp-action="EditComment" method="post">
-
+                    @Html.AntiForgeryToken()
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label"></label>
                         <input asp-for="Title" class="form-control" />
@@ -31,7 +31,7 @@
                     <button type="submit" class="btn btn-primary">
                         Edit
                     </button>
-                    <a asp-controller="Posts"  asp-action="PostPreview" asp-route-id = "@Model.PostId" class="btn btn-primary">Cancel</a>
+                    <a asp-controller="Posts" asp-action="PostPreview" asp-route-id="@Model.PostId" class="btn btn-primary">Cancel</a>
 
                 </form>
 

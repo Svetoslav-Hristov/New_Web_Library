@@ -130,42 +130,57 @@ namespace New_Web_Library.Service.Core
 
 
 
-
-
-
             if (userId.HasValue)
             {
 
-                if (!pagingModel.Comments.Any())
+                if (!allComments.Any())
                 {
                     bool isAuthor = model.UserId == userId.Value;
                     bool isWithinTime = DateTime.UtcNow - model.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime);
 
-                    if((isAuthor && isWithinTime)|| isAdmin )
+                    if ((isAuthor && isWithinTime) || isAdmin)
+                    {
 
-                    model.IsAuthor = true;
+                        model.CanModify = true;
+
+                    }
 
                 }
                 else
                 {
 
 
-                    var lastCommentEntity = allComments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
-
-                    var lastComment = pagingModel.Comments.FirstOrDefault(c => c.Id == lastCommentEntity?.Id);
-
-
-                    if (lastComment != null)
+                    if (isAdmin)
                     {
-                        bool isAuthor = lastComment.UserId == userId.Value;
-                        bool isWithinTime = DateTime.UtcNow - lastComment.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime);
+                        model.CanModify = true;
 
-                        if ((isAuthor && isWithinTime) || isAdmin)
+                        foreach (var coment in pagingModel.Comments)
                         {
-                            lastComment.IsAuthor = true;
+                            coment.CanModify = true;
+
                         }
 
                     }
+                    else
+                    {
+
+                        var lastCommentEntity = allComments.OrderByDescending(p => p.CreatedOn).FirstOrDefault();
+
+                        if (lastCommentEntity != null && lastCommentEntity.UserId==userId.Value 
+                            && DateTime.UtcNow - lastCommentEntity.CreatedOn < TimeSpan.FromMinutes(CommentLifeTime))
+                        {
+                            var lastComment = pagingModel.Comments.FirstOrDefault(c => c.Id == lastCommentEntity.Id);
+
+
+                            if (lastComment != null)
+                            {
+                                lastComment.CanModify = true;
+                            }
+
+                        }
+
+                    }
+
                 }
             }
 

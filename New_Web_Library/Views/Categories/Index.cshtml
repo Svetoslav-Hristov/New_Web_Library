@@ -75,8 +75,6 @@
 
 
 
-
-
 <div>
     @if (User.IsInRole("Admin"))
     {
@@ -130,11 +128,21 @@
 
                                             @sub.Title
                                         </a>
-                                        <span style="margin-left:10px; color:gray;">
-                                            (@sub.PostCount)
-                                        </span>
+                                        @if (sub.PostCount > 0)
+                                        {
+                                            <span style="margin-left:10px; color:black;">
+                                                (@sub.PostCount)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="margin-left:10px; color:lightgray;">
+                                                (@sub.PostCount)
+                                            </span>
+
+                                        }
                                     </div>
- 
+
                                 }
                             </div>
                         }
@@ -185,7 +193,7 @@
                                   asp-route-id="@category.Id"
                                   method="post"
                                   onsubmit="return confirm('Are you sure you want to delete this category?');">
-
+                                @Html.AntiForgeryToken()
                                 <button type="submit"
                                         class="btn btn-outline-danger">
                                     Delete Category

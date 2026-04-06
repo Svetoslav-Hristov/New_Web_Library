@@ -5,13 +5,13 @@
     var successBook = TempData["SuccessBook"] as string;
 
     var errorBook = TempData["ErrorBook"] as string;
-    
-    
+
+
     //reservation//
-    
+
     var successReservation = TempData["SuccessReservation"] as string;
 
-    
+
 
 
 }
@@ -103,7 +103,7 @@
                       asp-route-id="@Model.Id"
                       method="post"
                       onsubmit="return confirm('Are you sure you want to delete this book?');">
-
+                    @Html.AntiForgeryToken()
                     <button type="submit"
                             class="btn btn-outline-danger">
                         Delete
@@ -126,6 +126,9 @@
                       asp-route-bookId="@Model.Id"
                       method="post"
                       class="w-100">
+
+                    @Html.AntiForgeryToken()
+
                     <button type="submit" class="btn btn-outline-primary w-100">
                         Reserve
                     </button>

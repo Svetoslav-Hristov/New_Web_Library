@@ -5,6 +5,7 @@
     <h1>Create Book</h1>
 
     <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="mb-3">
             <label asp-for="Title"></label>
@@ -22,14 +23,19 @@
             <label asp-for="CoverImage"></label>
             <select asp-for="CoverImage"
                     asp-items="Model.Covers"
-                    class="form-select">
+                    class="form-select"
+                    id="coverSelect">
                 <option value="">-- Select cover --</option>
             </select>
         </div>
 
-        <img src="~/Images/@Model.CoverImage"
-             alt="Book cover"
-             class="img-thumbnail" />
+        <div>
+            <img id="coverPreview"
+                 src="@(!string.IsNullOrEmpty(Model.CoverImage) ? "/Images/" + Model.CoverImage : "/Images/no-cover.png")"
+                 width="150"
+                 alt="Cover preview" />
+
+        </div>
 
         <div class="mb-3">
             <label asp-for="Description"></label>
@@ -68,4 +74,26 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const select = document.getElementById("coverSelect");
+            const img = document.getElementById("coverPreview");
+
+            if (!select || !img) return;
+
+            if (select.value) {
+                img.src = "/Images/" + select.value;
+            }
+
+            select.addEventListener("change", function () {
+                if (this.value) {
+                    img.src = "/Images/" + this.value;
+                } else {
+                    img.src = "/Images/no-cover.png";
+                }
+            });
+        });
+    </script>
+
 }
