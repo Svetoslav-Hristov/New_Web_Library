@@ -20,20 +20,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ASP.NET_Fundamentals\New_Web_Library\GCommon\New_Web_Library.GCommon.csproj" />
-    <ProjectReference Include="..\..\..\ASP.NET_Fundamentals\New_Web_Library\New_Library.Data\New_Web_Library.Data.csproj" />
-    <ProjectReference Include="..\..\..\ASP.NET_Fundamentals\New_Web_Library\New_Library.Service.Core\New_Web_Library.Service.Core.csproj" />
-    <ProjectReference Include="..\..\..\ASP.NET_Fundamentals\New_Web_Library\New_Web_Library.ViewModels\New_Web_Library.ViewModels.csproj" />
-    <ProjectReference Include="..\New_Web_Library\New_Web_Library.csproj" />
-    
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="TestResults\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GCommon\New_Web_Library.GCommon.csproj" />
+    <ProjectReference Include="..\New_Library.Data\New_Web_Library.Data.csproj" />
+    <ProjectReference Include="..\New_Library.Service.Core\New_Web_Library.Service.Core.csproj" />
+    <ProjectReference Include="..\New_Web_Library.ViewModels\New_Web_Library.ViewModels.csproj" />
+    <ProjectReference Include="..\New_Web_Library\New_Web_Library.csproj" />
   </ItemGroup>
 
 </Project>
