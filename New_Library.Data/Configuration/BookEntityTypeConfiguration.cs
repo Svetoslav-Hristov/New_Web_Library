@@ -13,7 +13,7 @@ namespace New_Web_Library.Data.Configuration
         {
             Id = Guid.Parse("b5cebf85-e61a-4e95-b688-a2b0e6893bed"),
             Title = "The Hobbit",
-            Author = "J.R.R. Tolkien",
+            AuthorId = Guid.Parse("a1be31d1-8d08-4837-bf49-cf303d8083f0"),
             Year=1937,
             CoverImageUrl="TheHobbit.jpg",
             Description="The Hobbit is a tale of high adventure, " +
@@ -26,7 +26,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("eeb61727-49d9-4b67-a836-1d3eacc4f08d"),
              Title = "1984",
-             Author = "George Orwell",
+             AuthorId = Guid.Parse("a79aff9a-5b7d-4c86-8fdc-73950656cfd2"),
              Year=1949,
              CoverImageUrl="1984.jpg",
              Description="Nineteen Eighty-Four: A Novel, often referred to as 1984," +
@@ -43,7 +43,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("cda5bf3e-e99c-4a9a-bc3c-889ec28b7031"),
              Title = "Brave New World",
-             Author = "Aldous Huxley",
+             AuthorId = Guid.Parse("1dc33818-603a-4c00-ba62-93c819bf3ba7"),
              Year=1932,
              CoverImageUrl = "BraveNewWorld.jpg",
              Description="Originally published in 1932, this outstanding work of literature is more crucial and relevant today than ever before." +
@@ -58,7 +58,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("f057357a-d690-48ce-a4cc-e1a9748cc63c"),
              Title = "Clean Code",
-             Author = "Robert C. Martin",
+             AuthorId =Guid.Parse("86fe4481-0fe8-44fc-9ca1-7f53edf0dab8") ,
              Year=2008,
              CoverImageUrl="CleanCode.jpg",
              Genre = Genre.Programming
@@ -67,7 +67,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("43f42ae2-7f5f-4944-871e-52d9fd057e6a"),
              Title = "The Pragmatic Programmer",
-             Author = "Andrew Hunt",
+             AuthorId = Guid.Parse("47df0e8f-7a6b-4ed1-abfa-372f26dbcd49"),
              Year = 1999,
              CoverImageUrl="PragmaticProgramer.jpg",
              Description="Ward Cunningham Straight from the programming trenches, The Pragmatic Programmer cuts through the" +
@@ -87,7 +87,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("5571dd6b-512c-4d64-8620-cf469800d93c"),
              Title = "The Da Vinci Code",
-             Author = "Dan Brown",
+             AuthorId = Guid.Parse("d7cf5390-d958-4fdd-8365-d019cac4e850"),
              Year=2003,
              CoverImageUrl="DaVinciCode.jpg",
              Description="The Da Vinci Code is a 2003 mystery thriller novel by Dan Brown. It is Brown's second novel" +
@@ -101,7 +101,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("e2c70baa-d665-4ace-9409-6b053e41ed4f"),
              Title = "Sherlock Holmes",
-             Author = "Arthur Conan Doyle",
+             AuthorId = Guid.Parse("4841f823-58e2-4aea-98b9-3cdbd9b740e4"),
              Year=1892,
              CoverImageUrl="SherlockHolmes.jpg",
              Genre = Genre.Mystery
@@ -110,7 +110,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("3fb3a2e4-5968-4eac-9838-eec211167561"),
              Title = "It",
-             Author = "Stephen King",
+             AuthorId = Guid.Parse("732f4066-8eb3-4ede-b7c5-5edf339574ac"),
              Year=1986,
              CoverImageUrl="It.jpg",
              Description="Derry: A small city in Maine, place as hauntingly familiar as your own hometown," +
@@ -125,7 +125,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("65f62571-ee92-4e56-b6b9-dd7a8efe8e3f"),
              Title = "The Shining",
-             Author = "Stephen King",
+             AuthorId = Guid.Parse("732f4066-8eb3-4ede-b7c5-5edf339574ac"),
              Year=1977,
              CoverImageUrl="theShining.jpg",
              Description="The Shining is a 1977 horror novel by American author Stephen King. It is King's third published" +
@@ -142,7 +142,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("8c263c22-48fd-4ecd-9aa9-e01f2d8c0745"),
              Title = "The Alchemist",
-             Author = "Paulo Coelho",
+             AuthorId = Guid.Parse("86867d10-13a6-41cd-91c3-eac7c74d0267"),
              Year=1988,
              CoverImageUrl="TheAlchemist.jpg",
              Description="The Alchemist details the journey of a young Andalusian shepherd boy named Santiago." +
@@ -156,7 +156,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("f315b770-aba6-4dd3-b9f0-c8b3d0dce787"),
              Title = "Sapiens",
-             Author = "Yuval Noah Harari",
+             AuthorId = Guid.Parse("98be7892-9c29-45b0-bc44-3a55f55438d8"),
              Year=2011,
              CoverImageUrl="Sapiens.jpg",
              Genre = Genre.History
@@ -165,7 +165,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("4a8a88ba-79f6-44d6-8701-0c4d6bd7e412"),
              Title = "Homo Deus",
-             Author = "Yuval Noah Harari",
+             AuthorId = Guid.Parse("98be7892-9c29-45b0-bc44-3a55f55438d8"),
              Year=2015,
              CoverImageUrl="HomoDeus.jpg",
              Genre = Genre.History
@@ -174,7 +174,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("ed7d0f41-9d87-4c33-a0c7-3620ed591fe3"),
              Title = "Steve Jobs",
-             Author = "Walter Isaacson",
+             AuthorId = Guid.Parse("1e1e3c27-c460-4fc8-9e00-a799d28f3c71"),
              Year=2011,
              CoverImageUrl="SteveJobs.jpg",
              Genre = Genre.Biography
@@ -183,7 +183,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("4f73e635-6290-4152-8c9b-cbcd4d09f496"),
              Title = "The Martian",
-             Author = "Andy Weir",
+             AuthorId = Guid.Parse("3be2562a-695c-41c1-b3f7-713e4bda5da0"),
              Year=2011,
              CoverImageUrl="Martian.jpg",
              Genre = Genre.ScienceFiction
@@ -192,7 +192,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("f15ea439-f2a1-40ac-8278-1056d7a75a52"),
              Title = "Dune",
-             Author = "Frank Herbert",
+             AuthorId = Guid.Parse("383e7342-18e8-4eb8-a74e-9b403011d328"),
              Year=1965,
              CoverImageUrl="Dune.jpg",
              Description="Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides," +
@@ -212,7 +212,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("1192f7d6-3197-4a88-87ce-a251dd1cf0b3"),
              Title = "The Name of the Wind",
-             Author = "Patrick Rothfuss",
+             AuthorId = Guid.Parse("c8f65ff4-c963-4397-be53-6cda4c7fb567"),
              Year=2007,
              CoverImageUrl="TheNameOfWind.jpg",
              Description="The Name of the Wind, also called The Kingkiller Chronicle: Day One, is a heroic fantasy novel " +
@@ -231,7 +231,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("8be4237a-cadb-4f8c-bfd8-68eab7b7c64e"),
              Title = "To Kill a Mockingbird",
-             Author = "Harper Lee",
+             AuthorId = Guid.Parse("527255b7-2a1b-486a-b5be-6ebf376487f2"),
              Year=1960,
              CoverImageUrl="ToKillMockingBird.jpg",
              Description="One of the best-loved stories of all time, To Kill a Mockingbird has been translated " +
@@ -253,7 +253,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("3b57c8d7-a88e-4318-b5c4-0d1ab176c2e1"),
              Title = "Pride and Prejudice",
-             Author = "Jane Austen",
+             AuthorId = Guid.Parse("49e43a4b-106a-4ad0-9ecc-1234064f6cde"),
              Year=1813,
              CoverImageUrl="Pride.jpg",
              Description="Pride and Prejudice is an 1813 novel of manners written by Jane Austen. " +
@@ -270,7 +270,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("023fe09a-5ed3-4b7c-8eeb-f323f9e43cbf"),
              Title = "The Great Gatsby",
-             Author = "F. Scott Fitzgerald",
+             AuthorId = Guid.Parse("e93c976c-b126-4cf9-a3ee-b816c250d7aa"),
              Year=1925,
              CoverImageUrl="TheGreatGatsby.jpg",
              Genre = Genre.Romance
@@ -279,7 +279,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("b6680038-dd42-4e75-9b24-ab7f2455393d"),
              Title = "Crime and Punishment",
-             Author = "Fyodor Dostoevsky",
+             AuthorId = Guid.Parse("d6f1d900-f138-4ba9-b956-da3738d7f988"),
              Year=1866,
              CoverImageUrl="CrimeAndPunishment.jpg",
              Description="Crime and Punishment is a novel by Fyodor Dostoyevsky, first published in 1866." +
@@ -299,7 +299,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("7a183b2a-9af9-4412-9a2d-bcac7383e7ac"),
              Title = "The Catcher in the Rye",
-             Author = "J.D. Salinger",
+             AuthorId = Guid.Parse("9389518b-498c-4bbb-974a-079794394e2e"),
              Year=1945,
              CoverImageUrl="TheCatcherInTheRye.jpg",
              Genre = Genre.History
@@ -308,7 +308,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("d292d10e-8797-4b79-be46-150c747a58bf"),
              Title = "Dracula",
-             Author = "Bram Stoker",
+             AuthorId = Guid.Parse("06c9d74c-a4c6-4218-8d41-e65cf98be9b9"),
              Year=1897,
              CoverImageUrl="Dracula.jpg",
              Genre = Genre.Horror
@@ -317,7 +317,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("905974f8-f5b3-4eaf-a143-11b8345aca92"),
              Title = "Fahrenheit 451",
-             Author = "Ray Bradbury",
+             AuthorId = Guid.Parse("3aee53ce-3292-4895-8cef-5c41ab9684db"),
              Year=1953,
              CoverImageUrl="Fahrenheit451.jpg",
              Genre = Genre.ScienceFiction
@@ -326,7 +326,7 @@ namespace New_Web_Library.Data.Configuration
         {
              Id = Guid.Parse("7f7663d2-b426-4b01-af52-8d617a2fe553"),
              Title = "Refactoring",
-             Author = "Martin Fowler",
+             AuthorId = Guid.Parse("1af9840b-6115-41a2-b441-effe379fdc55"),
              Year= 1999,
              CoverImageUrl="Refactoring.jpg",
              Genre = Genre.Programming

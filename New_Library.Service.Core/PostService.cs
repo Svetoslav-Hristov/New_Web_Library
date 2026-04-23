@@ -1,16 +1,12 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using New_Library.Data.Models.Forum;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
-using New_Web_Library.Data.Models.Contracts;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.ViewModels.Forum;
-using static New_Web_Library.GCommon.EntityValidations;
 using static New_Web_Library.GCommon.EntityValidations.Posts;
 using static New_Web_Library.GCommon.EntityValidations.Topics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace New_Web_Library.Service.Core
 {

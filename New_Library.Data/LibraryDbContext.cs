@@ -16,6 +16,7 @@ namespace New_Web_Library.Data
 
         }
 
+        public virtual DbSet<Author> Authors { get; set; } = null!;
 
         public virtual DbSet<Book> Books { get; set; } = null!;
 
@@ -31,8 +32,6 @@ namespace New_Web_Library.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
 
             base.OnModelCreating(modelBuilder);
 

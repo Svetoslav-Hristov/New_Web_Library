@@ -7,7 +7,7 @@
         int Year { get; set; }
         string? CoverImageUrl { get; set; }
         string? Description { get; set; }
-        string Author { get; set; }
+       
 
     }
 }

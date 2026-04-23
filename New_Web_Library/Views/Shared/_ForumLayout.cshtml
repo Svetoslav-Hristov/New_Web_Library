@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
+   
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom mb-0 box-shadow "style="background-color:lightgray">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom mb-0 box-shadow " style="background-color:lightgray">
 
             <div class="container-fluid ">
 
@@ -18,7 +19,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <img src="~/images/Forum_Logo.png" style="height:40px;" />
                     <a class="navbar-brand"
-                      asp-area=""
+                       asp-area=""
                        asp-controller="Categories"
                        asp-action="Index">
                         Web_Library_Forum
@@ -29,7 +30,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <img src="~/images/CustomerSupport_Logo.png" style="height:30px;" />
                         <a class="navbar-brand"
-                         asp-area="Admin"
+                           asp-area="Admin"
                            asp-controller="Systems"
                            asp-action="ForumSupportPreview">
                             Forum_Support
@@ -41,7 +42,7 @@
                 <div class="mx-auto d-flex align-items-center gap-2">
                     <img src="~/images/Books_Logo.png" style="height:50px;" />
                     <a class="nav-link text-dark fw-bold"
-                      asp-area=""
+                       asp-area=""
                        asp-controller="Books"
                        asp-action="Index">
                         Back To Books
@@ -57,13 +58,13 @@
         </nav>
 
     </header>
-
-    <main main class="flex-grow-1 d-flex flex-column" style="min-height: 0;">
- 
-        @RenderBody()
-        </main>
     
-    <footer class="border-top footer text-muted py-4 mt-auto" style="background-color:lightgray" >
+    <main main class="flex-grow-1 d-flex flex-column">
+
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted py-4 mt-auto" style="background-color:lightgray">
         <div class="container-fluid ">
             &copy; 2026 - New_Web_Library - <a asp-area="" asp-controller="Welcome" asp-action="Contacts">Contacts</a>
         </div>

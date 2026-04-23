@@ -17,8 +17,24 @@ html {
     min-height: 100%;
 }
 
+.author-image {
+    float: left;
+    width: 220px;
+    max-width: 100%;
+    margin: 0 20px 15px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.author-biography::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+
 body {
-    margin-bottom: 60px;
+    margin-bottom: 0px;
 }
 
 .book-cover-small {
@@ -44,6 +60,7 @@ body {
     justify-content: center;
     gap: 35px;
     flex-wrap: wrap;
+}
     .book-card
 
 {

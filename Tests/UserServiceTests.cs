@@ -303,14 +303,20 @@ namespace New_Web_Library.Services.Core.Tests
             {
                 Id = Guid.NewGuid(),
                 Title = "Old Book",
-                Author = "Test Author"
+                Author =new Author 
+                {
+                    Name = "Test Author" 
+                }
             };
 
             var book2 = new Book
             {
                 Id = Guid.NewGuid(),
                 Title = "New Book",
-                Author = "Test Author"
+                Author =new Author 
+                { 
+                    Name = "Test Author" 
+                }
             };
 
             var user = new User

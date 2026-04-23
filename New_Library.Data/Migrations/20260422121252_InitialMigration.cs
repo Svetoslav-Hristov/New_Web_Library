@@ -1,0 +1,581 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace New_Web_Library.Data.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialMigration : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Authors",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Biography = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Books",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    CoverImageUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Genre = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Books", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Books_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Topics",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Topics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Topics_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Topics_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsersBooks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReservedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    ReservationExpiresOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    PickUpDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    ReturnDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersBooks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UsersBooks_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersBooks_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TopicId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Posts_Topics_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topics",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsBlocked", "IsDeleted", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { new Guid("19c4ebff-4f5c-4504-8641-0dd4fb9f2218"), 0, "Sofia, Lozenets", 32, "6fa5428b-cdfb-4ba5-9b99-e9087c7740bb", "maria.georgieva@library.bg", false, "Maria", false, false, "Georgieva", false, null, null, null, null, "+359887654321", false, null, false, null },
+                    { new Guid("30460549-2e0d-40c7-90ff-6f435900d186"), 0, "Sofia, Nadezhda", 41, "16d1147c-5d3b-4a57-9cef-2657c6c9aea9", "georgi.ivanov@library.bg", false, "Georgi", true, false, "Ivanov", false, null, null, null, null, "+359889777888", false, null, false, null },
+                    { new Guid("376b646e-7761-428b-b62b-21c58734fca7"), 0, "Sofia, Obelya", 46, "eea2fac5-86be-4ded-a621-15466276373d", "dimitar.hristov@library.bg", false, "Dimitar", true, false, "Hristov", false, null, null, null, null, "+359883111222", false, null, false, null },
+                    { new Guid("5c80ef3a-faad-40f4-b245-45790594fe37"), 0, "Sofia, Geo Milev", 30, "60dab041-cdca-493c-8061-36027e36879e", "radostina.nikolova@library.bg", false, "Radostina", false, false, "Nikolova", false, null, null, null, null, "+359882444555", false, null, false, null },
+                    { new Guid("66757a02-9ffa-4c13-8070-6aeb39d5a570"), 0, "Sofia, Lyulin 5", 34, "849be58c-aa24-41cb-a9d5-132d66ee9207", "vladimir.angelov@library.bg", false, "Vladimir", false, false, "Angelov", false, null, null, null, null, "+359881666777", false, null, false, null },
+                    { new Guid("7023f574-e36a-4c31-b4a0-65bba3947199"), 0, "Sofia, Center", 27, "301a57bf-cbd6-4200-a0ee-4982e6310a19", "desislava.popova@library.bg", false, "Desislava", false, false, "Popova", false, null, null, null, null, "+359880888999", false, null, false, null },
+                    { new Guid("70d6692c-73ff-42fd-8992-1e175692b52f"), 0, "Sofia, Druzhba 2", 23, "0ba69799-7fbd-4500-91c1-a90faa4ca2e7", "petya.koleva@library.bg", false, "Petya", false, false, "Koleva", false, null, null, null, null, "+359884222333", false, null, false, null },
+                    { new Guid("b97533fb-a904-4f0e-bacc-1dfd9f769122"), 0, "Sofia, Krasno Selo", 35, "53682720-6031-4f16-b400-5caf03a95a5d", "nikolay.stoyanov@library.bg", false, "Nikolay", false, false, "Stoyanov", false, null, null, null, null, "+359885999000", false, null, false, null },
+                    { new Guid("e6df1540-5bab-4126-b284-4a9af52c47cd"), 0, "Sofia, Studentski Grad", 29, "562980f5-f612-4f50-aa8a-2ef53a1332d5", "elena.dimitrova@library.bg", false, "Elena", false, false, "Dimitrova", false, null, null, null, null, "+359886333444", false, null, false, null },
+                    { new Guid("f71797dc-7130-48d6-8f30-7d24d19bf347"), 0, "Sofia, Mladost 1", 26, "c58cb3f5-91e1-46c5-9e77-fd416176b87b", "ivan.petrov@library.bg", false, "Ivan", false, false, "Petrov", false, null, null, null, null, "+359888123456", false, null, false, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Authors",
+                columns: new[] { "Id", "Biography", "ImageUrl", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("06c9d74c-a4c6-4218-8d41-e65cf98be9b9"), "Bram Stoker (1847–1912) was an Irish author and theatre manager best known for his classic Gothic horror novel Dracula (1897), one of the most influential works in horror literature. Through this novel, he created one of the most enduring figures in popular culture and helped define the modern image of the vampire.\r\n\r\nHe was born Abraham Stoker in Clontarf, Dublin, Ireland. As a child, he suffered from illness and spent much of his early years bedridden. During this time he developed a strong imagination and love of storytelling. Later, he recovered and went on to study mathematics at Trinity College Dublin, where he also became active in athletics and student life.\r\n\r\nAfter university, Stoker worked as a civil servant while writing theatre criticism. His reviews brought him into contact with the famous actor Sir Henry Irving. Stoker later became Irving’s manager and moved to London, where he spent many years managing the Lyceum Theatre. This career placed him in artistic and literary circles and influenced his writing.\r\n\r\nAlthough he wrote several novels and short stories, his greatest success came with Dracula. Told through letters, diary entries, and documents, the novel follows Count Dracula’s attempt to spread his power from Transylvania to England and the efforts of a group led by Professor Van Helsing to stop him. The story combined folklore, suspense, superstition, and modern fears of the Victorian age.\r\n\r\nDracula was not an immediate worldwide sensation on publication, but over time it became a literary masterpiece and the foundation of countless films, plays, television series, and adaptations. Count Dracula became one of the most recognizable fictional villains in history.\r\n\r\nStoker also wrote other works, including The Jewel of Seven Stars, The Lair of the White Worm, and adventure stories, though none achieved the fame of Dracula.\r\n\r\nHe died in London in 1912. After his death, the popularity of Dracula continued to grow enormously.\r\n\r\nToday Bram Stoker is remembered as a central figure in Gothic fiction and horror literature. His imagination shaped modern vampire mythology and left a lasting mark on world culture.", null, "Bram Stoker" },
+                    { new Guid("1af9840b-6115-41a2-b441-effe379fdc55"), null, null, "Martin Fowler" },
+                    { new Guid("1dc33818-603a-4c00-ba62-93c819bf3ba7"), "Aldous Huxley (1894–1963) was an English writer, essayist, and intellectual best known for his influential dystopian novel Brave New World (1932). Born in Godalming, Surrey, England, he came from a distinguished family of scientists and thinkers. His grandfather was the famous biologist Thomas Henry Huxley, known as “Darwin’s Bulldog,” and his brother Julian Huxley later became a renowned biologist and the first Director-General of UNESCO.\r\n\r\nHuxley studied at Eton College and later at Balliol College, Oxford, where he read English literature. During his youth, he suffered from a severe eye illness that temporarily left him nearly blind, an experience that deeply affected his life and limited some career possibilities. Despite this challenge, he developed into a prolific author.\r\n\r\nIn the 1920s, Huxley gained recognition for his sharp social satire in novels such as Crome Yellow and Point Counter Point. His most famous work, Brave New World, imagined a technologically advanced society in which people are controlled through conditioning, consumerism, and pleasure rather than force. The novel became one of the most important warnings about authoritarianism, mass culture, and the misuse of science.\r\n\r\nLater in life, Huxley moved to the United States and lived in California. There he became increasingly interested in philosophy, spirituality, mysticism, and human consciousness. These themes appeared in works such as The Perennial Philosophy (1945) and The Doors of Perception (1954), which explored altered states of mind and influenced later cultural movements.\r\n\r\nHuxley also worked as a screenwriter in Hollywood for a time, contributing to several film projects. Throughout his life, he remained a thoughtful critic of modern society, technology, and the dangers of losing individuality.\r\n\r\nHe died on November 22, 1963, in Los Angeles, California. Aldous Huxley is remembered as one of the twentieth century’s most important writers, whose works continue to inspire debate about freedom, ethics, science, and the future of humanity.", "/AuthorImages/Aldous_Huxley.jpg", "Aldous Huxley" },
+                    { new Guid("1e1e3c27-c460-4fc8-9e00-a799d28f3c71"), null, null, "Walter Isaacson" },
+                    { new Guid("383e7342-18e8-4eb8-a74e-9b403011d328"), null, null, "Frank Herbert" },
+                    { new Guid("3aee53ce-3292-4895-8cef-5c41ab9684db"), "Ray Bradbury (1920–2012) was an American author celebrated for his imaginative works of science fiction, fantasy, horror, and literary fiction. He is best known for combining poetic language with powerful ideas about technology, censorship, human nature, and the importance of imagination. Bradbury became one of the most beloved and influential writers of the twentieth century.\r\n\r\nHe was born in Waukegan, Illinois, United States. Many memories of his childhood in a small town later inspired the nostalgic settings and emotional tone of some of his fiction. His family later moved to Los Angeles, California, where Bradbury developed a deep love for libraries, cinema, and storytelling. Because he could not afford college, he educated himself through extensive reading and lifelong study in public libraries.\r\n\r\nBradbury began publishing stories in magazines during the 1940s and quickly gained attention for his originality and vivid style. His breakthrough came with The Martian Chronicles (1950), a connected series of stories about human settlement on Mars. The book explored colonization, loneliness, cultural conflict, and the destruction of innocence.\r\n\r\nHis most famous novel, Fahrenheit 451 (1953), imagined a future society where books are banned and “firemen” burn them. The story follows Guy Montag, a man who begins to question censorship and conformity. The novel became a classic warning about the dangers of suppressing ideas and losing independent thought.\r\n\r\nBradbury also wrote Something Wicked This Way Comes, Dandelion Wine, The Illustrated Man, and hundreds of short stories. His work often blended wonder, fear, nostalgia, and moral reflection. He was especially skilled at portraying both the beauty and danger of technological progress.\r\n\r\nBeyond books, Bradbury wrote screenplays, essays, plays, and television scripts. He contributed to film and popular culture, including work connected with adaptations of his stories. He remained active for decades as a public speaker and defender of reading, libraries, and creativity.\r\n\r\nRay Bradbury died in 2012 in Los Angeles. Today he is remembered as one of America’s great storytellers, whose works continue to inspire readers to value imagination, freedom, and the human spirit.", null, "Ray Bradbury" },
+                    { new Guid("3be2562a-695c-41c1-b3f7-713e4bda5da0"), null, null, "Andy Weir" },
+                    { new Guid("47df0e8f-7a6b-4ed1-abfa-372f26dbcd49"), null, null, "Andrew Hunt" },
+                    { new Guid("4841f823-58e2-4aea-98b9-3cdbd9b740e4"), "Arthur Conan Doyle (1859–1930) was a British writer and physician best known as the creator of the legendary detective Sherlock Holmes, one of the most famous fictional characters in literary history. His works helped shape modern detective fiction and continue to influence literature, film, and television around the world.\r\n\r\nHe was born in Edinburgh, Scotland, into an Irish Catholic family. Doyle studied medicine at the University of Edinburgh, where one of his professors, Dr. Joseph Bell, impressed students with his remarkable powers of observation and deduction. Bell later became an important inspiration for the character of Sherlock Holmes.\r\n\r\nAfter qualifying as a doctor, Doyle worked as a physician while also writing stories in his spare time. In 1887 he published A Study in Scarlet, the first novel featuring Sherlock Holmes and Dr. John Watson. Holmes’s brilliant reasoning, scientific methods, and sharp attention to detail quickly captured readers’ interest.\r\n\r\nDoyle later wrote many more Holmes adventures, including The Sign of Four, The Hound of the Baskervilles, and dozens of short stories published in magazines. Sherlock Holmes became so popular that when Doyle attempted to end the series, public demand eventually persuaded him to bring the detective back.\r\n\r\nAlthough Holmes overshadowed much of his other work, Doyle also wrote historical novels, science fiction, adventure stories, and nonfiction. His Professor Challenger stories, including The Lost World (1912), became classics of early science fiction and adventure literature.\r\n\r\nOutside writing, Doyle was active in public life and supported causes he believed in, sometimes using his fame to campaign against miscarriages of justice. In later life he developed a strong interest in spiritualism and wrote extensively on the subject.\r\n\r\nArthur Conan Doyle was knighted in 1902 for his public service and contributions during the Boer War period. He died on July 7, 1930, in England.\r\n\r\nToday he is remembered as one of the most influential storytellers of the modern era. Through Sherlock Holmes, Doyle established many of the detective story conventions still used today, including logical deduction, forensic clues, and the brilliant investigator solving seemingly impossible mysteries.", "/AuthorImages/ArturConnonDoile.jpg", "Arthur Conan Doyle" },
+                    { new Guid("49e43a4b-106a-4ad0-9ecc-1234064f6cde"), "Jane Austen (1775–1817) was an English novelist celebrated for her sharp social observation, wit, and enduring stories about love, marriage, family, and class. She is considered one of the most important writers in English literature, and her novels remain widely read and adapted around the world.\r\n\r\nShe was born in Steventon, Hampshire, England, into a close and educated family. Her father was a clergyman who encouraged reading and learning, giving Austen access to a broad range of books from an early age. She began writing as a teenager, producing stories, parodies, and early drafts that revealed her intelligence and humor.\r\n\r\nAusten lived during a period when women had limited economic independence, and marriage often shaped a woman’s future. These realities strongly influenced her fiction. Rather than writing about wars or grand politics, she focused on domestic life, relationships, manners, and the social pressures of her time.\r\n\r\nHer major novels include Sense and Sensibility (1811), Pride and Prejudice (1813), Mansfield Park (1814), and Emma (1815). In these works, Austen created memorable heroines such as Elizabeth Bennet and Emma Woodhouse, characters admired for their intelligence, individuality, and emotional growth. Her stories often combine romance with subtle criticism of vanity, hypocrisy, and social ambition.\r\n\r\nAusten’s novels were originally published anonymously, often identified only as being written “By a Lady.” Although she achieved some success during her lifetime, her full fame grew significantly after her death.\r\n\r\nShe completed Persuasion and Northanger Abbey, both of which were published posthumously in 1818. These later works further demonstrated her maturity as a writer and her skill in portraying human relationships.\r\n\r\nJane Austen died in Winchester, England, at the age of 41. Though her life was relatively quiet, her literary legacy became immense. Her novels are praised for elegant prose, psychological insight, and timeless themes that continue to resonate with readers across generations.\r\n\r\nToday Jane Austen is remembered as a master of the novel whose works continue to inspire films, television adaptations, academic study, and devoted readers worldwide.", null, "Jane Austen" },
+                    { new Guid("527255b7-2a1b-486a-b5be-6ebf376487f2"), null, null, "Harper Lee" },
+                    { new Guid("732f4066-8eb3-4ede-b7c5-5edf339574ac"), "Stephen King (born 1947) is an American author widely regarded as one of the most successful and influential writers of modern popular fiction. He is best known for his horror novels, but his work also includes suspense, fantasy, science fiction, drama, and psychological thrillers. Over his long career, he has published dozens of bestselling books and sold hundreds of millions of copies worldwide.\r\n\r\nHe was born in Portland, Maine, United States, and was raised primarily by his mother after his father left the family when King was young. From an early age, he developed a love of storytelling, horror films, and imaginative fiction. He studied English at the University of Maine, where he also began publishing short stories.\r\n\r\nBefore achieving literary success, King worked various jobs, including teaching. His breakthrough came in 1974 with the publication of Carrie, a novel about a troubled teenage girl with supernatural powers. The book became a major success and was later adapted into a popular film.\r\n\r\nKing went on to write many famous novels, including The Shining, Salem’s Lot, It, Misery, Pet Sematary, The Stand, and Doctor Sleep. His stories often combine ordinary settings with terrifying or supernatural events, creating fear through both atmosphere and character psychology. He is especially admired for making readers care deeply about his characters before placing them in extreme situations.\r\n\r\nIn addition to horror, King has written acclaimed works such as The Green Mile, 11/22/63, and novellas like Rita Hayworth and Shawshank Redemption and The Body, which inspired successful films. Several of his books have been adapted into movies, television series, and stage productions.\r\n\r\nKing survived a serious accident in 1999 when he was struck by a vehicle while walking near his home, but he recovered and continued writing. He has also written essays and nonfiction, including On Writing, a respected book about the craft of writing.\r\n\r\nStephen King remains one of the defining voices of modern fiction. His storytelling ability, memorable characters, and enormous range have earned him generations of readers and a lasting place in contemporary literature.", "/AuthorImages/StephenKing.jpg", "Stephen King" },
+                    { new Guid("86867d10-13a6-41cd-91c3-eac7c74d0267"), "Paulo Coelho (born 1947) is a Brazilian author best known for his internationally acclaimed novel The Alchemist, one of the most widely read and translated books in modern literature. His works often explore themes such as destiny, spirituality, personal growth, love, and the search for meaning in life.\r\n\r\nHe was born in Rio de Janeiro, Brazil. During his youth, Coelho had a difficult relationship with his family, who initially opposed his artistic ambitions and preferred a more conventional career path for him. He showed an early interest in literature, theatre, and creative expression. Before becoming a novelist, he worked in several fields, including journalism, songwriting, and theatre.\r\n\r\nIn the 1970s, Coelho became known in Brazil as a lyricist and collaborated with famous musicians, writing songs that brought him public recognition. During this period, he also experienced political repression under Brazil’s military dictatorship, an experience that influenced his later views on freedom and self-discovery.\r\n\r\nA turning point in his life came when he undertook a spiritual pilgrimage across northern Spain on the Camino de Santiago. This journey inspired his autobiographical book The Pilgrimage (1987), which explored faith, discipline, and inner transformation.\r\n\r\nSoon after, he published The Alchemist (1988), the story of a young shepherd named Santiago who travels in search of treasure and learns to follow his dreams. Though modestly successful at first, the novel later became a global phenomenon. It has been translated into many languages and has inspired millions of readers around the world.\r\n\r\nCoelho continued writing bestselling novels such as Brida, Veronika Decides to Die, Eleven Minutes, The Valkyries, and Adultery. His books often combine simple storytelling with philosophical and spiritual ideas, making them accessible to a broad international audience.\r\n\r\nHe is also known for being active online and maintaining close communication with readers through social media. Beyond literature, Coelho has supported charitable and cultural initiatives.\r\n\r\nPaulo Coelho remains one of the most influential contemporary authors. His messages about courage, purpose, and listening to one’s heart have given his books lasting global popularity.", null, "Paulo Coelho" },
+                    { new Guid("86fe4481-0fe8-44fc-9ca1-7f53edf0dab8"), "Robert C. Martin, widely known as “Uncle Bob,” is an American software engineer, author, and speaker best known for his major influence on modern software development practices. He is one of the most recognized advocates of clean code, agile principles, and professional standards in programming.\r\n\r\nMartin began his career as a programmer in the early years of the software industry and accumulated decades of practical experience in designing and building software systems. Over time, he became known not only for technical expertise but also for his strong views on craftsmanship, discipline, and responsibility in software engineering.\r\n\r\nHe was one of the original signatories of the Agile Manifesto in 2001, a landmark document that helped transform the way software teams work. Agile development emphasized collaboration, adaptability, frequent delivery, and close communication with customers. Martin played an important role in spreading these ideas through books, lectures, and consulting.\r\n\r\nHe is the author of several highly influential books. His best-known work, Clean Code: A Handbook of Agile Software Craftsmanship (2008), became a standard reference for developers around the world. In it, he promoted writing readable, maintainable, and well-structured code. Other notable books include The Clean Coder, Clean Architecture, and Agile Software Development: Principles, Patterns, and Practices.\r\n\r\nMartin is also strongly associated with the SOLID principles of object-oriented design, which help developers create flexible and maintainable software systems. These principles are widely taught and used in professional software development.\r\n\r\nThrough conferences, training sessions, articles, and online talks, he has mentored generations of programmers. His teaching style combines technical depth with practical advice about ethics, teamwork, testing, and long-term code quality.\r\n\r\nRobert C. Martin remains one of the most influential figures in software engineering. His ideas continue to shape how developers think about code structure, professionalism, and building software that can evolve successfully over time.", "/AuthorImages/RobertMartin.jpg", "Robert C. Martin" },
+                    { new Guid("9389518b-498c-4bbb-974a-079794394e2e"), "J.D. Salinger (1919–2010) was an American writer best known for his influential novel The Catcher in the Rye (1951), one of the most widely read and discussed books of the twentieth century. He became famous for his distinctive voice, sensitive portrayal of youth, and later for his extraordinary privacy and withdrawal from public life.\r\n\r\nHe was born Jerome David Salinger in New York City, United States. He grew up in Manhattan and later attended several schools before enrolling at Valley Forge Military Academy. During his early adulthood, he developed a serious interest in writing and studied creative writing while beginning to publish short stories.\r\n\r\nSalinger served in the United States Army during World War II and took part in major military campaigns in Europe, including the Normandy invasion. His wartime experiences deeply affected him and influenced the emotional tone of some of his later work.\r\n\r\nHis literary breakthrough came with The Catcher in the Rye, a novel narrated by teenager Holden Caulfield. The story follows Holden’s wandering days in New York after leaving school and explores alienation, identity, innocence, and dissatisfaction with the adult world. The novel’s honest language and rebellious perspective strongly connected with generations of young readers.\r\n\r\nAfter the success of the novel, Salinger published important collections such as Nine Stories and books centered on the Glass family, including Franny and Zooey and Raise High the Roof Beam, Carpenters and Seymour: An Introduction. These works showed his interest in spirituality, family dynamics, and psychological complexity.\r\n\r\nDespite enormous fame, Salinger increasingly withdrew from public attention. He moved to Cornish, New Hampshire, where he lived privately for decades, rarely giving interviews or publishing new work. His reclusive lifestyle became almost as famous as his writing.\r\n\r\nHe died in 2010 at the age of 91. Although he published relatively little compared with many major authors, his impact on literature was significant. His exploration of adolescence, authenticity, and emotional vulnerability continues to influence writers and readers around the world.\r\n\r\nToday J.D. Salinger is remembered as both a major literary voice and one of the most mysterious figures in modern American literature.", null, "J.D. Salinger" },
+                    { new Guid("98be7892-9c29-45b0-bc44-3a55f55438d8"), null, null, "Yuval Noah Harari" },
+                    { new Guid("a1be31d1-8d08-4837-bf49-cf303d8083f0"), "J.R.R. Tolkien (1892–1973) was an English writer, philologist, and university professor best known as the author of The Hobbit and The Lord of the Rings, two of the most influential works of fantasy literature ever written. His imagination, world-building, and creation of original languages helped establish modern fantasy as a major literary genre.\r\n\r\nHe was born John Ronald Reuel Tolkien in Bloemfontein, South Africa, and moved to England as a child after the death of his father. He grew up with a deep love for language, mythology, and literature. Tolkien later studied at Exeter College, Oxford, where he specialized in classics and philology, the study of languages and their history.\r\n\r\nDuring World War I, Tolkien served in the British Army and took part in the Battle of the Somme. The hardships and losses of war deeply affected him and influenced themes of courage, friendship, sacrifice, and sorrow found in his later writing.\r\n\r\nAfter the war, Tolkien became a respected academic. He taught at the University of Leeds and later at Oxford University, where he was a professor of Anglo-Saxon and then English Language and Literature. He was an expert on medieval texts and translated important works such as Beowulf. His scholarly knowledge strongly shaped the myths, cultures, and languages of his fictional world.\r\n\r\nTolkien first gained fame with The Hobbit (1937), a children’s adventure novel following Bilbo Baggins and his journey to recover treasure guarded by the dragon Smaug. Its success led to his masterpiece, The Lord of the Rings (1954–1955), an epic story set in Middle-earth involving the struggle against the Dark Lord Sauron and the quest to destroy the One Ring.\r\n\r\nHis stories are admired for their depth, moral themes, memorable characters, and richly developed setting. Tolkien created entire histories, maps, races, and languages such as Elvish, making Middle-earth one of the most detailed fictional worlds ever imagined.\r\n\r\nHe was also a close friend of C.S. Lewis, and both were members of the literary discussion group known as the Inklings.\r\n\r\nJ.R.R. Tolkien died in 1973 in England. Today he is remembered as the father of modern fantasy literature, whose works continue to inspire books, films, games, and generations of readers worldwide.", null, "J.R.R. Tolkien" },
+                    { new Guid("a79aff9a-5b7d-4c86-8fdc-73950656cfd2"), "Orwell was a British journalist and author, who wrote two of the most famous novels of the 20th century 'Animal Farm' and 'Nineteen Eighty-Four'.\r\n\r\nOrwell was born Eric Arthur Blair on 25 June 1903 in eastern India, the son of a British colonial civil servant. He was educated in England and, after he left Eton, joined the Indian Imperial Police in Burma, then a British colony. He resigned in 1927 and decided to become a writer. In 1928, he moved to Paris where lack of success as a writer forced him into a series of menial jobs. He described his experiences in his first book, 'Down and Out in Paris and London', published in 1933. He took the name George Orwell, shortly before its publication. This was followed by his first novel, 'Burmese Days', in 1934.\r\n\r\nAn anarchist in the late 1920s, by the 1930s he had begun to consider himself a socialist. In 1936, he was commissioned to write an account of poverty among unemployed miners in northern England, which resulted in 'The Road to Wigan Pier' (1937). Late in 1936, Orwell travelled to Spain to fight for the Republicans against Franco's Nationalists. He was forced to flee in fear of his life from Soviet-backed communists who were suppressing revolutionary socialist dissenters. The experience turned him into a lifelong anti-Stalinist.\r\n\r\nBetween 1941 and 1943, Orwell worked on propaganda for the BBC. In 1943, he became literary editor of the Tribune, a weekly left-wing magazine. By now he was a prolific journalist, writing articles, reviews and books.\r\n\r\nIn 1945, Orwell's 'Animal Farm' was published. A political fable set in a farmyard but based on Stalin's betrayal of the Russian Revolution, it made Orwell's name and ensured he was financially comfortable for the first time in his life. 'Nineteen Eighty-Four' was published four years later. Set in an imaginary totalitarian future, the book made a deep impression, with its title and many phrases - such as 'Big Brother is watching you', 'newspeak' and 'doublethink' - entering popular use. By now Orwell's health was deteriorating and he died of tuberculosis on 21 January 1950.", "/AuthorImages/Orwell.jpg", "George Orwell" },
+                    { new Guid("c8f65ff4-c963-4397-be53-6cda4c7fb567"), null, null, "Patrick Rothfuss" },
+                    { new Guid("d6f1d900-f138-4ba9-b956-da3738d7f988"), "Fyodor Dostoevsky (1821–1881) was a Russian novelist, philosopher, and journalist widely regarded as one of the greatest writers in world literature. His works explored psychology, morality, faith, freedom, suffering, and the inner conflicts of human nature. He is especially admired for the emotional depth and philosophical power of his novels.\r\n\r\nHe was born in Moscow, Russia, into the family of a military doctor. Dostoevsky studied engineering at the Nikolayev Military Engineering Institute in Saint Petersburg, but his true passion was literature. After completing his studies, he left engineering service and turned to writing.\r\n\r\nHis first novel, Poor Folk (1846), gained immediate attention and established him as a promising young writer. However, his life soon took a dramatic turn. In 1849 he was arrested for participating in a discussion group that criticized the Russian government. He was sentenced to death, but at the last moment the execution was canceled and replaced with years of hard labor in Siberia, followed by military service.\r\n\r\nThis traumatic experience deeply shaped his worldview and later writing. Themes of punishment, redemption, guilt, and spiritual rebirth became central in his novels.\r\n\r\nAfter returning from exile, Dostoevsky wrote many of his greatest works, including Notes from Underground, Crime and Punishment, The Idiot, Demons (also known as The Possessed), and The Brothers Karamazov. These novels examine moral choices, crime, religious belief, social unrest, and the search for meaning in a troubled world.\r\n\r\nCrime and Punishment tells the story of Rodion Raskolnikov, a poor student who commits murder and struggles with guilt and conscience. The Brothers Karamazov, his final major novel, is considered one of the greatest philosophical novels ever written.\r\n\r\nDostoevsky also struggled personally with debt, epilepsy, and gambling addiction, yet continued to write with extraordinary intensity. His difficult life experiences gave his fiction unusual realism and psychological insight.\r\n\r\nHe died in Saint Petersburg in 1881. Today Fyodor Dostoevsky is remembered as a literary giant whose exploration of the human soul influenced writers, psychologists, philosophers, and readers throughout the world.", null, "Fyodor Dostoevsky" },
+                    { new Guid("d7cf5390-d958-4fdd-8365-d019cac4e850"), "Dan Brown (born 1964) is an American author best known for his bestselling thriller novels that combine mystery, history, symbols, art, and secret organizations. He became one of the most commercially successful writers of the modern era through stories that blend fast-paced suspense with intellectual puzzles.\r\n\r\nHe was born in Exeter, New Hampshire, United States. His father was a mathematics teacher, and his mother was a musician and church organist. Growing up in an academic environment influenced his later interest in codes, logic, religion, and hidden meanings—topics that became central elements in his fiction.\r\n\r\nBrown studied at Amherst College and later spent time in Europe, where he developed a strong interest in art history and culture. Before becoming a full-time writer, he worked as a teacher and pursued music. His early novels gained moderate attention, but his breakthrough came in 2003 with The Da Vinci Code.\r\n\r\nThe Da Vinci Code became an international phenomenon, selling millions of copies worldwide. The novel follows Harvard symbologist Robert Langdon as he investigates a murder in the Louvre Museum and uncovers clues connected to religious history, secret societies, and famous works of art. Its success led to global debates, controversy, and major interest in historical mysteries.\r\n\r\nBrown continued the Robert Langdon series with novels such as Angels & Demons, The Lost Symbol, Inferno, and Origin. These books often explore themes such as science versus religion, technology, cryptography, architecture, and hidden knowledge.\r\n\r\nSeveral of his novels were adapted into successful films starring Tom Hanks as Robert Langdon, helping expand Brown’s worldwide popularity.\r\n\r\nDan Brown is known for his short chapters, cliffhangers, and puzzle-driven storytelling style that keeps readers engaged. Although some historians and critics have challenged the accuracy of certain claims in his fiction, his books have inspired many readers to explore art, history, architecture, and symbolism.\r\n\r\nHe remains one of the most recognized contemporary thriller writers, whose works continue to attract audiences around the world.", "/AuthorImages/DanBrown.jpg", "Dan Brown" },
+                    { new Guid("e93c976c-b126-4cf9-a3ee-b816c250d7aa"), "F. Scott Fitzgerald (1896–1940) was an American novelist and short story writer best known for capturing the spirit, glamour, and disillusionment of the Jazz Age. He is considered one of the greatest writers of twentieth-century American literature, with works that explore wealth, ambition, love, and the fragility of the American Dream.\r\n\r\nHe was born Francis Scott Key Fitzgerald in Saint Paul, Minnesota, United States. From a young age, he showed literary talent and strong ambition. He attended Princeton University, where he wrote for student publications and developed his passion for writing, though he left before graduating to join the U.S. Army during World War I.\r\n\r\nWhile stationed in the military, Fitzgerald met Zelda Sayre, who would later become his wife and one of the most famous figures of the 1920s. Their marriage became both glamorous and turbulent, marked by fame, financial pressure, and personal struggles.\r\n\r\nFitzgerald achieved immediate success with his first novel, This Side of Paradise (1920), which made him a literary celebrity. The book captured the attitudes and energy of a new postwar generation. He followed it with novels such as The Beautiful and Damned and Tender Is the Night, along with many short stories published in leading magazines.\r\n\r\nHis masterpiece, The Great Gatsby (1925), is now regarded as one of the finest American novels ever written. Set during the roaring twenties, it tells the story of Jay Gatsby, a mysterious millionaire driven by love and illusion. The novel examines class, desire, moral emptiness, and the pursuit of impossible dreams.\r\n\r\nDespite his talent, Fitzgerald struggled with financial difficulties, heavy drinking, and the mental illness of Zelda, who spent much of her later life in psychiatric care. In the 1930s he moved to Hollywood, where he worked as a screenwriter while continuing to write fiction.\r\n\r\nHe died in 1940 at the age of 44, believing much of his success had faded. However, after his death, his reputation grew enormously, especially through the rediscovery of The Great Gatsby.\r\n\r\nToday F. Scott Fitzgerald is remembered as a brilliant stylist and chronicler of ambition, beauty, and disappointment. His works continue to define an era and remain central to American literary culture.", null, "F. Scott Fitzgerald" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "DeleteAt", "Description", "IsDeleted", "Name", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, null, "Modern literary works", false, "Modern Literature", null },
+                    { 2, null, "Timeless classics", false, "Classical Literature", null },
+                    { 3, null, "Poems and verse", false, "Poetry", null },
+                    { 4, null, "Fantasy worlds and stories", false, "Fantasy", null },
+                    { 5, null, "Sci-fi adventures and futuristic stories", false, "Science Fiction", null },
+                    { 6, null, "Stories set in historical periods", false, "Historical Fiction", null },
+                    { 7, null, "Suspenseful and mysterious stories", false, "Mystery & Thriller", null },
+                    { 8, null, "Informative and factual works", false, "General Discussion", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Books",
+                columns: new[] { "Id", "AuthorId", "CoverImageUrl", "Description", "Genre", "Title", "Year" },
+                values: new object[,]
+                {
+                    { new Guid("023fe09a-5ed3-4b7c-8eeb-f323f9e43cbf"), new Guid("e93c976c-b126-4cf9-a3ee-b816c250d7aa"), "TheGreatGatsby.jpg", null, 3, "The Great Gatsby", 1925 },
+                    { new Guid("1192f7d6-3197-4a88-87ce-a251dd1cf0b3"), new Guid("c8f65ff4-c963-4397-be53-6cda4c7fb567"), "TheNameOfWind.jpg", "The Name of the Wind, also called The Kingkiller Chronicle: Day One, is a heroic fantasy novel written by American author Patrick Rothfuss. It is the first book in the ongoing fantasy trilogy The Kingkiller Chronicle. It was published on March 27, 2007, by DAW Books, the novel has been hailed as a masterpiece of high fantasy.\r\n\r\nThe story begins the tale of Kvothe (pronounced \"quothe\"), a young man who becomes the most notorious magician his world has ever known. Kvothe narrates his own journey, from his childhood in a troupe of traveling players to his years as a near-feral orphan in a crime-ridden city, and his daring entrance into a prestigious and perilous school of magic.\r\n\r\nPatrick Rothfuss's debut novel has been praised for its fresh and earthy originality, transporting readers into the mind of a wizard and the world that shaped him. It explores the truth behind the legend of a hero and how one can become entangled in their own mythology. Rothfuss's powerful storytelling and robust writing have earned him comparisons to renowned fantasy authors such as Tad Williams, George R. R. Martin, and Robert Jordan.", 0, "The Name of the Wind", 2007 },
+                    { new Guid("3b57c8d7-a88e-4318-b5c4-0d1ab176c2e1"), new Guid("49e43a4b-106a-4ad0-9ecc-1234064f6cde"), "Pride.jpg", "Pride and Prejudice is an 1813 novel of manners written by Jane Austen. The novel follows the character development of Elizabeth Bennet, the dynamic protagonist of the book who learns about the repercussions of hasty judgments and comes to appreciate the difference between superficial goodness and actual goodness.\r\n\r\nMr. Bennet, owner of the Longbourn estate in Hertfordshire, has five daughters, but his property is entailed and can only be passed to a male heir. His wife also lacks an inheritance, so his family faces becoming very poor upon his death. Thus, it is imperative that at least one of the girls marry well to support the others, which is a motivation that drives the plot.", 3, "Pride and Prejudice", 1813 },
+                    { new Guid("3fb3a2e4-5968-4eac-9838-eec211167561"), new Guid("732f4066-8eb3-4ede-b7c5-5edf339574ac"), "It.jpg", "Derry: A small city in Maine, place as hauntingly familiar as your own hometown, only in Derry the haunting is real...\r\n\r\nThey were seven teenagers when they first stumbled upon the horror. Now they are grown-up men and women who have gone out into the big world to gain success and happiness. But none of them can withstand the force that has drawn them back to Derry to face the nightmare without an end, and the evil without a name...", 4, "It", 1986 },
+                    { new Guid("43f42ae2-7f5f-4944-871e-52d9fd057e6a"), new Guid("47df0e8f-7a6b-4ed1-abfa-372f26dbcd49"), "PragmaticProgramer.jpg", "Ward Cunningham Straight from the programming trenches, The Pragmatic Programmer cuts through the increasing specialization and technicalities of modern software development to examine the core process--taking a requirement and producing working, maintainable code that delights its users. It covers topics ranging from personal responsibility and career development to architectural techniques for keeping your code flexible and easy to adapt and reuse. Read this book, and you’ll learn how to Fight software rot; Avoid the trap of duplicating knowledge; Write flexible, dynamic, and adaptable code; Avoid programming by coincidence; Bullet-proof your code with contracts, assertions, and exceptions; Capture real requirements; Test ruthlessly and effectively; Delight your users; Build teams of pragmatic programmers; and Make your developments more precise with automation. Written as a series of self-contained sections and filled with entertaining anecdotes, thoughtful examples, and interesting analogies, The Pragmatic Programmer illustrates the best practices and major pitfalls of many different aspects of software development. Whether you’re a new coder, an experienced program.", 7, "The Pragmatic Programmer", 1999 },
+                    { new Guid("4a8a88ba-79f6-44d6-8701-0c4d6bd7e412"), new Guid("98be7892-9c29-45b0-bc44-3a55f55438d8"), "HomoDeus.jpg", null, 6, "Homo Deus", 2015 },
+                    { new Guid("4f73e635-6290-4152-8c9b-cbcd4d09f496"), new Guid("3be2562a-695c-41c1-b3f7-713e4bda5da0"), "Martian.jpg", null, 1, "The Martian", 2011 },
+                    { new Guid("5571dd6b-512c-4d64-8620-cf469800d93c"), new Guid("d7cf5390-d958-4fdd-8365-d019cac4e850"), "DaVinciCode.jpg", "The Da Vinci Code is a 2003 mystery thriller novel by Dan Brown. It is Brown's second novel to include the character Robert Langdon: the first was his 2000 novel Angels & Demons. The Da Vinci Code follows \"symbologist\" Robert Langdon and cryptologist Sophie Neveu after a murder in the Louvre Museum in Paris causes them to become involved in a battle between the Priory of Sion and Opus Dei over the possibility of Jesus Christ and Mary Magdalene having had a child together.", 11, "The Da Vinci Code", 2003 },
+                    { new Guid("65f62571-ee92-4e56-b6b9-dd7a8efe8e3f"), new Guid("732f4066-8eb3-4ede-b7c5-5edf339574ac"), "theShining.jpg", "The Shining is a 1977 horror novel by American author Stephen King. It is King's third published novel and first hardback bestseller; its success firmly established King as a preeminent author in the horror genre. The setting and characters are influenced by King's personal experiences, including both his visit to The Stanley Hotel in 1974 and his struggle with alcoholism. The book was followed by a sequel, Doctor Sleep, published in 2013.\r\n\r\nThe Shining centers on the life of Jack Torrance, a struggling writer and recovering alcoholic who accepts a position as the off-season caretaker of the historic Overlook Hotel in the Colorado Rockies. His family accompanies him on this job, including his young son Danny Torrance, who possesses \"the shining\", an array of psychic abilities that allow Danny to see the hotel's horrific past. Soon, after a winter storm leaves them snowbound, the supernatural forces inhabiting the hotel influence Jack's sanity, leaving his wife and son in incredible danger.\r\n\r\n", 4, "The Shining", 1977 },
+                    { new Guid("7a183b2a-9af9-4412-9a2d-bcac7383e7ac"), new Guid("9389518b-498c-4bbb-974a-079794394e2e"), "TheCatcherInTheRye.jpg", null, 6, "The Catcher in the Rye", 1945 },
+                    { new Guid("7f7663d2-b426-4b01-af52-8d617a2fe553"), new Guid("1af9840b-6115-41a2-b441-effe379fdc55"), "Refactoring.jpg", null, 7, "Refactoring", 1999 },
+                    { new Guid("8be4237a-cadb-4f8c-bfd8-68eab7b7c64e"), new Guid("527255b7-2a1b-486a-b5be-6ebf376487f2"), "ToKillMockingBird.jpg", "One of the best-loved stories of all time, To Kill a Mockingbird has been translated into more than 40 languages, sold more than 30 million copies worldwide, served as the basis for an enormously popular motion picture, and voted one of the best novels of the 20th century by librarians across the United States. A gripping, heart-wrenching, and wholly remarkable tale of coming-of-age in a South poisoned by virulent prejudice, it views a world of great beauty and savage inequities through the eyes of a young girl, as her father -- a crusading local lawyer -- risks everything to defend a black man unjustly accused of a terrible crime.\r\n\r\nLawyer Atticus Finch defends Tom Robinson -- a black man charged with the rape of a white girl. Writing through the young eyes of Finch's children Scout and Jem, Harper Lee explores with rich humor and unswerving honesty the irrationality of adult attitudes toward race and class in small-town Alabama during the mid-1930s Depression years. The conscience of a town steeped in prejudice, violence, and hypocrisy is pricked by the stamina and quiet heroism of one man's struggle for justice. But the weight of history will only tolerate so much.", 6, "To Kill a Mockingbird", 1960 },
+                    { new Guid("8c263c22-48fd-4ecd-9aa9-e01f2d8c0745"), new Guid("86867d10-13a6-41cd-91c3-eac7c74d0267"), "TheAlchemist.jpg", "The Alchemist details the journey of a young Andalusian shepherd boy named Santiago. Santiago, believing a recurring dream to be prophetic, decides to travel to the pyramids of Egypt to find treasure. On the way, he encounters love, danger, opportunity and disaster. One of the significant characters that he meets is an old king named Melchizedek who tells him that \"When you want something, all the universe conspires in helping you to achieve it.\" This is the core philosophy and motif of the book.", 8, "The Alchemist", 1988 },
+                    { new Guid("905974f8-f5b3-4eaf-a143-11b8345aca92"), new Guid("3aee53ce-3292-4895-8cef-5c41ab9684db"), "Fahrenheit451.jpg", null, 1, "Fahrenheit 451", 1953 },
+                    { new Guid("b5cebf85-e61a-4e95-b688-a2b0e6893bed"), new Guid("a1be31d1-8d08-4837-bf49-cf303d8083f0"), "TheHobbit.jpg", "The Hobbit is a tale of high adventure, undertaken by a company of dwarves in search of dragon-guarded gold. A reluctant partner in this perilous quest is Bilbo Baggins, a comfort-loving unambitious hobbit, who surprises even himself by his resourcefulness and skill as a burglar.", 0, "The Hobbit", 1937 },
+                    { new Guid("b6680038-dd42-4e75-9b24-ab7f2455393d"), new Guid("d6f1d900-f138-4ba9-b956-da3738d7f988"), "CrimeAndPunishment.jpg", "Crime and Punishment is a novel by Fyodor Dostoyevsky, first published in 1866. Translation to english by Constance Garnett.\r\n\r\nIn the peak heat of a St. Petersburg summer, an erstwhile university student, Rodion Romanovich Raskolnikov, commits a crime, bludgeoning a pawnbroker and her sister with an axe. What follows is a psychological chess match between Raskolnikov and a wily detective that moves toward a form of redemption for our antihero. Relentlessly philosophical and psychological, tackles freedom and strength, suffering and madness, illness, while asking if “great men” have license to forge their own moral codes.\r\n\r\nRaskolnikov, a destitute and desperate former student, commits a random murder without remorse or regret, imagining himself to be a great man far above moral law. But as he embarks on a dangerous cat-and-mouse game with a suspicious police investigator, his own conscience begins to torment him and he seeks sympathy and redemption from Sonya, a downtrodden prostitute.", 8, "Crime and Punishment", 1866 },
+                    { new Guid("cda5bf3e-e99c-4a9a-bc3c-889ec28b7031"), new Guid("1dc33818-603a-4c00-ba62-93c819bf3ba7"), "BraveNewWorld.jpg", "Originally published in 1932, this outstanding work of literature is more crucial and relevant today than ever before. Cloning, feel-good drugs, antiaging programs, and total social control through politics, programming, and media -- has Aldous Huxley accurately predicted our future? With a storyteller's genius, he weaves these ethical controversies in a compelling narrative that dawns in the year 632 AF (After Ford, the deity). When Lenina and Bernard visit a savage reservation, we experience how Utopia can destroy humanity. A powerful work of speculative fiction that has enthralled and terrified readers for generations, Brave New World is both a warning to be heeded and thought-provoking yet satisfying entertainment. - Container.", 1, "Brave New World", 1932 },
+                    { new Guid("d292d10e-8797-4b79-be46-150c747a58bf"), new Guid("06c9d74c-a4c6-4218-8d41-e65cf98be9b9"), "Dracula.jpg", null, 4, "Dracula", 1897 },
+                    { new Guid("e2c70baa-d665-4ace-9409-6b053e41ed4f"), new Guid("4841f823-58e2-4aea-98b9-3cdbd9b740e4"), "SherlockHolmes.jpg", null, 2, "Sherlock Holmes", 1892 },
+                    { new Guid("ed7d0f41-9d87-4c33-a0c7-3620ed591fe3"), new Guid("1e1e3c27-c460-4fc8-9e00-a799d28f3c71"), "SteveJobs.jpg", null, 5, "Steve Jobs", 2011 },
+                    { new Guid("eeb61727-49d9-4b67-a836-1d3eacc4f08d"), new Guid("a79aff9a-5b7d-4c86-8fdc-73950656cfd2"), "1984.jpg", "Nineteen Eighty-Four: A Novel, often referred to as 1984, is a dystopian social science fiction novel by the English novelist George Orwell (the pen name of Eric Arthur Blair). It was published on 8 June 1949 by Secker & Warburg as Orwell's ninth and final book completed in his lifetime. Thematically, Nineteen Eighty-Four centres on the consequences of totalitarianism, mass surveillance, and repressive regimentation of persons and behaviours within society. Orwell, himself a democratic socialist, modelled the authoritarian government in the novel after Stalinist Russia. More broadly, the novel examines the role of truth and facts within politics and the ways in which they are manipulated.", 1, "1984", 1949 },
+                    { new Guid("f057357a-d690-48ce-a4cc-e1a9748cc63c"), new Guid("86fe4481-0fe8-44fc-9ca1-7f53edf0dab8"), "CleanCode.jpg", null, 7, "Clean Code", 2008 },
+                    { new Guid("f15ea439-f2a1-40ac-8278-1056d7a75a52"), new Guid("383e7342-18e8-4eb8-a74e-9b403011d328"), "Dune.jpg", "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the \"spice\" melange, a drug capable of extending life and enhancing consciousness. Coveted across the known universe, melange is a prize worth killing for...\r\n\r\nWhen House Atreides is betrayed, the destruction of Paul's family will set the boy on a journey toward a destiny greater than he could ever have imagined. And as he evolves into the mysterious man known as Muad'Dib, he will bring to fruition humankind's most ancient and unattainable dream.\r\n\r\nA stunning blend of adventure and mysticism, environmentalism and politics, Dune won the first Nebula Award, shared the Hugo Award, and formed the basis of what is undoubtedly the grandest epic in science fiction.", 0, "Dune", 1965 },
+                    { new Guid("f315b770-aba6-4dd3-b9f0-c8b3d0dce787"), new Guid("98be7892-9c29-45b0-bc44-3a55f55438d8"), "Sapiens.jpg", null, 6, "Sapiens", 2011 }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail",
+                unique: true,
+                filter: "[NormalizedEmail] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_PhoneNumber",
+                table: "AspNetUsers",
+                column: "PhoneNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Books_AuthorId",
+                table: "Books",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_PostId",
+                table: "Comments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_TopicId",
+                table: "Posts",
+                column: "TopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_UserId",
+                table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_CategoryId",
+                table: "Topics",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_Title_CategoryId",
+                table: "Topics",
+                columns: new[] { "Title", "CategoryId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_UserId",
+                table: "Topics",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersBooks_BookId",
+                table: "UsersBooks",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersBooks_UserId",
+                table: "UsersBooks",
+                column: "UserId");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "UsersBooks");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Topics");
+
+            migrationBuilder.DropTable(
+                name: "Authors");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+        }
+    }
+}

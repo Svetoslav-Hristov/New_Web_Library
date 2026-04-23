@@ -2,6 +2,19 @@
 {
     public static class EntityValidations
     {
+
+        public static class Author
+        {
+            public const int AuthorNameMaxLength = 100;
+            public const int AuthorNameMinLength = 2;
+            public const int URLMaxLength = 2048;
+            public const int BiographyMaxLength = 3000;
+            public const int BiographyMinLength = 100;
+
+
+
+        }
+
         public static class Users
         {
             public const int FirstNameUserMaxLength = 50;

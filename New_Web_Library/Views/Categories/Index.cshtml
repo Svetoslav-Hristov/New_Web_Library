@@ -75,20 +75,22 @@
 
 
 
-<div>
+<div class="flex-grow-1 d-flex flex-column">
     @if (User.IsInRole("Admin"))
     {
-        <a class="btn btn-outline-success"
-           asp-area="Admin"
-           asp-controller="Categories"
-           asp-action="CreateCategory"
-           style="background-color:lemonchiffon">
-            + Add Category
-        </a>
+        <div>
+            <a class="btn btn-outline-success mb-0"
+               asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="CreateCategory">
+
+                + Add Category
+            </a>
+        </div>
     }
 
 
-    <table class="table">
+    <table class="table mb-0">
 
         <thead style="background: lemonchiffon;">
             <tr>

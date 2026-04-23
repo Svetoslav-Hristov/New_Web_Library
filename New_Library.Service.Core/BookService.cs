@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using New_Library.Data.Repository.Contracts;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Repository.Contracts;
 using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
@@ -17,14 +17,15 @@ namespace New_Web_Library.Services.Core
         private readonly ISystemRepository _systemsRepository;
         private readonly IWebHostEnvironment _environment;
         private readonly ILogger<IBookService> _logger;
-
+        private readonly IAuthorRepository _authorRepository;
       
         public BookService(IBookRepository booksRepository, IWebHostEnvironment environment,
-            ISystemRepository systemsRepository ,ILogger<IBookService> logger )
+            ISystemRepository systemsRepository ,ILogger<IBookService> logger,IAuthorRepository authorRepository)
         {
             this._booksRepository = booksRepository;
             this._environment = environment;
             this._systemsRepository = systemsRepository;
+            this._authorRepository = authorRepository;
             this._logger = logger;
         }
 
@@ -39,7 +40,7 @@ namespace New_Web_Library.Services.Core
             {
                 Id = b.Id,
                 Title = b.Title,
-                AuthorName = b.Author,
+                AuthorName = b.Author.Name,
                 YearOfPublished = b.Year,
                 Genre = b.Genre,
                 CoverImageUrl = b.CoverImageUrl
@@ -117,7 +118,9 @@ namespace New_Web_Library.Services.Core
                 Id = book.Id,
                 Title = book.Title,
                 YearOfPublished = book.Year,
-                AuthorName = book.Author,
+                AuthorId=book.Author.Id,
+                HasBiography=!string.IsNullOrWhiteSpace(book.Author.Biography),
+                AuthorName = book.Author.Name,
                 Description = book.Description,
                 Genre = book.Genre,
                 BookStatus = currentStatus,
@@ -187,7 +190,6 @@ namespace New_Web_Library.Services.Core
                 Year = model.Year,
                 CoverImageUrl = model.CoverImage,
                 Description = model.Description,
-                Author = authorName,
                 Genre = model.Genre
 
             };
@@ -242,7 +244,7 @@ namespace New_Web_Library.Services.Core
                 Year = book.Year,
                 CoverImage = book.CoverImageUrl,
                 Description = book.Description,
-                SelectedAuthor = book.Author,
+                SelectedAuthor = book.Author.Name,
                 Genre = book.Genre,
 
             };
@@ -303,7 +305,7 @@ namespace New_Web_Library.Services.Core
                 book.Year = model.Year;
                 book.CoverImageUrl = model.CoverImage ?? book.CoverImageUrl;
                 book.Description = model.Description;
-                book.Author = authorName;
+                book.Author.Name = authorName;
                 book.Genre = model.Genre;
 
                 
@@ -396,7 +398,7 @@ namespace New_Web_Library.Services.Core
 
         public async Task BookModelDataFillingAsync(BookFormModel model)
         {
-            List<string> authors = await _booksRepository.GetAllAuthorsAsync();
+            List<string> authors = await _authorRepository.GetAllAuthorsAsync();
 
             model.Authors = authors.Select(a => new SelectListItem 
             {

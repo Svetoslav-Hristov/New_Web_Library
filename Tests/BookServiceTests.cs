@@ -1,21 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using New_Library.Data.Repository;
 using New_Library.Data.Repository.Contracts;
-using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Repository.Contracts;
 using New_Web_Library.GCommon.Enums;
-using New_Web_Library.Services.Core;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.Book;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static NUnit.Framework.Constraints.Tolerance;
 
 namespace New_Web_Library.Services.Core.Tests
 {
@@ -25,7 +16,8 @@ namespace New_Web_Library.Services.Core.Tests
         private Mock<IBookRepository> _booksRepoMock;
         private Mock<ISystemRepository> _systemsRepoMock;
         private Mock<IWebHostEnvironment> _envMock;
-        private Mock<ILogger<IBookService>> _loggerMock;
+        private Mock<ILogger<IBookService>> _loggerRepoMock;
+        private Mock<IAuthorRepository> _authorRepoMock;
 
         private BookService _service;
 
@@ -35,10 +27,11 @@ namespace New_Web_Library.Services.Core.Tests
             _booksRepoMock = new Mock<IBookRepository>();
             _systemsRepoMock = new Mock<ISystemRepository>();
             _envMock = new Mock<IWebHostEnvironment>();
-            _loggerMock = new Mock<ILogger<IBookService>>();
+            _loggerRepoMock = new Mock<ILogger<IBookService>>();
+            _authorRepoMock = new Mock<IAuthorRepository>();
 
             _service = new BookService(_booksRepoMock.Object, _envMock.Object
-                , _systemsRepoMock.Object, _loggerMock.Object);
+                , _systemsRepoMock.Object,  _loggerRepoMock.Object,_authorRepoMock.Object);
 
 
         }
@@ -50,8 +43,24 @@ namespace New_Web_Library.Services.Core.Tests
 
             var books = new List<Book>
             {
-                new Book { Id = Guid.NewGuid(), Title = "B", Author = "B" },
-                new Book { Id = Guid.NewGuid(), Title = "A", Author = "A" }
+                new Book 
+                { 
+                    Id = Guid.NewGuid(),
+                    Title = "B",
+                    Author = new Author
+                    {
+                        Name="B" 
+                    } 
+                },
+                new Book 
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "A",
+                    Author = new Author
+                    {
+                        Name= "A" 
+                    } 
+                }
             }
             .AsQueryable();
 
@@ -72,8 +81,24 @@ namespace New_Web_Library.Services.Core.Tests
         {
             var books = new List<Book>
         {
-            new Book { Id = Guid.NewGuid(), Title = "CSharp", Author = "Ivan" },
-            new Book { Id = Guid.NewGuid(), Title = "Java", Author = "Petar" }
+            new Book 
+            { 
+                Id = Guid.NewGuid(),
+                Title = "CSharp",
+                Author = new Author
+                {
+                    Name="Ivan" 
+                }
+            },
+            new Book 
+            {
+                Id = Guid.NewGuid(),
+                Title = "Java", 
+                Author = new Author
+                {
+                    Name="Petar" 
+                }
+            }
         }
             .AsQueryable();
 
@@ -129,8 +154,24 @@ namespace New_Web_Library.Services.Core.Tests
         {
             var books = new List<Book>
         {
-            new Book { Title = "CSharp", Author = "Ivan", Genre = Genre.Horror },
-            new Book { Title = "CSharp", Author = "Ivan", Genre = Genre.History }
+            new Book 
+            { 
+                Title = "CSharp", 
+                Author = new Author
+                {
+                    Name="Ivan" 
+                },
+                Genre = Genre.Horror 
+            },
+            new Book 
+            {
+                Title = "CSharp",
+                Author = new Author
+                {
+                    Name= "Ivan" 
+                },
+                Genre = Genre.History 
+            }
         }
             .AsQueryable();
 
@@ -194,7 +235,10 @@ namespace New_Web_Library.Services.Core.Tests
             {
                 Id = id,
                 Title = "Test Book",
-                Author = "Ivan",
+                Author = new Author 
+                { 
+                    Name = "Ivan" 
+                },
                 Year = 2020,
                 Description = "Test Description",
                 Genre = Genre.History,
@@ -215,7 +259,7 @@ namespace New_Web_Library.Services.Core.Tests
 
             Assert.AreEqual(book.Id, result.Data.Id);
             Assert.AreEqual(book.Title, result.Data.Title);
-            Assert.AreEqual(book.Author, result.Data.AuthorName);
+            Assert.AreEqual(book.Author.Name, result.Data.AuthorName);
             Assert.AreEqual(book.Year, result.Data.YearOfPublished);
             Assert.AreEqual(BookStatus.Returned, result.Data.BookStatus);
 
@@ -250,7 +294,7 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetEmptyModelBookForm_ShouldLoadAuthorsAndGenres()
         {
-            _booksRepoMock.Setup(x => x.GetAllAuthorsAsync()).ReturnsAsync(new List<string> { "Ivan", "Peter" });
+            _authorRepoMock.Setup(x => x.GetAllAuthorsAsync()).ReturnsAsync(new List<string> { "Ivan", "Peter" });
 
 
             var rootPath = Directory.GetCurrentDirectory();
@@ -349,7 +393,7 @@ namespace New_Web_Library.Services.Core.Tests
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Data);
 
-            Assert.AreEqual("Ivan", result.Data.Author);
+            Assert.AreEqual("Ivan", result.Data.Author.Name);
 
             _booksRepoMock.Verify(x => x.AddAsync(It.IsAny<Book>()), Times.Once);
         }
@@ -369,7 +413,7 @@ namespace New_Web_Library.Services.Core.Tests
             var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
 
             Assert.IsTrue(result.Success);
-            Assert.AreEqual("Peter", result.Data.Author);
+            Assert.AreEqual("Peter", result.Data.Author.Name);
         }
 
 
@@ -384,7 +428,7 @@ namespace New_Web_Library.Services.Core.Tests
 
             var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
 
-            Assert.AreEqual("Ivan", result.Data.Author);
+            Assert.AreEqual("Ivan", result.Data.Author.Name);
         }
 
 
@@ -398,7 +442,10 @@ namespace New_Web_Library.Services.Core.Tests
             {
                 Id = id,
                 Title = "Test",
-                Author = "Pesho",
+                Author = new Author 
+                { 
+                    Name = "Pesho" 
+                },
                 Year = 2020,
                 Genre = Genre.History,
                 Description = "Desc"
@@ -408,7 +455,7 @@ namespace New_Web_Library.Services.Core.Tests
              .ReturnsAsync(book);
 
 
-            _booksRepoMock.Setup(x => x.GetAllAuthorsAsync())
+            _authorRepoMock.Setup(x => x.GetAllAuthorsAsync())
              .ReturnsAsync(new List<string> { "Pesho", "Ivan" });
 
             _envMock.Setup(x => x.WebRootPath)
@@ -422,7 +469,7 @@ namespace New_Web_Library.Services.Core.Tests
             Assert.IsNotNull(result.Data);
 
             Assert.AreEqual(book.Title, result.Data.Title);
-            Assert.AreEqual(book.Author, result.Data.SelectedAuthor);
+            Assert.AreEqual(book.Author.Name, result.Data.SelectedAuthor);
         }
 
 
@@ -541,7 +588,10 @@ namespace New_Web_Library.Services.Core.Tests
             {
                 Id = id,
                 Title = "Old",
-                Author = "OldAuthor",
+                Author =new Author 
+                { 
+                    Name = "OldAuthor" 
+                },
                 CoverImageUrl = "old.jpg"
             };
 
@@ -560,7 +610,7 @@ namespace New_Web_Library.Services.Core.Tests
 
             Assert.IsTrue(result.Success);
             Assert.AreEqual("New", book.Title);
-            Assert.AreEqual("Pesho", book.Author);
+            Assert.AreEqual("Pesho", book.Author.Name);
         }
 
 

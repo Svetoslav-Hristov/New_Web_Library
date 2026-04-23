@@ -17,13 +17,7 @@ namespace New_Library.Data.Repository
         {
         }
 
-        public async Task<List<string>> GetAllAuthorsAsync()
-        {
-            var authors = await _dbContext.Books.AsNoTracking().Select(b => b.Author)
-                .Distinct().ToListAsync();
-
-            return authors;
-        }
+       
 
         public IQueryable<Book> GetAllBooks()
         {
@@ -37,7 +31,7 @@ namespace New_Library.Data.Repository
 
         public async Task<Book?> GetByIdAsync(Guid id) 
         {
-            return await _dbContext.Books.FindAsync(id);
+            return await _dbContext.Books.Include(b=>b.Author).FirstOrDefaultAsync(b=>b.Id==id);
         }
 
         public async Task<bool> IsExistBookAsync(Guid bookId)

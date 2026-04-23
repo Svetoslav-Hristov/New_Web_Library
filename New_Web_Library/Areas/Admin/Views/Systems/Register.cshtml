@@ -4,27 +4,27 @@
 
     var blockedUser = TempData["IncorrectUser"] as string;
 
-   
+
     // loan messages//
     var errorLoan = TempData["ErrorLoan"] as string;
-    
+
     var successLoan = TempData["SuccessLoan"] as string;
 
 }
 
 @if (!string.IsNullOrEmpty(successLoan))
 {
-<div class="alert alert-success" role="alert">
-    @successLoan
-</div>
+    <div class="alert alert-success" role="alert">
+        @successLoan
+    </div>
 
 }
 
 @if (!string.IsNullOrEmpty(errorLoan))
 {
-<div class="alert alert-danger" role="alert">
-    @errorLoan
-</div>
+    <div class="alert alert-danger" role="alert">
+        @errorLoan
+    </div>
 
 }
 
@@ -44,17 +44,11 @@
 }
 
 <div class="container-fluid px-0">
-    <div class="row g-0">
+    <div class="d-flex flex-grow-1 min-vh-100">
         <aside class="border-end bg-light p-3" style="width: 230px; height: 85vh; flex-shrink: 0;">
             <h5 class="mb-3">Menu</h5>
 
             <div class="d-flex flex-column gap-2">
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="Index"
-                   class="btn btn-outline-primary">
-                    🙎‍ Users Register
-                </a>
                 <a asp-area="Admin"
                    asp-controller="Systems"
                    asp-action="Register"
@@ -65,9 +59,20 @@
                    asp-controller="Systems"
                    asp-action="CreateLoan"
                    class="btn btn-outline-success">
-                   ✏ ➕ Create Loan
+                    ✏ ➕ Create Loan
                 </a>
-
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   class="btn btn-outline-primary">
+                    🙎‍ Users Register
+                </a>
+                <a class="btn btn-outline-primary"
+                   asp-area="Admin"
+                   asp-controller="Authors"
+                   asp-action="Index">
+                    📜 Authors Register
+                </a>
                 <a asp-area=""
                    asp-controller="Books"
                    asp-action="Index"
@@ -78,13 +83,12 @@
                    asp-area="Admin"
                    asp-controller="Books"
                    asp-action="Create">
-                   📗 + Add Book
+                    📗 + Add Book
                 </a>
-
-
+                
             </div>
         </aside>
-        <main class="col-md-9 col-lg-10 p-4 mx-auto">
+        <main class="col-md-9 col-lg-9 p-4 mx-auto">
 
             <h2 class="mb-4">📚 Borrowed Books Register</h2>
 
@@ -127,7 +131,7 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr style="background-color:white" >
+                                <tr style="background-color:white">
                                     <td>
                                         <a asp-controller="Users"
                                            asp-action="Details"

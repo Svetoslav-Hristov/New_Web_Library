@@ -5,9 +5,6 @@
 }
 <div class="container">
 
-
-
-
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <a asp-controller="Users"
@@ -89,7 +86,8 @@
                 {
                     <tr>
                         <td>
-                            <a asp-controller="Books"
+                            <a asp-area=""
+                                asp-controller="Books"
                                asp-action="Details"
                                asp-route-id="@b.BookId">
                                 @b.Title

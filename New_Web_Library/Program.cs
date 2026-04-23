@@ -6,6 +6,8 @@ using New_Library.Data.Repository.Contracts;
 using New_Library.Services.Core;
 using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
+using New_Web_Library.Data.Repository;
+using New_Web_Library.Data.Repository.Contracts;
 using New_Web_Library.Service.Core;
 using New_Web_Library.Service.Core.Interfaces;
 using New_Web_Library.Services.Core;
@@ -457,6 +459,8 @@ namespace New_Web_Library
 
         private static void RegisterRepositories(IServiceCollection services)
         {
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+
             services.AddScoped<IBookRepository, BookRepository>();
 
             services.AddScoped<ISystemRepository, SystemRepository>();
@@ -476,6 +480,8 @@ namespace New_Web_Library
         }
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddScoped<IAuthorService, AuthorService>();
+            
             services.AddScoped<IBookService, BookService>();
 
             services.AddScoped<ISystemService, SystemService>();

@@ -7,8 +7,13 @@ namespace New_Web_Library.ViewModels.Book
   
     public class FullPreviewModelBook:PreviewBookModel
     {
+
+        public Guid? AuthorId { get; set; }
+
         [Required]
         public string AuthorName { get; set; } = null!;
+
+        public bool HasBiography { get; set; }
 
         public int YearOfPublished { get; set; }
 

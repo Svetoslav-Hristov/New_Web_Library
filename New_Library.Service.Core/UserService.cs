@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using New_Library.Data.Repository.Contracts;
-using New_Web_Library.Data;
 using New_Web_Library.Data.Models;
-using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Services.Core.Common;
 using New_Web_Library.Services.Core.Interfaces;
 using New_Web_Library.ViewModels.User;

@@ -33,13 +33,13 @@ namespace New_Web_Library.Services.Core.Tests
 
             context.Books.AddRange(new List<Book>
             {
-                new Book { Id = new Guid(),Author="Test Author" ,Title = "Z Book", CoverImageUrl = "img1" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "A Book", CoverImageUrl = "img2" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "C Book", CoverImageUrl = "img3" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "B Book", CoverImageUrl = null   },
-                new Book { Id = new Guid(),Author="Test Author" ,Title = "D Book", CoverImageUrl = "img5" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "E Book", CoverImageUrl = "img6" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "F Book", CoverImageUrl = "img7" }
+                new Book { Id = new Guid(),Author= new Author{Name="Test Author" } ,Title = "Z Book", CoverImageUrl = "img1" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "A Book", CoverImageUrl = "img2" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "C Book", CoverImageUrl = "img3" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "B Book", CoverImageUrl = null   },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" },Title = "D Book", CoverImageUrl = "img5" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "E Book", CoverImageUrl = "img6" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "F Book", CoverImageUrl = "img7" }
             });
 
             await context.SaveChangesAsync();
@@ -76,7 +76,10 @@ namespace New_Web_Library.Services.Core.Tests
             context.Books.Add(new Book
             {
                 Title = "No Image",
-                Author = "Test Author",
+                Author = new Author 
+                { 
+                    Name = "Test Author" 
+                },
                 CoverImageUrl = null  
             });
 
@@ -110,13 +113,13 @@ namespace New_Web_Library.Services.Core.Tests
 
             context.Books.AddRange(new List<Book>
             {
-                new Book { Id = new Guid(),Author="Test Author" ,Title = "Z Book", CoverImageUrl = "img1" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "A Book", CoverImageUrl = "img2" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "C Book", CoverImageUrl = "img3" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "B Book", CoverImageUrl = null   },
-                new Book { Id = new Guid(),Author="Test Author" ,Title = "D Book", CoverImageUrl = "img5" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "E Book", CoverImageUrl = "img6" },
-                new Book { Id = new Guid(),Author="Test Author", Title = "F Book", CoverImageUrl = "img7" }
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" } ,Title = "Z Book", CoverImageUrl = "img1" },
+                new Book { Id = new Guid(),Author=new Author{Name= "Test Author" }, Title = "A Book", CoverImageUrl = "img2" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "C Book", CoverImageUrl = "img3" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "B Book", CoverImageUrl = null   },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" } ,Title = "D Book", CoverImageUrl = "img5" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "E Book", CoverImageUrl = "img6" },
+                new Book { Id = new Guid(),Author=new Author{Name="Test Author" }, Title = "F Book", CoverImageUrl = "img7" }
             });
 
             await context.SaveChangesAsync();

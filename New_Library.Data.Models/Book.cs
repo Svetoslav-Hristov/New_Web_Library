@@ -1,6 +1,7 @@
 ﻿using New_Web_Library.GCommon.Enums;
 using New_Web_Library.Data.Models.Contracts;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace New_Web_Library.Data.Models
@@ -22,11 +23,12 @@ namespace New_Web_Library.Data.Models
 
         [MaxLength(DescriptionMaxLength)]
         public string? Description { get; set; }
-        
-        [Required]
-        [MaxLength(AuthorMaxLengthName)]
-        public string Author { get; set; } = null!;
 
+        [ForeignKey(nameof(Author))]
+        public Guid AuthorId { get; set; }
+
+        public virtual Author Author { get; set; } = null!;
+        
         public Genre Genre { get; set; }
 
         public ICollection<UserBook> BookUsers { get; set; } = new List<UserBook>();

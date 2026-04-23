@@ -57,7 +57,24 @@
 
             <div class="col-md-8">
                 <h2>@Model.Title</h2>
-                <h5 class="text-muted">by @Model.AuthorName</h5>
+                <h5 class="text-muted">
+                    by
+                    @if (Model.HasBiography)
+                    {
+                        <a asp-controller="Authors"
+                           asp-action="Details"
+                           asp-route-id="@Model.AuthorId"
+                           class="text-decoration-underline text-primary">
+                            @Model.AuthorName
+                        </a>
+                    }
+                    else
+                    {
+                        <span>@Model.AuthorName</span>
+                    }
+
+                </h5>
+
                 <p>Year of published: @Model.YearOfPublished</p>
                 <p>
                     Status:
