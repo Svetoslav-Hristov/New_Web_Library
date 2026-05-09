@@ -2,7 +2,31 @@
 
 @{
     ViewData["Title"] = "User Details";
+
+    var errorUser = TempData["ErrorUser"] as string;
+
+    var successChanges = TempData["SuccessUser"] as string;
+   
 }
+
+
+@if (!string.IsNullOrEmpty(errorUser))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorUser
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(successChanges))
+{
+    <div class="alert alert-success" role="alert">
+        @successChanges
+    </div>
+}
+
+
+
 <div class="container">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -20,7 +44,19 @@
         </a>
 
         <div class="d-flex gap-2">
-            <a asp-controller="Users"
+            <form asp-controller="Users"
+                  asp-action="ChangeStatus"
+                  asp-route-id="@Model.Id"
+                  method="post" class="d-inline"
+                  onsubmit="return confirm('Are you sure you want to change staus of this user?');">
+                @Html.AntiForgeryToken()
+                <button type="submit"
+                        class="btn btn-outline-danger btn-sm px-4 d-inline-flex align-items-center justify-content-center">
+                    ChangeStatus
+                </button>
+            </form>
+            <a asp-area="Admin"
+                asp-controller="Users"
                asp-action="Edit"
                asp-route-id="@Model.Id"
                class="btn btn-outline-warning btn-sm px-4 d-inline-flex align-items-center justify-content-center">

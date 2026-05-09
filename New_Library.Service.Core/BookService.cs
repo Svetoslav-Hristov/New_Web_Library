@@ -120,6 +120,7 @@ namespace New_Web_Library.Services.Core
                 YearOfPublished = book.Year,
                 AuthorId=book.Author.Id,
                 HasBiography=!string.IsNullOrWhiteSpace(book.Author.Biography),
+                HasImage=!string.IsNullOrWhiteSpace(book.Author.ImageUrl),
                 AuthorName = book.Author.Name,
                 Description = book.Description,
                 Genre = book.Genre,
@@ -159,19 +160,16 @@ namespace New_Web_Library.Services.Core
             }
 
 
-            string? authorName = null;
-
-            if (!string.IsNullOrEmpty(model.NewAuthor))
+            if (model.SelectedAuthor == Guid.Empty)
             {
-                authorName = model.NewAuthor.Trim();
+                return new ServiceResult<Book> { Success = false, ErrorMessage = "Invalid author Id!" };
             }
 
-            else
-            {
-                authorName = model.SelectedAuthor;
-            }
+            var author = await _authorRepository.GetByIdAsync(model.SelectedAuthor);
 
-            if (authorName == null)
+            
+
+            if (author == null)
             {
                 
                 return new ServiceResult<Book> 
@@ -190,6 +188,7 @@ namespace New_Web_Library.Services.Core
                 Year = model.Year,
                 CoverImageUrl = model.CoverImage,
                 Description = model.Description,
+                AuthorId=model.SelectedAuthor,
                 Genre = model.Genre
 
             };
@@ -224,7 +223,7 @@ namespace New_Web_Library.Services.Core
 
             if (Id == Guid.Empty)
             {
-                return new ServiceResult<BookFormModel> { Success = false, ErrorMessage = "Not found!" };
+                return new ServiceResult<BookFormModel> { Success = false, ErrorMessage = "Invalid book id!" };
 
             }
 
@@ -233,7 +232,7 @@ namespace New_Web_Library.Services.Core
 
             if (book == null)
             {
-                return new ServiceResult<BookFormModel> { Success = false, ErrorMessage = "Book not found !" };
+                return new ServiceResult<BookFormModel> { Success = false, ErrorMessage = "Book not found!" };
                
             }
 
@@ -244,7 +243,7 @@ namespace New_Web_Library.Services.Core
                 Year = book.Year,
                 CoverImage = book.CoverImageUrl,
                 Description = book.Description,
-                SelectedAuthor = book.Author.Name,
+                SelectedAuthor = book.AuthorId,
                 Genre = book.Genre,
 
             };
@@ -262,30 +261,13 @@ namespace New_Web_Library.Services.Core
                 return new ServiceResult<Book>
                 {
                     Success = false,
-                    ErrorMessage = "Invalid book id."
+                    ErrorMessage = "Invalid book id!"
                 };
             }
-
-
-            string? authorName = null;
-
-            if (!string.IsNullOrEmpty(model.NewAuthor))
-            {
-                authorName = model.NewAuthor.Trim();
-            }
-
-            else
-            {
-                authorName = model.SelectedAuthor;
-            }
-
-            if (authorName == null)
-            {
-                return new ServiceResult<Book> { Success = false, ErrorMessage = "Тhe book must have an author!" };
-            }
-
-
+           
+            
             Book? book = await _booksRepository.GetByIdAsync(Id);
+
 
             if (book == null )
             {
@@ -296,21 +278,52 @@ namespace New_Web_Library.Services.Core
                 };
             
             }
+            
+            if (model.SelectedAuthor == Guid.Empty)
+            {
+                return new ServiceResult<Book> { Success = false, ErrorMessage = "Invalid author Id" };
+            }
+
+            var author = await _authorRepository.GetByIdAsync(model.SelectedAuthor);
+          
+
+            if (author == null)
+            {
+                return new ServiceResult<Book> { Success = false, ErrorMessage = "The book must have an author!" };
+            }
+
+
+
 
 
             try
             {
+                bool isDifferent = book.Title != model.Title || book.Year != model.Year || book.CoverImageUrl != model.CoverImage
+                    || book.Description != model.Description || book.AuthorId != model.SelectedAuthor || book.Genre != model.Genre;
 
-                book.Title = model.Title;
-                book.Year = model.Year;
-                book.CoverImageUrl = model.CoverImage ?? book.CoverImageUrl;
-                book.Description = model.Description;
-                book.Author.Name = authorName;
-                book.Genre = model.Genre;
+               
+                if (isDifferent)
+                {
+                    book.Title = model.Title;
+                    book.Year = model.Year;
+                    book.CoverImageUrl = model.CoverImage ?? book.CoverImageUrl;
+                    book.Description = model.Description;
+                    book.AuthorId = model.SelectedAuthor;
+                    book.Author = author;
+                    book.Genre = model.Genre;
 
-                
+                    await _booksRepository.UpdateAsync(book);
 
-                await _booksRepository.UpdateAsync(book);
+                    return new ServiceResult<Book> { Success = true, Data = book };
+
+                }
+                else
+                {
+                    return new ServiceResult<Book> { Success = false,ErrorMessage="No changes detected!" };
+
+                } 
+
+               
 
             }
             catch(Exception ex)
@@ -327,9 +340,6 @@ namespace New_Web_Library.Services.Core
 
             }
 
-            return new ServiceResult<Book> { Success = true, Data = book };
-
-
         }
 
         public async Task <ServiceResult<bool>> DeleteCurrentBookAsync(Guid Id)
@@ -338,7 +348,7 @@ namespace New_Web_Library.Services.Core
             
             if (Id == Guid.Empty)
             {
-                return new ServiceResult<bool> { Success = false, ErrorMessage = "Not found !" };
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Not found!" };
 
             }
 
@@ -350,7 +360,7 @@ namespace New_Web_Library.Services.Core
                return new ServiceResult<bool> 
                {
                    Success = false,
-                   ErrorMessage = "The book you are trying to delete is missing !"
+                   ErrorMessage = "The book you are trying to delete is missing!"
                };
             
             }
@@ -392,18 +402,18 @@ namespace New_Web_Library.Services.Core
             }
 
 
-            return new ServiceResult<bool> { Success = true };
+            return new ServiceResult<bool> { Success = true,Data=true };
 
         }
 
         public async Task BookModelDataFillingAsync(BookFormModel model)
         {
-            List<string> authors = await _authorRepository.GetAllAuthorsAsync();
+            Dictionary<string,Guid> authors = await _authorRepository.GetAllAuthorsAsync();
 
-            model.Authors = authors.Select(a => new SelectListItem 
+            model.Authors = authors.OrderBy(a=>a.Key).Select(a => new SelectListItem 
             {
-                Text = a,
-                Value = a 
+                Text = a.Key,
+                Value = a.Value.ToString() 
             });
 
             model.Genres = Enum.GetValues(typeof(Genre)).Cast<Genre>()

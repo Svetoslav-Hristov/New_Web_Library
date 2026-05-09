@@ -28,7 +28,7 @@ namespace New_Library.Services.Core
         }
 
 
-        public async Task<ServiceResult<UserPagingViewModel>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search ,int page,int pageSize)
+        public async Task<ServiceResult<UserPagingViewModel>> GetAllUsersWithOrWithoutSearchCriteriaAsync(string? search, int page, int pageSize)
         {
 
             IQueryable<User> allUsers = _usersRepository.GetAllUsers();
@@ -94,14 +94,14 @@ namespace New_Library.Services.Core
 
             };
 
-            
+
 
             return new ServiceResult<UserPagingViewModel> { Success = true, Data = model };
         }
 
         public async Task<ServiceResult<User>> ChangeUserStatusAsync(Guid Id)
         {
-            
+
             User? blockedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (blockedUser == null)
@@ -144,7 +144,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<UserViewModel>> GetAllUserDetailsAsync(Guid Id)
         {
-            
+
             var foundUser = await _usersRepository.UserFullDetailsAndHistory(Id);
 
 
@@ -186,7 +186,7 @@ namespace New_Library.Services.Core
 
         public async Task<ServiceResult<User>> DeleteUserProfileAsync(Guid Id)
         {
-            
+
             User? removedUser = await _usersRepository.FindByIdAsync(Id);
 
             if (removedUser == null)
@@ -224,7 +224,168 @@ namespace New_Library.Services.Core
 
         }
 
+        public async Task<ServiceResult<UserFormModel>> EditUserProfileAsync(Guid Id, Guid changerId)
+        {
+            if (Id == Guid.Empty)
+            {
+                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "Invalid user Id!" };
+            }
 
+            var user = await _usersRepository.FindByIdAsync(Id);
+
+            if (user == null)
+            {
+                return new ServiceResult<UserFormModel> { Success = false, ErrorMessage = "User not found!" };
+            }
+
+            var isAdmin = await _usersRepository.AdminOrNotAsync(changerId);
+
+            if (!isAdmin || changerId == Guid.Empty)
+            {
+                return new ServiceResult<UserFormModel>
+                {
+                    Success = false,
+                    ErrorMessage = "You don't have permission to make changes on user's profile! "
+                };
+
+            }
+
+            UserFormModel model = new UserFormModel()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName=user.UserName,
+                Age = user.Age,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email
+
+
+            };
+
+            return new ServiceResult<UserFormModel> { Success = true, Data = model };
+
+
+        }
+
+        public async Task<ServiceResult<bool>> ConfirmEditUserProfileAsync(UserFormModel model, Guid Id, Guid changerId)
+        {
+            var isAdmin = await _usersRepository.AdminOrNotAsync(changerId);
+
+            if (changerId == Guid.Empty || !isAdmin)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "You don't have access to make changes!"
+                };
+            }
+
+            var user = await _usersRepository.FindByIdAsync(Id);
+
+            if (user == null)
+            {
+                return new ServiceResult<bool>
+                {
+                    Success = false,
+                    ErrorMessage = "User not found!"
+                };
+            }
+
+
+            if (string.IsNullOrWhiteSpace(model.FirstName))
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "First name is required." };
+            }
+
+
+            if (string.IsNullOrWhiteSpace(model.LastName))
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Last name is required." };
+            }
+
+
+            if (string.IsNullOrWhiteSpace(model.Address))
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Address is required." };
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Email address is required." };
+            }
+
+            var isExistEmail = await _userManager.FindByEmailAsync(model.Email);
+
+            if (isExistEmail != null && isExistEmail.Id != Id)
+            {
+
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "This email belongs to another user." };
+            }
+
+
+            if (string.IsNullOrWhiteSpace(model.PhoneNumber))
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Phone number is required." };
+            }
+
+
+            var isExistPhoneNumber = await _usersRepository.SearchByPhoneOrEmail(model.PhoneNumber);
+
+            if (isExistPhoneNumber != null && isExistPhoneNumber.Id != Id)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "This phone number belongs to another user." };
+
+            }
+
+            if (model.Age < 5 || model.Age > 120)
+            {
+                return new ServiceResult<bool> { Success = false, ErrorMessage = "Age must be in range 5-120 ." };
+            }
+
+            bool isChanged = model.FirstName.Trim() != user.FirstName || model.LastName.Trim() != user.LastName || model.Age != user.Age
+                || model.PhoneNumber.Trim() != user.PhoneNumber || model.Address.Trim() != user.Address || 
+                model.Email.Trim().ToLower() != user.Email.ToLower();
+
+            try
+            {
+                if (isChanged)
+                {
+                    user.FirstName = model.FirstName.Trim();
+                    user.LastName = model.LastName.Trim();
+                    user.Age = model.Age;
+                    user.Address = model.Address.Trim();
+                    user.PhoneNumber = model.PhoneNumber.Trim();
+                    user.Email = model.Email.Trim();
+
+                    await _usersRepository.UpdateAsync(user);
+
+                }
+                else
+                {
+                    return new ServiceResult<bool> { Success = false, ErrorMessage = "User profile was not changed." };
+                }
+
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error editing user's profile with id {userId}", Id);
+
+                return new ServiceResult<bool> 
+                { 
+                    Success = false,
+                    ErrorMessage = "Unexpected error is occurred while edit user's profile !Please try again later ." 
+                };
+
+
+
+            }
+
+
+            return new ServiceResult<bool> { Success = true };
+
+        }
     }
 }
 

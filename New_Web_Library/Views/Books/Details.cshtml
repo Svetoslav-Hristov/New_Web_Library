@@ -59,11 +59,11 @@
                 <h2>@Model.Title</h2>
                 <h5 class="text-muted">
                     by
-                    @if (Model.HasBiography)
+                    @if (Model.HasBiography || Model.HasImage)
                     {
                         <a asp-controller="Authors"
                            asp-action="Details"
-                           asp-route-id="@Model.AuthorId"
+                           asp-route-Id="@Model.AuthorId"
                            class="text-decoration-underline text-primary">
                             @Model.AuthorName
                         </a>

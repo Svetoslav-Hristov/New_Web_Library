@@ -15,6 +15,8 @@ namespace New_Web_Library.ViewModels.Book
 
         public bool HasBiography { get; set; }
 
+        public bool HasImage { get; set; }
+
         public int YearOfPublished { get; set; }
 
         public Genre Genre { get; set; }

@@ -23,11 +23,8 @@ namespace New_Web_Library.ViewModels.Book
         [MaxLength(DescriptionMaxLength)]
         public string? Description { get; set; }
 
-        public string? SelectedAuthor { get; set; }
-
-        
-        [StringLength(AuthorMaxLengthName,MinimumLength =AuthorMinLengthName)]
-        public string? NewAuthor { get; set; }
+        [Required]
+        public Guid SelectedAuthor { get; set; }
 
         [Required]
         public Genre Genre { get; set; }

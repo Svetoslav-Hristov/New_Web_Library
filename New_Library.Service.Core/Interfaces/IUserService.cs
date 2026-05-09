@@ -16,7 +16,9 @@ namespace New_Web_Library.Services.Core.Interfaces
 
         Task<ServiceResult<User>> DeleteUserProfileAsync(Guid Id);
 
-        
+        Task<ServiceResult<UserFormModel>> EditUserProfileAsync(Guid Id, Guid changerId);
+
+        Task<ServiceResult<bool>> ConfirmEditUserProfileAsync(UserFormModel model, Guid Id, Guid changerId);
 
     }
 }

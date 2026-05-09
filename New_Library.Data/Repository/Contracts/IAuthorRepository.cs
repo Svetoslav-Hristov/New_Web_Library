@@ -5,10 +5,15 @@ namespace New_Web_Library.Data.Repository.Contracts
 {
     public interface IAuthorRepository : IBaseRepository
     {
-        Task<List<string>> GetAllAuthorsAsync();
+        Task<Dictionary<string,Guid>> GetAllAuthorsAsync();
 
-        IQueryable<Author> GetAllAuthorsFullDetailsAsync();
+        IQueryable<Author?> GetAllAuthorsFullDetailsAsync();
+
+        Task<Author?> GetAuthorWithBooksAsync(Guid Id);
 
         Task<Author?> GetByIdAsync(Guid Id);
+
+        Task<bool> ExistByName(string name);
+
     }
 }

@@ -13,26 +13,44 @@ namespace New_Web_Library.Data.Repository
             
         }
 
-        public async Task<List<string>> GetAllAuthorsAsync()
+        public Task<bool> ExistByName(string name)
         {
-            var authors = await _dbContext.Authors.AsNoTracking().Select(a => a.Name)
-                .Distinct().ToListAsync();
+            string normalized = name.Trim();
 
+
+            return _dbContext.Authors.AnyAsync(a => a.Name == normalized);
+           
+        }
+
+        public async Task<Dictionary<string,Guid>> GetAllAuthorsAsync()
+        {
+            Dictionary<string, Guid> authors = await _dbContext.Authors.AsNoTracking()
+                .ToDictionaryAsync(a => a.Name, a => a.Id);
+            
             return authors;
 
         }
 
-        public  IQueryable<Author> GetAllAuthorsFullDetailsAsync()
+        public  IQueryable<Author?> GetAllAuthorsFullDetailsAsync()
         {
-            var authors = _dbContext.Authors.
+            var authors = _dbContext.Authors.Include(a=>a.Books).
                 AsNoTracking().OrderBy(a=>a.Name);
 
             return authors;
+        }
+
+        public async Task<Author?> GetAuthorWithBooksAsync(Guid Id)
+        {
+            return await _dbContext.Authors.Include(a=>a.Books).FirstOrDefaultAsync(a => a.Id == Id);
+        
         }
 
         public async Task<Author?> GetByIdAsync(Guid Id)
         {
             return await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == Id);
         }
+
+        
+
     }
 }

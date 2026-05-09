@@ -1,0 +1,95 @@
+﻿@model IEnumerable<AuthorPreviewDetails>
+
+@{
+    var errorAuthor = TempData["ErrorAuthor"] as string;
+}
+
+
+@if (!string.IsNullOrEmpty(errorAuthor))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorAuthor
+    </div>
+
+}
+
+<div class="d-flex flex-grow-1">
+
+    <div class="col-md-9 col-lg-10 d-flex flex-column" style="min-height: 500px;">
+
+        <div class="container flex-grow-1 d-flex flex-column">
+
+            <main class="flex-grow-1 d-flex flex-column">
+
+                <!-- SEARCH -->
+                <div class="d-flex justify-content-center mb-4">
+                    <form asp-action="Index"
+                          method="get"
+                          class="d-flex gap-2 w-50">
+
+                        <input type="text"
+                               name="search"
+                               value="@Context.Request.Query["search"]"
+                               class="form-control"
+                               placeholder="Search author..." />
+
+                        <button type="submit" class="btn btn-primary">
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+                <!-- HEADER -->
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-3 fw-bold">
+                    <span>Author Name</span>
+                    <span>Books Count</span>
+                </div>
+                <!-- AUTHORS -->
+                @if (!Model.Any())
+                {
+                    <p class="text-muted text-center">No authors yet.</p>
+                }
+                else
+                {
+                    <div>
+                        @foreach (AuthorPreviewDetails u in Model)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                <!-- AUTHOR NAME -->
+                                <div>
+                                    @if (!string.IsNullOrWhiteSpace(u.Biography) || !string.IsNullOrWhiteSpace(u.ImageUrl))
+                                    {
+                                        <a asp-controller="Authors"
+                                           asp-action="Details"
+                                           asp-route-id="@u.Id"
+                                           class="text-decoration-none text-primary fs-5 fw-semibold">
+                                            @u.Name
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="fs-5 fw-semibold text-dark">
+                                            @u.Name
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- BOOK COUNT -->
+                                <div class="text-muted">
+                                    @(u.CountBooks)
+                                </div>
+
+                            </div>
+                        }
+
+
+                    </div>
+                }
+
+            </main>
+        
+        </div>
+    </div>
+
+</div>

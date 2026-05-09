@@ -1,0 +1,107 @@
+﻿@model AuthorDetailsForm
+
+
+
+<div class="container mt-4" style="max-width:700px;">
+
+    <h2 class="mb-4">Edit Author</h2>
+
+    <form asp-action="Edit" method="post">
+
+        <input asp-for="Id" type="hidden" />
+
+        <!-- NAME -->
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+
+            <input asp-for="Name"
+                   class="form-control"
+                   placeholder="Enter author name" />
+
+            <span asp-validation-for="Name"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- BIOGRAPHY -->
+        <div class="mb-3">
+            <label asp-for="Biography" class="form-label"></label>
+
+            <textarea asp-for="Biography"
+                      class="form-control"
+                      rows="8"
+                      placeholder="Enter biography"></textarea>
+
+            <span asp-validation-for="Biography"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- IMAGE SELECT -->
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label">
+                Select Author Image
+            </label>
+
+            <select asp-for="ImageUrl"
+                    asp-items="Model.Images"
+                    class="form-select"
+                    id="authorImageSelect">
+
+                <option value="">-- Select image --</option>
+            </select>
+
+            <span asp-validation-for="ImageUrl"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- LIVE PREVIEW -->
+        <div class="mb-4 text-center">
+            <img id="authorPreview"
+                 src="@(string.IsNullOrWhiteSpace(Model.ImageUrl)
+                                     ? "/AuthorImages/no-image.jpg"
+                                     : Model.ImageUrl)"
+                 alt="Author Preview"
+                 class="img-thumbnail"
+                 style="max-height:250px; max-width:100%; object-fit:cover;" />
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="d-flex gap-2">
+            <button type="submit"
+                    class="btn btn-outline-warning">
+                Save Changes
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const select = document.getElementById("authorImageSelect");
+            const img = document.getElementById("authorPreview");
+
+            if (!select || !img) return;
+
+            select.addEventListener("change", function () {
+
+                if (this.value) {
+                    img.src = this.value;
+                } else {
+                    img.src = "/AuthorImages/no-image.jpg";
+                }
+
+            });
+
+        });
+    </script>
+}

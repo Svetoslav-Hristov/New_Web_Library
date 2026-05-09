@@ -50,10 +50,7 @@ namespace New_Web_Library.ViewModels.User
         public string Email { get; set; } = null!;
 
 
-        [Required]
-        [DataType(DataType.Password,ErrorMessage = "The field is required.")]
-        public string Password { get; set; } = null!;
-
+       
 
     }
 }

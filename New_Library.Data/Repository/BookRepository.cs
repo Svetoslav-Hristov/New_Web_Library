@@ -17,7 +17,10 @@ namespace New_Library.Data.Repository
         {
         }
 
-       
+        public async Task<bool> AuthorBooks(Guid Id)
+        {
+            return await _dbContext.Books.AsNoTracking().AnyAsync(b => b.AuthorId == Id);
+        }
 
         public IQueryable<Book> GetAllBooks()
         {

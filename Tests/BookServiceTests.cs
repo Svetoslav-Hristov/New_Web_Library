@@ -31,7 +31,7 @@ namespace New_Web_Library.Services.Core.Tests
             _authorRepoMock = new Mock<IAuthorRepository>();
 
             _service = new BookService(_booksRepoMock.Object, _envMock.Object
-                , _systemsRepoMock.Object,  _loggerRepoMock.Object,_authorRepoMock.Object);
+                , _systemsRepoMock.Object, _loggerRepoMock.Object, _authorRepoMock.Object);
 
 
         }
@@ -41,25 +41,38 @@ namespace New_Web_Library.Services.Core.Tests
         public async Task GetAllBooks_ShouldReturnAll_WhenNoFilters()
         {
 
+            var authorA = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "A"
+
+            };
+
+            var authorB = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "B"
+
+            };
+
+
             var books = new List<Book>
             {
-                new Book 
-                { 
+                new Book
+                {
                     Id = Guid.NewGuid(),
                     Title = "B",
-                    Author = new Author
-                    {
-                        Name="B" 
-                    } 
+                    AuthorId=authorB.Id,
+                    Author = authorB
+
                 },
-                new Book 
+                new Book
                 {
                     Id = Guid.NewGuid(),
                     Title = "A",
-                    Author = new Author
-                    {
-                        Name= "A" 
-                    } 
+                    AuthorId=authorA.Id,
+                    Author = authorA
+
                 }
             }
             .AsQueryable();
@@ -79,25 +92,39 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetAllBooks_ShouldFilterBySearch()
         {
-            var books = new List<Book>
-        {
-            new Book 
-            { 
-                Id = Guid.NewGuid(),
-                Title = "CSharp",
-                Author = new Author
-                {
-                    Name="Ivan" 
-                }
-            },
-            new Book 
+            Author authorA = new Author
             {
                 Id = Guid.NewGuid(),
-                Title = "Java", 
-                Author = new Author
-                {
-                    Name="Petar" 
-                }
+                Name = "Ivan"
+
+            };
+
+            Author authorB = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Petar"
+
+            };
+
+
+
+            var books = new List<Book>
+        {
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "CSharp",
+                AuthorId=authorA.Id,
+                Author =authorA
+
+            },
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "Java",
+                AuthorId=authorB.Id,
+                Author = authorB
+
             }
         }
             .AsQueryable();
@@ -113,10 +140,39 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetAllBooks_ShouldFilterByGenre()
         {
+            Author authorA = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Ivan"
+
+            };
+
+            Author authorB = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Petar"
+
+            };
+
+
             var books = new List<Book>
         {
-            new Book { Id = Guid.NewGuid(), Title = "C#", Genre = Genre.Mystery },
-            new Book { Id = Guid.NewGuid(), Title = "History", Genre = Genre.History }
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "C#",
+                AuthorId=authorA.Id,
+                Author=authorA,
+                Genre = Genre.Mystery
+            },
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "History",
+                AuthorId=authorB.Id,
+                Author=authorB,
+                Genre = Genre.History
+            }
         }
             .AsQueryable();
 
@@ -132,11 +188,53 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetAllBooks_ShouldReturnPagedResult()
         {
+
+            Author authorA = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Jon"
+
+            };
+
+            Author authorB = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Peter"
+
+            };
+            Author authorC = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Glen"
+
+            };
+
+
+
             var books = new List<Book>
         {
-            new Book { Id = Guid.NewGuid(), Title = "A" },
-            new Book { Id = Guid.NewGuid(), Title = "B" },
-            new Book { Id = Guid.NewGuid(), Title = "C" }
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "A",
+                AuthorId=authorA.Id,
+                Author=authorA
+
+            },
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "B",
+                AuthorId=authorB.Id,
+                Author=authorB
+            },
+            new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = "C",
+                AuthorId=authorC.Id,
+                Author=authorC
+            }
         }
             .AsQueryable();
 
@@ -152,25 +250,31 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetAllBooks_ShouldFilterBySearchAndGenre()
         {
+            Guid authorId = Guid.NewGuid();
+
             var books = new List<Book>
         {
-            new Book 
-            { 
-                Title = "CSharp", 
-                Author = new Author
-                {
-                    Name="Ivan" 
-                },
-                Genre = Genre.Horror 
-            },
-            new Book 
+            new Book
             {
                 Title = "CSharp",
+                AuthorId=authorId,
                 Author = new Author
                 {
-                    Name= "Ivan" 
+                    Id=authorId,
+                    Name="Ivan"
                 },
-                Genre = Genre.History 
+                Genre = Genre.Horror
+            },
+            new Book
+            {
+                Title = "CSharp",
+                AuthorId=authorId,
+                Author = new Author
+                {
+                    Id=authorId,
+                    Name= "Ivan"
+                },
+                Genre = Genre.History
             }
         }
             .AsQueryable();
@@ -229,18 +333,25 @@ namespace New_Web_Library.Services.Core.Tests
         public async Task GetCurrentModel_ShouldReturnCorrectResult_WhenIsValidId()
         {
 
-            var id = Guid.NewGuid();
+            Guid id = Guid.NewGuid();
 
-            var book = new Book
+            Author author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Jon"
+
+
+            };
+
+
+            Book book = new Book
             {
                 Id = id,
                 Title = "Test Book",
-                Author = new Author 
-                { 
-                    Name = "Ivan" 
-                },
                 Year = 2020,
                 Description = "Test Description",
+                AuthorId = author.Id,
+                Author = author,
                 Genre = Genre.History,
                 CoverImageUrl = "url"
             };
@@ -272,9 +383,22 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task GetCurrentModel_ShouldReturnReturnedStatus_WhenStatusIsNull()
         {
-            var id = Guid.NewGuid();
+            Guid id = Guid.NewGuid();
 
-            var book = new Book { Id = id, Title = "Test" };
+            Author author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Jon"
+            };
+
+
+            var book = new Book
+            {
+                Id = id,
+                Title = "Test",
+                AuthorId = author.Id,
+                Author = author
+            };
 
             _booksRepoMock.Setup(x => x.GetByIdAsync(id))
              .ReturnsAsync(book);
@@ -292,41 +416,43 @@ namespace New_Web_Library.Services.Core.Tests
         }
 
         [Test]
-        public async Task GetEmptyModelBookForm_ShouldLoadAuthorsAndGenres()
+        public async Task GetEmptyModelBookForm_ShouldLoadAuthorsGenresAndCovers()
         {
-            _authorRepoMock.Setup(x => x.GetAllAuthorsAsync()).ReturnsAsync(new List<string> { "Ivan", "Peter" });
+            _authorRepoMock.Setup(x => x.GetAllAuthorsAsync())
+                .ReturnsAsync(new Dictionary<string, Guid>
+                {
+            { "Ivan", Guid.NewGuid() },
+            { "Peter", Guid.NewGuid() }
+                });
 
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempPath);
 
-            var rootPath = Directory.GetCurrentDirectory();
-
-            var imagesPath = Path.Combine(rootPath, "images");
-
+            var imagesPath = Path.Combine(tempPath, "images");
             Directory.CreateDirectory(imagesPath);
 
+            File.WriteAllText(Path.Combine(imagesPath, "test1.jpg"), "");
+            File.WriteAllText(Path.Combine(imagesPath, "test2.jpg"), "");
 
-            _envMock.Setup(x => x.WebRootPath).Returns(Directory.GetCurrentDirectory());
-
+            _envMock.Setup(x => x.WebRootPath).Returns(tempPath);
 
             var result = await _service.GetEmptyModelBookFormWithLoadedTypesAsync();
-
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Data);
 
-
             Assert.IsNotNull(result.Data.Authors);
             Assert.IsTrue(result.Data.Authors.Any());
-
 
             Assert.IsNotNull(result.Data.Genres);
             Assert.IsTrue(result.Data.Genres.Any());
 
+            Assert.IsNotNull(result.Data.Covers);
+            Assert.IsTrue(result.Data.Covers.Any());
         }
 
-
-
         [Test]
-        public async Task CreateBook_ShouldRetunError_WhenModelIsNull()
+        public async Task CreateBook_ShouldReturnError_WhenModelIsNull()
         {
 
 
@@ -339,14 +465,17 @@ namespace New_Web_Library.Services.Core.Tests
         }
 
         [Test]
-        public async Task CreateBook_ShouldReturnError_WhenMisssingAuthor()
+        public async Task CreateBook_ShouldReturnError_WhenMissingAuthor()
         {
             BookFormModel model = new BookFormModel()
             {
                 Title = "Test",
-                NewAuthor = null,
-                SelectedAuthor = null
+                SelectedAuthor = Guid.NewGuid(),
+
+
             };
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(model.SelectedAuthor)).ReturnsAsync((Author?)null);
 
             var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
 
@@ -358,12 +487,25 @@ namespace New_Web_Library.Services.Core.Tests
         [Test]
         public async Task CreateBook_ShouldReturnError_WhenRepositoryThrows()
         {
+            Author author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Author"
+            };
+
+
             BookFormModel model = new BookFormModel()
             {
                 Title = "Test",
-                NewAuthor = "Ivan"
+                Year = 2020,
+                Genre = Genre.History,
+                SelectedAuthor = author.Id
+
+
 
             };
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(author.Id)).ReturnsAsync(author);
 
             _booksRepoMock.Setup(x => x.AddAsync(It.IsAny<Book>()))
             .ThrowsAsync(new Exception());
@@ -376,117 +518,120 @@ namespace New_Web_Library.Services.Core.Tests
 
         }
 
-
         [Test]
-        public async Task CreateBook_ShouldCreateBook_WhenNewAuthorProvided()
+        public async Task CreateBook_ShouldCreateBook_WhenValidAuthorSelected()
         {
+
+
+            var author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Author"
+            };
+
+
             var model = new BookFormModel
             {
                 Title = "Test",
                 Year = 2020,
-                NewAuthor = "Ivan",
+                SelectedAuthor = author.Id,
                 Genre = Genre.History
             };
+
+
+            _authorRepoMock
+                .Setup(x => x.GetByIdAsync(author.Id))
+                .ReturnsAsync(author);
 
             var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Data);
-
-            Assert.AreEqual("Ivan", result.Data.Author.Name);
+            Assert.AreEqual(author.Id, result.Data.AuthorId);
 
             _booksRepoMock.Verify(x => x.AddAsync(It.IsAny<Book>()), Times.Once);
         }
 
 
 
-        [Test]
-        public async Task CreateBook_ShouldUseSelectedAuthor_WhenNoNewAuthor()
-        {
-            var model = new BookFormModel
-            {
-                Title = "Test",
-                SelectedAuthor = "Peter",
-                Genre = Genre.History
-            };
-
-            var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
-
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual("Peter", result.Data.Author.Name);
-        }
-
-
-        [Test]
-        public async Task CreateBook_ShouldTrimNewAuthor()
-        {
-            var model = new BookFormModel
-            {
-                Title = "Test",
-                NewAuthor = "  Ivan  "
-            };
-
-            var result = await _service.CreateNewBookUsingBookFormModelAsync(model);
-
-            Assert.AreEqual("Ivan", result.Data.Author.Name);
-        }
-
 
         [Test]
         public async Task EditBook_ShouldReturnModel_WhenBookExists()
         {
+            var bookId = Guid.NewGuid();
 
-            var id = Guid.NewGuid();
+            Author author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Peter"
+            };
 
             var book = new Book
             {
-                Id = id,
+                Id = bookId,
                 Title = "Test",
-                Author = new Author 
-                { 
-                    Name = "Pesho" 
-                },
+                AuthorId = author.Id,
+                Author = author,
                 Year = 2020,
                 Genre = Genre.History,
                 Description = "Desc"
             };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
-             .ReturnsAsync(book);
-
+            _booksRepoMock
+                .Setup(x => x.GetByIdAsync(bookId))
+                .ReturnsAsync(book);
 
             _authorRepoMock.Setup(x => x.GetAllAuthorsAsync())
-             .ReturnsAsync(new List<string> { "Pesho", "Ivan" });
+                .ReturnsAsync(new Dictionary<string, Guid>
+                {
+                    {
+                        "Peter",
+                        author.Id
+                    },
+                    {
+                        "Ivan",
+                        Guid.NewGuid()
+                    }
+                });
 
-            _envMock.Setup(x => x.WebRootPath)
-             .Returns(Directory.GetCurrentDirectory());
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempPath);
+            Directory.CreateDirectory(Path.Combine(tempPath, "images"));
 
+            _envMock.Setup(x => x.WebRootPath).Returns(tempPath);
 
-            var result = await _service.EditBookUsingBookFormModelAsync(id);
-
+            var result = await _service.EditBookUsingBookFormModelAsync(bookId);
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Data);
 
             Assert.AreEqual(book.Title, result.Data.Title);
-            Assert.AreEqual(book.Author.Name, result.Data.SelectedAuthor);
-        }
+            Assert.AreEqual(book.AuthorId, result.Data.SelectedAuthor);
+            Assert.AreEqual(book.Year, result.Data.Year);
+            Assert.AreEqual(book.Genre, result.Data.Genre);
+            Assert.AreEqual(book.Description, result.Data.Description);
 
+            Assert.IsNotNull(result.Data.Authors);
+            Assert.IsTrue(result.Data.Authors.Any());
+        }
 
         [Test]
         public async Task EditBook_ShouldReturnError_WhenIdIsEmpty()
         {
             var id = Guid.Empty;
 
+
             var result = await _service.EditBookUsingBookFormModelAsync(id);
 
             Assert.IsFalse(result.Success);
 
-            Assert.AreEqual("Not found!", result.ErrorMessage);
+            Assert.AreEqual("Invalid book id!", result.ErrorMessage);
 
             Assert.IsNull(result.Data);
 
+            _booksRepoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
         }
+
 
 
         [Test]
@@ -495,13 +640,17 @@ namespace New_Web_Library.Services.Core.Tests
             var id = Guid.NewGuid();
 
 
+            _booksRepoMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync((Book?)null);
+
             var result = await _service.EditBookUsingBookFormModelAsync(id);
 
             Assert.IsFalse(result.Success);
 
-            Assert.AreEqual("Book not found !", result.ErrorMessage);
+            Assert.AreEqual("Book not found!", result.ErrorMessage);
 
             Assert.IsNull(result.Data);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(id),Times.Once);
 
         }
 
@@ -512,224 +661,452 @@ namespace New_Web_Library.Services.Core.Tests
             var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(Guid.Empty, new BookFormModel());
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Invalid book id.", result.ErrorMessage);
-        }
-
-        [Test]
-        public async Task ConfirmEdit_ShouldReturnError_WhenAuthorMissing()
-        {
-            var id = Guid.NewGuid();
-
-            var model = new BookFormModel
-            {
-                NewAuthor = null,
-                SelectedAuthor = null
-            };
-
-            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(id, model);
-
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Тhe book must have an author!", result.ErrorMessage);
+            Assert.AreEqual("Invalid book id!", result.ErrorMessage);
         }
 
 
         [Test]
         public async Task ConfirmEdit_ShouldReturnError_WhenBookNotFound()
         {
-            var id = Guid.NewGuid();
+            var bookId = Guid.NewGuid();
 
-            var model = new BookFormModel
+           
+
+            BookFormModel model = new BookFormModel
             {
-                SelectedAuthor = "Pesho"
+                Title = "Test",
+                SelectedAuthor =Guid.NewGuid(),
+
+
+
             };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
-              .ReturnsAsync((Book)null);
 
-            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(id, model);
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
+              .ReturnsAsync((Book?)null);
+
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
 
             Assert.IsFalse(result.Success);
             Assert.AreEqual("The book you are trying to edit is missing.", result.ErrorMessage);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
+            _authorRepoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+
         }
+
+
+
+        [Test]
+        public async Task ConfirmEdit_ShouldReturnError_WhenAuthorIdIsEmpty()
+        {
+            var bookId = Guid.NewGuid();
+
+            Book book = new Book
+            {
+                Id = bookId,
+                Title = "Test",
+                
+
+            };
+
+
+            BookFormModel model = new BookFormModel
+            {
+
+                SelectedAuthor = Guid.Empty
+            };
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId)).ReturnsAsync(book);
+
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("Invalid author Id", result.ErrorMessage);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
+            _authorRepoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+
+        }
+        
+        
+        [Test]
+        public async Task ConfirmEdit_ShouldReturnError_WhenAuthorIsMissing()
+        {
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
+
+
+            Book book = new Book
+            {
+                Id=bookId,
+                Title = "Test",
+                AuthorId = authorId
+            };
+
+            BookFormModel model = new BookFormModel
+            {
+
+                SelectedAuthor = authorId
+            };
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId)).ReturnsAsync(book);
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync((Author?)null);
+
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("The book must have an author!", result.ErrorMessage);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+            _authorRepoMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+
+        }
+
+
+
+        [Test]
+        public async Task ConfirmEdit_ShouldReturnError_WhenNoChangesDetected()
+        {
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
+
+            Author author = new Author
+            {
+                Id = authorId,
+                Name = "Peter"
+
+            };
+
+
+            Book book = new Book
+            {
+                Id = bookId,
+                Title = "Title",
+                AuthorId = authorId
+
+            };
+
+            BookFormModel model = new BookFormModel
+            {
+                Title = "Title",
+                SelectedAuthor = authorId
+            };
+
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(author);
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
+             .ReturnsAsync(book);
+
+            
+
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("No changes detected!", result.ErrorMessage);
+            Assert.IsNull(result.Data);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+            _authorRepoMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+            
+
+        }
+
+
 
 
         [Test]
         public async Task ConfirmEdit_ShouldReturnError_WhenUpdateFails()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
 
-            var book = new Book { Id = id };
-
-            var model = new BookFormModel
+            Author author = new Author
             {
-                Title = "Test",
-                SelectedAuthor = "Pesho"
+                Id = authorId,
+                Name = "Peter"
+
+            };
+            
+
+            Book book = new Book 
+            { 
+                Id = bookId,
+                Title="Test",
+                AuthorId=authorId
+                
             };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+            BookFormModel model = new BookFormModel
+            {
+                Title = "New Title",
+                SelectedAuthor =authorId
+            };
+
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(author);
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
              .ReturnsAsync(book);
 
             _booksRepoMock.Setup(x => x.UpdateAsync(It.IsAny<Book>()))
               .ThrowsAsync(new Exception());
 
-            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(id, model);
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
 
             Assert.IsFalse(result.Success);
             Assert.AreEqual("Unexpected error is occurred while edit book! Please try again later.", result.ErrorMessage);
+            Assert.IsNull(result.Data);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+            _authorRepoMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+            _booksRepoMock.Verify(x => x.UpdateAsync(It.IsAny<Book>()), Times.Once);
+
         }
 
 
         [Test]
         public async Task ConfirmEdit_ShouldUpdateBookSuccessfully()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
 
-            var book = new Book
+            Author author = new Author
             {
-                Id = id,
+                Id = authorId,
+                Name = "Peter"
+
+
+            };
+
+            Book book = new Book
+            {
+                Id = bookId,
                 Title = "Old",
-                Author =new Author 
-                { 
-                    Name = "OldAuthor" 
+                AuthorId=Guid.NewGuid(),
+                Author = new Author
+                {
+
+                    Name = "OldAuthor"
                 },
                 CoverImageUrl = "old.jpg"
             };
 
-            var model = new BookFormModel
+            BookFormModel model = new BookFormModel
             {
                 Title = "New",
-                SelectedAuthor = "Pesho",
+                SelectedAuthor =authorId,
                 CoverImage = "new.jpg",
                 Genre = Genre.History
             };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+            _authorRepoMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(author);
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
               .ReturnsAsync(book);
 
-            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(id, model);
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
 
             Assert.IsTrue(result.Success);
             Assert.AreEqual("New", book.Title);
-            Assert.AreEqual("Pesho", book.Author.Name);
+            Assert.AreEqual("Peter", book.Author.Name);
+
+            _authorRepoMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
         }
 
 
         [Test]
         public async Task ConfirmEdit_ShouldKeepOldCover_WhenNewCoverIsNull()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
 
-            var book = new Book
+            Author author = new Author
             {
-                Id = id,
+                Id = authorId,
+                Name = "Peter"
+
+
+            };
+           
+            Book book = new Book
+            {
+                Id = bookId,
+                Title = "Old Title",
+                AuthorId=authorId,
                 CoverImageUrl = "old.jpg"
             };
 
-            var model = new BookFormModel
+            BookFormModel model = new BookFormModel
             {
-                SelectedAuthor = "Pesho",
+                Title="New Title",
+                SelectedAuthor=authorId,
                 CoverImage = null
             };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+
+            _authorRepoMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(author);
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
               .ReturnsAsync(book);
 
-            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(id, model);
+            var result = await _service.ConfirmEditChangesUsingBookFormModelAsync(bookId, model);
 
+            Assert.IsTrue(result.Success);
             Assert.AreEqual("old.jpg", book.CoverImageUrl);
+
+           
+            _booksRepoMock.Verify(x => x.UpdateAsync(It.IsAny<Book>()),Times.Once);
+
         }
 
         [Test]
         public async Task DeleteBook_ShouldReturnError_WithEmptyId()
         {
-            var id = Guid.Empty;
+            Guid bookId = Guid.Empty;
 
-            var result = await _service.DeleteCurrentBookAsync(id);
+            var result = await _service.DeleteCurrentBookAsync(bookId);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Not found !", result.ErrorMessage);
+            Assert.AreEqual("Not found!", result.ErrorMessage);
 
-
+           
         }
 
         [Test]
-        public async Task DeleteBook_ShouldReturnError_WithInCorrectId()
+        public async Task DeleteBook_ShouldReturnError_WhenBookMissing()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
 
-            var result = await _service.DeleteCurrentBookAsync(id);
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId)).ReturnsAsync((Book?)null);
+
+            var result = await _service.DeleteCurrentBookAsync(bookId);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("The book you are trying to delete is missing !", result.ErrorMessage);
+            Assert.AreEqual("The book you are trying to delete is missing!", result.ErrorMessage);
 
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
 
         }
 
         [Test]
         public async Task DeleteBook_ShouldReturnError_WhenBookIsTaken()
         {
+
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
+
             
-            var id = Guid.NewGuid();
 
-            var book = new Book { Id = id };
+            Book book = new Book 
+            { 
+                Id = bookId,
+                Title="Test",
+                AuthorId=authorId
+                
+            
+            };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+            
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
               .ReturnsAsync(book);
 
-            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(id))
+            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(bookId))
                .ReturnsAsync(true);
 
-            
-            var result = await _service.DeleteCurrentBookAsync(id);
 
-           
+            var result = await _service.DeleteCurrentBookAsync(bookId);
+
+
             Assert.IsFalse(result.Success);
             Assert.AreEqual("Book cannot be deleted because it is currently taken.", result.ErrorMessage);
+            Assert.IsFalse(result.Data);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
+            _systemsRepoMock.Verify(x => x.IsTakenBookAsync(bookId), Times.Once);
+
+            _booksRepoMock.Verify(x => x.DeleteAsync(It.IsAny<Book>()), Times.Never);
+
 
         }
 
         [Test]
         public async Task DeleteBook_ShouldDeleteSuccessfully_WhenBookIsNotTaken()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();   
 
-            var book = new Book { Id = id };
+            Book book = new Book 
+            { 
+                Id = bookId,
+                Title="Test",
+                AuthorId=authorId
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+            };
+
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
               .ReturnsAsync(book);
 
-            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(id))
+            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(bookId))
                .ReturnsAsync(false);
 
-            var result = await _service.DeleteCurrentBookAsync(id);
+            var result = await _service.DeleteCurrentBookAsync(bookId);
 
             Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.Data);
+            Assert.IsNull(result.ErrorMessage);
 
-            _booksRepoMock.Verify(x => x.DeleteAsync(book), Times.Once);
-        
-        
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
+            _systemsRepoMock.Verify(x => x.IsTakenBookAsync(bookId), Times.Once);
+
+            _booksRepoMock.Verify(x => x.DeleteAsync(It.Is<Book>(b=>b.Id==bookId)), Times.Once);
+
+
         }
 
         [Test]
         public async Task DeleteBook_ShouldReturnError_WhenDeleteFails()
         {
-            var id = Guid.NewGuid();
+            Guid bookId = Guid.NewGuid();
+            Guid authorId = Guid.NewGuid();
 
-            var book = new Book { Id = id };
+            Book book = new Book 
+            { 
+                Id = bookId,
+                Title="Test",
+                AuthorId=authorId
+            };
 
-            _booksRepoMock.Setup(x => x.GetByIdAsync(id))
+            _booksRepoMock.Setup(x => x.GetByIdAsync(bookId))
               .ReturnsAsync(book);
 
-            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(id))
+            _systemsRepoMock.Setup(x => x.IsTakenBookAsync(bookId))
               .ReturnsAsync(false);
 
             _booksRepoMock.Setup(x => x.DeleteAsync(book))
               .ThrowsAsync(new Exception());
 
-            var result = await _service.DeleteCurrentBookAsync(id);
+            var result = await _service.DeleteCurrentBookAsync(bookId);
 
             Assert.IsFalse(result.Success);
             Assert.AreEqual("Unexpected error occurred! Please try again later.", result.ErrorMessage);
+
+            _booksRepoMock.Verify(x => x.GetByIdAsync(bookId), Times.Once);
+
+            _systemsRepoMock.Verify(x => x.IsTakenBookAsync(bookId), Times.Once);
+
+            _booksRepoMock.Verify(x => x.DeleteAsync(It.Is<Book>(b => b.Id == bookId)), Times.Once);
+
+
         }
 
 

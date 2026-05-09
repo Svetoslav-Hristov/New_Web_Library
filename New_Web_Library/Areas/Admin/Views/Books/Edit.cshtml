@@ -57,12 +57,6 @@
             <span asp-validation-for="SelectedAuthor" class="text-danger"></span>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="NewAuthor">Or add new Author</label>
-            <input asp-for="NewAuthor" class="form-control" />
-        </div>
-        <span asp-validation-for="NewAuthor" class="text-danger"></span>
-
         <button type="submit" class="btn btn-success">Save</button>
         <a class="btn btn-secondary" asp-area="" asp-controller="Books" asp-action="Index">Cancel</a>
     </form>

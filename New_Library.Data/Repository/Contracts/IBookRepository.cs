@@ -19,7 +19,7 @@ namespace New_Library.Data.Repository.Contracts
 
         Task<bool> IsExistBookAsync(Guid bookId);
 
-        
+        Task<bool> AuthorBooks(Guid Id); 
 
     }
 }

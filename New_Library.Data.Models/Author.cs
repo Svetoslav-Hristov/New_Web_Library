@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static New_Web_Library.GCommon.EntityValidations.Author;
+using static New_Web_Library.GCommon.EntityValidations.Authors;
 using New_Web_Library.Data.Models.Contracts;
 
 namespace New_Web_Library.Data.Models
@@ -18,7 +18,7 @@ namespace New_Web_Library.Data.Models
         public string? Biography { get; set; }
 
         [Url]
-        [StringLength(URLMaxLength)]
+        [StringLength(UrlMaxLength)]
         public string? ImageUrl { get; set; }
 
         public List<Book> Books { get; set; } = new List<Book>();

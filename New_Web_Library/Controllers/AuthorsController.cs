@@ -13,6 +13,29 @@ namespace New_Web_Library.Controllers
             this._authorService = authorService;
         }
 
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult>Index(string? search)
+        {
+
+            var result = await _authorService.GetAllAuthorsAsync(search);
+
+            if (!result.Success)
+            {
+                TempData["ErrorAuthor"] = result.ErrorMessage;
+
+            }
+
+            return View(result.Data);
+
+
+        }
+
+
+
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(Guid Id)
@@ -28,6 +51,7 @@ namespace New_Web_Library.Controllers
             {
                 TempData["ErrorAuthor"] = result.ErrorMessage;
 
+                return RedirectToAction(nameof(Index));
                
             }
 

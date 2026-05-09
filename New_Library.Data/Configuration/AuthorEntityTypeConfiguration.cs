@@ -137,7 +137,8 @@ namespace New_Web_Library.Data.Configuration
             new Author
             {
                 Id=Guid.Parse("47df0e8f-7a6b-4ed1-abfa-372f26dbcd49"),
-                Name="Andrew Hunt"
+                Name="Andrew Hunt",
+                ImageUrl="/AuthorImages/Andy_Hunt.jpg",
 
             },
             new Author
@@ -234,6 +235,7 @@ namespace New_Web_Library.Data.Configuration
             {
                 Id=Guid.Parse("86867d10-13a6-41cd-91c3-eac7c74d0267"),
                 Name="Paulo Coelho",
+                ImageUrl="/AuthorImages/Paulo_Coelho.jpg",
                 Biography="Paulo Coelho (born 1947) is a Brazilian author best known for his internationally acclaimed novel" +
                 " The Alchemist, one of the most widely read and translated books in modern literature." +
                 " His works often explore themes such as destiny, spirituality, personal growth, " +
@@ -261,37 +263,44 @@ namespace New_Web_Library.Data.Configuration
             new Author
             {
                 Id=Guid.Parse("98be7892-9c29-45b0-bc44-3a55f55438d8"),
-                Name="Yuval Noah Harari"
+                Name="Yuval Noah Harari",
+                ImageUrl="/AuthorImages/Yuval_Noah_Harari.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("1e1e3c27-c460-4fc8-9e00-a799d28f3c71"),
-                Name="Walter Isaacson"
+                Name="Walter Isaacson",
+                ImageUrl="/AuthorImages/Walter_Isaacson.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("3be2562a-695c-41c1-b3f7-713e4bda5da0"),
-                Name="Andy Weir"
+                Name="Andy Weir",
+                ImageUrl="/AuthorImages/Andy_Weir.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("383e7342-18e8-4eb8-a74e-9b403011d328"),
-                Name="Frank Herbert"
+                Name="Frank Herbert",
+                ImageUrl="/AuthorImages/Frank_Herbert.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("c8f65ff4-c963-4397-be53-6cda4c7fb567"),
-                Name="Patrick Rothfuss"
+                Name="Patrick Rothfuss",
+                ImageUrl="/AuthorImages/Patrick_Rothfuss.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("527255b7-2a1b-486a-b5be-6ebf376487f2"),
-                Name="Harper Lee"
+                Name="Harper Lee",
+                ImageUrl="/AuthorImages/Harper-Lee.jpg"
             },
             new Author
             {
                 Id=Guid.Parse("49e43a4b-106a-4ad0-9ecc-1234064f6cde"),
                 Name="Jane Austen",
+                ImageUrl="/AuthorImages/Jane_Austen.jpg",
                 Biography="Jane Austen (1775–1817) was an English novelist celebrated for her sharp social observation," +
                 " wit, and enduring stories about love, marriage, family, and class." +
                 " She is considered one of the most important writers in English literature, and her novels" +
@@ -321,6 +330,7 @@ namespace New_Web_Library.Data.Configuration
             {
                 Id=Guid.Parse("e93c976c-b126-4cf9-a3ee-b816c250d7aa"),
                 Name="F. Scott Fitzgerald",
+                ImageUrl="/AuthorImages/F._Scott_Fitzgerald.jpg",
                 Biography="F. Scott Fitzgerald (1896–1940) was an American novelist and short story writer best" +
                 " known for capturing the spirit, glamour, and disillusionment of the Jazz Age." +
                 " He is considered one of the greatest writers of twentieth-century American" +
@@ -412,6 +422,7 @@ namespace New_Web_Library.Data.Configuration
             {
                 Id=Guid.Parse("06c9d74c-a4c6-4218-8d41-e65cf98be9b9"),
                 Name="Bram Stoker",
+                ImageUrl="/AuthorImages/Bram_Stroker.jpg",
                 Biography="Bram Stoker (1847–1912) was an Irish author and theatre manager best known" +
                 " for his classic Gothic horror novel Dracula (1897), one of the most influential works in" +
                 " horror literature. Through this novel, he created one of the most enduring figures in popular " +
@@ -438,6 +449,7 @@ namespace New_Web_Library.Data.Configuration
             {
                 Id=Guid.Parse("3aee53ce-3292-4895-8cef-5c41ab9684db"),
                 Name="Ray Bradbury",
+                ImageUrl="/AuthorImages/Ray_Bradbury.jpg",
                 Biography="Ray Bradbury (1920–2012) was an American author celebrated for his imaginative works" +
                 " of science fiction, fantasy, horror, and literary fiction. He is best known for" +
                 " combining poetic language with powerful ideas about technology, censorship, human nature," +
@@ -466,9 +478,34 @@ namespace New_Web_Library.Data.Configuration
             new Author
             {
                 Id=Guid.Parse("1af9840b-6115-41a2-b441-effe379fdc55"),
-                Name="Martin Fowler"
+                Name="Martin Fowler",
+                ImageUrl="/AuthorImages/Martin-Fowler.jpg",
+                Biography="Martin Fowler is a British software engineer, author," +
+                " and public speaker widely recognized for his contributions to software design, architecture," +
+                " and development practices. Born in 1963 in Walsall, England, he studied at University College London, " +
+                "where he earned a degree in Computer Science. Over the course of his career, " +
+                "Fowler has become one of the most influential voices in modern software engineering.\r\n\r\n" +
+                "Fowler is best known for his work on object-oriented analysis and design, particularly" +
+                " his emphasis on writing clean, maintainable, and well-structured code. " +
+                "He gained international recognition with the publication of his book " +
+                "Refactoring: Improving the Design of Existing Code (1999), which introduced a systematic approach " +
+                "to improving code quality without changing its external behavior. This book has had a lasting " +
+                "impact on how developers approach code maintenance and evolution.\r\n\r\n" +
+                "Another major contribution is his co-authorship of Patterns of Enterprise Application Architecture (2002)," +
+                " where he cataloged common solutions to recurring problems in enterprise software systems. " +
+                "Fowler also played a key role in popularizing the concept of Domain-Driven Design (DDD)" +
+                " through his writings and collaborations with other thought leaders.\r\n\r\n" +
+                "As Chief Scientist at ThoughtWorks, a global software consultancy, " +
+                "Fowler has influenced large-scale software projects and promoted agile methodologies, " +
+                "continuous integration, and evolutionary architecture. He is also a strong advocate for microservices, " +
+                "helping define and clarify the concept in the early 2010s.\r\n\r\nThrough his website and blog, " +
+                "martinfowler.com, he regularly publishes articles on software architecture," +
+                " development practices, and technology trends. His clear writing style and practical insights have " +
+                "made complex topics accessible to a wide audience of developers.\r\n\r\n" +
+                "Martin Fowler’s work continues to shape how software is designed and built," +
+                " encouraging developers to focus on simplicity, clarity, and continuous improvement."
             }
-        }; 
+        };
 
 
 

@@ -99,8 +99,8 @@ namespace New_Web_Library.Services.Core.Tests
         {
             var model = new BookFormModel
             {
-                NewAuthor = null,
-                SelectedAuthor = null
+                
+                SelectedAuthor = Guid.Empty
             };
 
             var result = await _controller.Create(model);
@@ -116,7 +116,7 @@ namespace New_Web_Library.Services.Core.Tests
         {
             var model = new BookFormModel
             {
-                SelectedAuthor = "Test"
+                SelectedAuthor = Guid.NewGuid()
             };
 
             _bookServiceMock.Setup(x => x.CreateNewBookUsingBookFormModelAsync(model))
@@ -140,7 +140,7 @@ namespace New_Web_Library.Services.Core.Tests
         {
             var model = new BookFormModel
             {
-                SelectedAuthor = "Test"
+                SelectedAuthor = Guid.NewGuid()
             };
 
             var book = new Book
@@ -270,8 +270,8 @@ namespace New_Web_Library.Services.Core.Tests
             var id = Guid.NewGuid();
             var model = new BookFormModel
             {
-                NewAuthor = null,
-                SelectedAuthor = null
+                
+                SelectedAuthor = Guid.Empty
             };
 
 
@@ -284,7 +284,7 @@ namespace New_Web_Library.Services.Core.Tests
             Assert.AreEqual("Edit", viewResult.ViewName);
 
             Assert.IsTrue(_controller.ModelState.ContainsKey("SelectedAuthor"));
-            Assert.IsTrue(_controller.ModelState.ContainsKey("NewAuthor"));
+           
 
             _bookServiceMock.Verify(s => s.BookModelDataFillingAsync(model), Times.Once);
 
@@ -492,7 +492,7 @@ namespace New_Web_Library.Services.Core.Tests
         {
             return new BookFormModel
             {
-                SelectedAuthor = "Author"
+                SelectedAuthor = Guid.NewGuid()
             };
         }
 

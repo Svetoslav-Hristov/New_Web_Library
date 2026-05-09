@@ -56,11 +56,10 @@ namespace New_Web_Library.Areas.Admin.Controllers
             }
 
 
-            if (string.IsNullOrEmpty(formModel.NewAuthor) && string.IsNullOrEmpty(formModel.SelectedAuthor))
+            if (formModel.SelectedAuthor==Guid.Empty)
             {
-                ModelState.AddModelError(nameof(formModel.NewAuthor), "Or add an author.");
-
-                ModelState.AddModelError(nameof(formModel.SelectedAuthor), "Please select and add an author.");
+                
+                ModelState.AddModelError(nameof(formModel.SelectedAuthor), "Please select  author.");
 
                 await _bookService.BookModelDataFillingAsync(formModel);
 
@@ -124,11 +123,9 @@ namespace New_Web_Library.Areas.Admin.Controllers
 
             }
 
-            if (string.IsNullOrEmpty(model.NewAuthor) && string.IsNullOrEmpty(model.SelectedAuthor))
+            if (model.SelectedAuthor==Guid.Empty)
             {
-                ModelState.AddModelError(nameof(model.SelectedAuthor), "Please select or add an author.");
-
-                ModelState.AddModelError(nameof(model.NewAuthor), "Or add an author.");
+                ModelState.AddModelError(nameof(model.SelectedAuthor), "Please select author.");
 
                 await _bookService.BookModelDataFillingAsync(model);
 
